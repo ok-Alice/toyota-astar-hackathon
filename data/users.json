@@ -1,0 +1,37 @@
+[
+  {
+    "email": "alice@astar.com",
+    "displayName": "Alice",
+    "password": "1234"
+  },
+  {
+    "email": "bob@astar.com",
+    "displayName": "Bob",
+    "password": "1234"
+  },
+  {
+    "email": "carol@astar.com",
+    "displayName": "Carol",
+    "password": "1234"
+  },
+  {
+    "email": "eve@astar.com",
+    "displayName": "Eve",
+    "password": "1234"
+  },
+  {
+    "email": "francis@astar.com",
+    "displayName": "Francis",
+    "password": "1234"
+  },
+  {
+    "email": "gregory@astar.com",
+    "displayName": "Gregory",
+    "password": "1234"
+  },
+  {
+    "email": "hailey@adobe.com",
+    "displayName": "Hailey",
+    "password": "1234"
+  }
+]

@@ -1,0 +1,35 @@
+.root {
+  --icon-size: 1.25rem;
+  display: flex;
+  pointer-events: none;
+}
+
+.icon {
+  display: inline-block;
+  font-size: 0;
+  height: var(--icon-size);
+  line-height: 0;
+  user-select: none;
+  vertical-align: middle;
+  width: var(--icon-size);
+}
+
+.xs {
+  --icon-size: 1rem;
+}
+
+.sm {
+  --icon-size: 1.25rem;
+}
+
+.md {
+  --icon-size: 1.5rem;
+}
+
+.lg {
+  --icon-size: 2rem;
+}
+
+.xl {
+  --icon-size: 2.5rem;
+}
