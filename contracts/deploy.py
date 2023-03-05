@@ -99,6 +99,7 @@ print("✅ Deployed Employee: ", employee.contract_address, "CodeHash:", employe
 result = employee.read(kp_alice, 'PSP34::collection_id')
 print('  🤩 Employee CollectionId:', result.contract_result_data[1][1])
 
+
 def contract_call(msg, contract, keypair, fname, args):
     gas_predict = contract.read(keypair, fname, args)
     
@@ -111,7 +112,8 @@ def contract_call(msg, contract, keypair, fname, args):
         print(f'  😎 Call {msg} {fname} : Events {contract_receipt.contract_events}')
     else:
         print(f'🤕 Error message: {contract_receipt.error_message}')
-        os.exit(1)
+        print(f'  ** Events {contract_receipt.contract_events}')
+        quit()
         
     return contract_receipt
     
@@ -193,13 +195,10 @@ contract_call(
     kp_bob,
     'Equippable::equip',
     args={
-       'token_id': { 'U64': 2 },
+       'token_id': { 'U64': 1 },
        'asset_id': 0,
        'slot_part_id': 0,
-       'child_nft' : {
-           
-       }
-       
-        
+       'child_nft' : ( project.contract_address, { 'U64': 1 } ),
+       'child_asset_id': 0,        
     }
 )
