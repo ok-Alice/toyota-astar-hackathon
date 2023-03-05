@@ -1,36 +1,14 @@
-# RMRK ink!
+# okAlice Toyota Hachkathon Backend
 
-Implementation of RMRK protocol in ink! Smart contract language
+## Build
 
-
-## Quick start
-
-1. Make sure you have the [latest cargo contract](https://crates.io/crates/cargo-contract)
+    $ cd contracts
+    $ sh build-all.sh
 
 
-2. Clone the repository
+## Deploy 
 
-```sh
-git clone https://github.com/rmrk-team/rmrk-ink.git
-```
+Have a local node running
 
-3. Compile & Build
-
-```sh
-cd ./rmrk-ink/contracts/rmrk
-cargo +nightly-2022-08-15 contract build
-```
-
-3. Run ink! unit tests
-
-```sh
-cargo test
-```
-
-4. Integration test
-```sh
-yarn
-yarn compile
-yarn test
-````
-
+    $ python3 contratcs/deploy.py
+    
