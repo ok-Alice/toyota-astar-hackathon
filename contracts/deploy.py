@@ -187,13 +187,6 @@ contract_call(
 
 ### Bob tries to equip project
 
-val = U64(0)
-val.process_encode(1)
-
-
-
-print("val: ", val)
-
 contract_call(
     "Employee by Bob",
     employee,
