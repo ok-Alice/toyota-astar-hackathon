@@ -1,10 +1,11 @@
 import type { AppProps } from 'next/app';
 import { Rajdhani } from '@next/font/google';
 import { Provider as JotaiProvider } from 'jotai';
-
-import 'styles/globals.scss';
 import { useRouter } from 'next/router';
 import Layout from 'components/Layout';
+
+import 'styles/globals.scss';
+import Preloader from 'components/Preloader';
 
 const rajdhani = Rajdhani({
   subsets: ['latin'],
@@ -26,6 +27,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         ) : (
           <Layout>
+            <Preloader />
             <Component {...pageProps} />
           </Layout>
         )}
