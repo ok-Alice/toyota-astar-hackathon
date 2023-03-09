@@ -23,10 +23,10 @@ kp_charlie = Keypair.create_from_uri('//Charlie')
 
 #### Deploy Assignments for Projects & Functions
 
-def deploy_contract(msg, name, kp, args):
+def deploy_contract(msg, contractname, kp, args):
     code = ContractCode.create_from_contract_files(
-        metadata_file=os.path.join(os.path.dirname(__file__), '..', 'target', 'ink', name , name + '.json'),
-        wasm_file=os.path.join(os.path.dirname(__file__), '..', 'target', 'ink', name, name + '.wasm'),
+        metadata_file=os.path.join(os.path.dirname(__file__), '..', 'target', 'ink', contractname , contractname + '.json'),
+        wasm_file=os.path.join(os.path.dirname(__file__), '..', 'target', 'ink', contractname, contractname + '.wasm'),
         substrate=substrate
     )
 
@@ -42,37 +42,54 @@ def deploy_contract(msg, name, kp, args):
         deployment_salt= '0x{}'.format(secrets.token_hex(8))  #for random string
     )
 
-    print("✅ Deployed", name, "as", msg, ":", contract.contract_address, "CodeHash:", contract.metadata.source['hash']);
+    print("✅ Deployed", contractname, "as", msg, ":", contract.contract_address, "CodeHash:", contract.metadata.source['hash']);
 
     return contract
 
 
-project = deploy_contract('project', 'assignments', kp_alice, args={
-        'name': "Project",
-        'symbol': "PRJ",
-        'base_uri': "http://hello.world/",
-        'max_supply': 100,
-        'collection_metadata': "ipfs://over.there/"  
-        })
+employee_project = deploy_contract(msg='EmployeeProject', 
+                          contractname='assignments', 
+                          kp=kp_alice, 
+                          args={
+                            'name': "EmployeeProject",
+                            'symbol': "PRJ",
+                            'base_uri': "http://hello.world/",
+                            'max_supply': 100,
+                            'collection_metadata': "ipfs://over.there/"  
+                            })
 
-function = deploy_contract('function', 'assignments', kp_alice,     args={
-        'name': "Function",
-        'symbol': "FNC",
-        'base_uri': "http://hello.world/",
-        'max_supply': 100,
-        'collection_metadata': "ipfs://over.there/"  
-        },)
+employee_function = deploy_contract(msg='EmployeeFunction', 
+                           contractname='assignments', 
+                           kp=kp_alice,     
+                           args={
+                            'name': "EmployeeFunction",
+                            'symbol': "FNC",
+                            'base_uri': "http://hello.world/",
+                            'max_supply': 100,
+                            'collection_metadata': "ipfs://over.there/"  
+                            },)
+
+employee = deploy_contract(msg='Employee', 
+                           contractname='employee', 
+                           kp=kp_alice,     
+                           args={
+                            'name': "Employee",
+                            'symbol': "EMP",
+                            'base_uri': "http://hello.world/",
+                            'max_supply': 10000,
+                            'collection_metadata': "ipfs://over.there/"  
+                            },)
 
 
-#### Deploy Employee
+project = deploy_contract(msg='Project',
+                          contractname='project',
+                          kp=kp_alice,
+                          args={
+                            'name': "Project",
+                            '_employee': employee.contract_address,  
+                          }
+                          )
 
-employee = deploy_contract('Employee', 'employee', kp_alice,     args={
-        'name': "Employee",
-        'symbol': "EMP",
-        'base_uri': "http://hello.world/",
-        'max_supply': 10000,
-        'collection_metadata': "ipfs://over.there/"  
-        },)
 
 result = employee.read(kp_alice, 'PSP34::collection_id')
 print('  🤩 Employee CollectionId:', result.contract_result_data[1][1])
@@ -107,14 +124,14 @@ contract_call(
         'parts' : [  {
             'part_type': 'Slot',
             'z': 0,
-            'equippable': [project.contract_address],
+            'equippable': [employee_project.contract_address],
             'part_uri': "",
             'is_equippable_by_all': False,
             },
         {
             'part_type': 'Slot',
             'z': 1,
-            'equippable': [function.contract_address],
+            'equippable': [employee_function.contract_address],
             'part_uri': "",
             'is_equippable_by_all': False,
             },
@@ -147,7 +164,7 @@ contract_call(
 
 contract_call(
     "Project for Bob",
-    project,
+    employee_project,
     kp_alice,
     'Minting::mint',
     args={
@@ -157,7 +174,7 @@ contract_call(
 
 contract_call(
     "Project for Charlie",
-    project,
+    employee_project,
     kp_alice,
     'Minting::mint',
     args={

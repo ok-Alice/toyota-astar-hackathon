@@ -1,5 +1,5 @@
 [package]
-name = "governor"
+name = "project"
 version = "0.6.0"
 authors = ["okAlice"]
 edition = "2021"

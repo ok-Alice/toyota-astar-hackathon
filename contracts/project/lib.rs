@@ -2,7 +2,7 @@
 #![feature(min_specialization)]
 
 #[openbrush::contract]
-pub mod governor {
+pub mod project {
     use ink::prelude::vec::Vec;
     use openbrush::{
 
@@ -14,7 +14,7 @@ pub mod governor {
 
     #[derive(Debug, scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
-    pub enum GovernorError {
+    pub enum ProjectError {
         Custom(String),
     } 
 
@@ -35,42 +35,41 @@ pub mod governor {
 
     #[ink(storage)]
     #[derive(Default, Storage)]
-    pub struct Governor {
+    pub struct Project {
         name: String,
     }
 
-    impl Governor {
+    impl Project {
 
         #[ink(constructor)]
         pub fn new(
             name: String,
-            _project: AccountId,
-            _function: AccountId,
+            _employee: AccountId,
         ) -> Self {
-            Governor { name }
+            Project { name }
         }
         /// Create new proposal for give ProjectID (can only be called by 
         /// project token holder)
         #[ink(message)]
-        pub fn create_proposal(&mut self, _title: String) -> Result<(),GovernorError> {
+        pub fn create_proposal(&mut self, _title: String) -> Result<(),ProjectError> {
             Ok(())
         } 
 
         /// List all open proposals for given project 
         #[ink(message)]
-        pub fn list_proposals(&self, _internal: bool) -> Result<Vec<u32>,GovernorError> {
+        pub fn list_proposals(&self, _internal: bool) -> Result<Vec<u32>,ProjectError> {
             Ok(Vec::default())
         }
 
         /// vote for given proposal Id
         #[ink(message)]
-        pub fn vote(&mut self, _proposal: ProposalId) -> Result<(), GovernorError> {
+        pub fn vote(&mut self, _proposal: ProposalId) -> Result<(), ProjectError> {
             Ok(())
         }
 
         /// Current state of proposal
         #[ink(message)]
-        pub fn proposal_state(&mut self, _proposal: ProposalId) -> Result<ProposalState, GovernorError> {
+        pub fn proposal_state(&mut self, _proposal: ProposalId) -> Result<ProposalState, ProjectError> {
             Ok(ProposalState::Active)
         }
     }
