@@ -135,7 +135,36 @@ contract_call(
             'is_equippable_by_all': False,
             },
         ]
-        }, )
+        },
+)
+
+asset_id = 1
+group_id = 1
+token_id = { 'U64': 1 }
+
+contract_call(
+    "Employee add_asset_entry",
+    employee,
+    kp_alice,
+    'Base::add_asset_entry',
+    args={
+        id: asset_id,
+        equippable_group_id: group_id,
+        asset_uri: 'asset_uri/',
+        part_ids: [0]
+    },
+)
+
+contract_call(
+    "Employee add_asset_to_token",
+    employee,
+    kp_alice,
+    'Base::add_asset_to_token',
+    args={
+        token_id: token_id,
+        asset_id: asset_id,
+    },
+)
 
 ### Call Employee MintTo
 
@@ -189,10 +218,10 @@ contract_call(
     kp_bob,
     'Equippable::equip',
     args={
-       'token_id': { 'U64': 1 },
-       'asset_id': 0,
+       'token_id': token_id,
+       'asset_id': asset_id,
        'slot_part_id': 0,
-       'child_nft' : ( project.contract_address, { 'U64': 1 } ),
+       'child_nft' : ( project.contract_address, token_id ),
        'child_asset_id': 0,        
     }
 )
