@@ -36,6 +36,7 @@ pub mod project {
     }
 
     type ProposalId = u32;
+    type ProjectId = u32;
 
 
     #[derive(scale::Decode, scale::Encode)]
@@ -75,7 +76,19 @@ pub mod project {
         }
 
         #[ink(message)]
-        pub fn gen_proposal_id(&self, title: String) -> Result<ProposalId, ProjectError> {
+        pub fn create_project(&mut self, title: String) -> Result<(), ProjectError> {
+            Ok(())
+        }
+
+
+        #[ink(message)]
+        pub fn project_colection(&self, project_id: ProjectId) -> Result<AccountId, ProjectError> {
+            Ok(self.env().account_id()) // mock
+        }
+    
+
+        #[ink(message)]
+        pub fn gen_title_id(&self, title: String) -> Result<u32, ProjectError> {
             let mut output = <Sha2x256 as HashOutput>::Type::default(); // 256-bit buffer
             ink_env::hash_bytes::<Sha2x256>(&title, &mut output);
             Ok(u32::from_ne_bytes([output[0], output[1], output[2], output[3]]))
@@ -84,8 +97,8 @@ pub mod project {
         /// Create new proposal for give ProjectID (can only be called by 
         /// project token holder)
         #[ink(message)]
-        pub fn create_proposal(&mut self, title: String, internal: bool) -> Result<(),ProjectError> {
-            let proposal_id = self.gen_proposal_id(title)?;
+        pub fn create_proposal(&mut self, project_id: ProjectId, title: String, internal: bool) -> Result<(),ProjectError> {
+            let proposal_id = self.gen_title_id(title)?;
 
             if self.proposals.get(&proposal_id).is_some() {
                 return Err(ProjectError::Custom(String::from("Proposal already exists")));
@@ -106,12 +119,12 @@ pub mod project {
 
         /// List all open proposals for given project 
         #[ink(message)]
-        pub fn list_proposal_ids(&self) -> Vec<ProposalId> {
+        pub fn list_proposal_ids(&self, project_id: ProjectId, ) -> Vec<ProposalId> {
             self.proposal_ids.clone()
         }
 
         #[ink(message)]
-        pub fn get_proposal_details(&self, proposal_id: ProposalId) -> Result<ProposalCore, ProjectError> {
+        pub fn get_proposal_details(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalCore, ProjectError> {
             match self.proposals.get(proposal_id) {
                 Some(pc) => Ok(pc),
                 None => Err(ProjectError::Custom(String::from("Proposal does not exist")))
@@ -120,13 +133,13 @@ pub mod project {
 
         /// vote for given proposal Id
         #[ink(message)]
-        pub fn vote(&mut self, _proposal: ProposalId) -> Result<(), ProjectError> {
+        pub fn vote(&mut self, project_id: ProjectId,  proposal: ProposalId) -> Result<(), ProjectError> {
             Ok(())
         }
 
         /// Current state of proposal
         #[ink(message)]
-        pub fn proposal_state(&mut self, _proposal: ProposalId) -> Result<ProposalState, ProjectError> {
+        pub fn proposal_state(&mut self, project_id: ProjectId, _proposal: ProposalId) -> Result<ProposalState, ProjectError> {
             Ok(ProposalState::Active)
         }
 
