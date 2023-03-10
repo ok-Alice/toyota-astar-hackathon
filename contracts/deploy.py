@@ -47,6 +47,8 @@ def deploy_contract(msg, contractname, kp, args):
     return contract
 
 
+# Alice deploys EmployeeProject
+
 employee_project = deploy_contract(msg='EmployeeProject', 
                           contractname='assignments', 
                           kp=kp_alice, 
@@ -57,6 +59,10 @@ employee_project = deploy_contract(msg='EmployeeProject',
                             'max_supply': 100,
                             'collection_metadata': "ipfs://over.there/"  
                             })
+
+assert(employee_project.read(kp_alice, 'PSP34::total_supply').contract_result_data[1] == 0)
+
+# Alice deploys EmployeeFunction
 
 employee_function = deploy_contract(msg='EmployeeFunction', 
                            contractname='assignments', 
@@ -69,6 +75,10 @@ employee_function = deploy_contract(msg='EmployeeFunction',
                             'collection_metadata': "ipfs://over.there/"  
                             },)
 
+assert(employee_function.read(kp_alice, 'PSP34::total_supply').contract_result_data[1] == 0)
+
+# Alice deploys Employee
+
 employee = deploy_contract(msg='Employee', 
                            contractname='employee', 
                            kp=kp_alice,     
@@ -80,6 +90,9 @@ employee = deploy_contract(msg='Employee',
                             'collection_metadata': "ipfs://over.there/"  
                             },)
 
+assert(employee.read(kp_alice, 'PSP34::total_supply').contract_result_data[1] == 0)
+
+# Alice deploys Project
 
 project = deploy_contract(msg='Project',
                           contractname='project',
@@ -90,6 +103,8 @@ project = deploy_contract(msg='Project',
                           }
                           )
 
+
+assert(project.read(kp_alice, 'voting_delay').contract_result_data[1] == 0)
 
 result = employee.read(kp_alice, 'PSP34::collection_id')
 print('  🤩 Employee CollectionId:', result.contract_result_data[1][1])
@@ -209,6 +224,10 @@ contract_call(
         'to': kp_charlie.ss58_address,
     }
 )
+
+
+## Approve parent
+
 
 ### Bob tries to equip project
 
