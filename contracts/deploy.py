@@ -147,23 +147,36 @@ contract_call(
     "Employee add_asset_entry",
     employee,
     kp_alice,
-    'Base::add_asset_entry',
+    'MultiAsset::add_asset_entry',
     args={
-        id: asset_id,
-        equippable_group_id: group_id,
-        asset_uri: 'asset_uri/',
-        part_ids: [0]
+        'id': asset_id,
+        'equippable_group_id': group_id,
+        'asset_uri': 'asset_uri/',
+        'part_ids': [0]
     },
+)
+
+### Call Employee MintTo
+
+contract_call(
+    "Mint Employee for Alice",
+    employee,
+    kp_alice,
+    'Minting::mint',
+    args={
+        'to': kp_alice.ss58_address,
+    }
 )
 
 contract_call(
     "Employee add_asset_to_token",
     employee,
     kp_alice,
-    'Base::add_asset_to_token',
+    'MultiAsset::add_asset_to_token',
     args={
-        token_id: token_id,
-        asset_id: asset_id,
+        'token_id': token_id,
+        'asset_id': asset_id,
+        'replaces_asset_with_id': None
     },
 )
 
@@ -214,15 +227,15 @@ contract_call(
 ### Bob tries to equip project
 
 contract_call(
-    "Employee by Bob",
+    "Employee by Alice",
     employee,
-    kp_bob,
+    kp_alice,
     'Equippable::equip',
     args={
        'token_id': token_id,
        'asset_id': asset_id,
        'slot_part_id': 0,
-       'child_nft' : ( project.contract_address, token_id ),
+       'child_nft' : ( project.contract_address, { 'U64': 2 } ),
        'child_asset_id': 0,        
     }
 )
