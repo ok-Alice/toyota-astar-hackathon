@@ -148,10 +148,10 @@ contract_call(
     kp_alice,
     'Base::add_asset_entry',
     args={
-        id: asset_id,
-        equippable_group_id: group_id,
-        asset_uri: 'asset_uri/',
-        part_ids: [0]
+        'id': asset_id,
+        'equippable_group_id': group_id,
+        'asset_uri': 'asset_uri/',
+        'part_ids': [0]
     },
 )
 
@@ -161,8 +161,8 @@ contract_call(
     kp_alice,
     'Base::add_asset_to_token',
     args={
-        token_id: token_id,
-        asset_id: asset_id,
+        'token_id': token_id,
+        'asset_id': asset_id,
     },
 )
 
