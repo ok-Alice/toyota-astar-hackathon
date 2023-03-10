@@ -94,7 +94,6 @@ project = deploy_contract(msg='Project',
 result = employee.read(kp_alice, 'PSP34::collection_id')
 print('  🤩 Employee CollectionId:', result.contract_result_data[1][1])
 
-
 def contract_call(msg, contract, keypair, fname, args):
     gas_predict = contract.read(keypair, fname, args)
     
