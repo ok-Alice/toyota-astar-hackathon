@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useCallback, useEffect } from 'react';
 
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { currentAccountAtom } from 'store/substrateAccount';
 
 import { Icon } from 'components/ui-kit/Icon';
@@ -9,16 +10,31 @@ import { Link } from 'components/Link';
 import { Avatar } from 'components/ui-kit/Avatar';
 
 import { Project } from 'db/projects';
+import { projectsAtom } from 'store/projects';
 
 import styles from './Sidebar.module.scss';
 
 export function Sidebar() {
   const router = useRouter();
   const currentAccount = useAtomValue(currentAccountAtom);
-  // eventually populate this
-  const projects: Project[] = [];
+  const projects = useAtomValue(projectsAtom);
+  const setProjects = useSetAtom(projectsAtom);
 
   const projectId = router.query.id as string;
+
+  const getProjects = useCallback(async () => {
+    const response = await fetch('/api/projects');
+    const apiProjects = (await response.json()) as Project[];
+    setProjects(apiProjects);
+  }, [setProjects]);
+
+  useEffect(() => {
+    if (!currentAccount) {
+      return;
+    }
+
+    getProjects();
+  }, [setProjects, currentAccount, getProjects]);
 
   if (!currentAccount) {
     return null;

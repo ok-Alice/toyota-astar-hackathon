@@ -2,6 +2,7 @@
 import users from './data/users.json';
 
 export type User = {
+  id: number;
   email: string;
   password: string;
   displayName: string;
