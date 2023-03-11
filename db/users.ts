@@ -1,13 +1,35 @@
 // users in JSON file for simplicity, store in a db for production applications
-import users from './data/users.json';
+import userData from './data/users.json';
 
 export type User = {
   id: number;
   email: string;
-  password: string;
+  password?: string;
   displayName: string;
+  badges: string[];
+};
+
+const getSanitizedUser = (user: User) => {
+  const { password, ...cleanedUser } = user;
+  return cleanedUser;
+};
+
+const list = () => userData.map(getSanitizedUser);
+
+const get = (id: number) => {
+  const foundUser = userData.find((user) => user.id === id);
+  if (!foundUser) return null;
+  return getSanitizedUser(foundUser);
+};
+
+const getByEmail = (email: string) => {
+  const foundUser = userData.find((user) => user.email === email);
+  if (!foundUser) return null;
+  return foundUser;
 };
 
 export const usersDB = {
-  getByEmail: (email: string) => users.find((x: User) => x.email === email)
+  list,
+  get,
+  getByEmail
 };

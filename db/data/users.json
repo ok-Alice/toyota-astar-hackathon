@@ -1,46 +1,57 @@
 [
   {
     "id": 0,
-    "address": "//ALICE",
+    "address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
     "email": "alice@astar.com",
     "displayName": "Alice",
-    "password": "1234"
+    "password": "1234",
+    "badges": ["Lead Frontend"]
   },
   {
     "id": 1,
-    "address": "//BOB",
+    "address": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
     "email": "bob@astar.com",
     "displayName": "Bob",
-    "password": "1234"
+    "password": "1234",
+    "badges": ["Lead Backend Dev"]
   },
   {
     "id": 2,
-    "email": "carol@astar.com",
-    "displayName": "Carol",
-    "password": "1234"
+    "address": "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y",
+    "email": "charlie@astar.com",
+    "displayName": "Charlie",
+    "password": "1234",
+    "badges": ["Full Stack Dev"]
   },
   {
     "id": 3,
-    "email": "eve@astar.com",
-    "displayName": "Eve",
-    "password": "1234"
+    "account": "5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy",
+    "email": "dave@astar.com",
+    "displayName": "Dave",
+    "password": "1234",
+    "badges": ["Medior Backend Dev"]
   },
   {
     "id": 4,
-    "email": "francis@astar.com",
-    "displayName": "Francis",
-    "password": "1234"
+    "account": "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
+    "email": "eve@astar.com",
+    "displayName": "Eve",
+    "password": "1234",
+    "badges": ["UX Designer"]
   },
   {
     "id": 5,
-    "email": "gregory@astar.com",
-    "displayName": "Gregory",
-    "password": "1234"
+    "account": "5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL",
+    "email": "ferdie@astar.com",
+    "displayName": "Ferdie",
+    "password": "1234",
+    "badges": ["Junior Frontend Dev"]
   },
   {
-    "id": 6,
+    "id": 7,
     "email": "hailey@adobe.com",
     "displayName": "Hailey",
-    "password": "1234"
+    "password": "1234",
+    "badges": ["External"]
   }
 ]

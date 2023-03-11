@@ -6,6 +6,7 @@ import {
 } from 'react';
 
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
@@ -13,7 +14,7 @@ import {
   substrateAccountAtom,
   disconnectAccountsAtom
 } from 'store/substrateAccount';
-import { disconnectEmailAccountAtom } from 'store/emailAccount';
+import { disconnectCurrentUserAtom } from 'store/db';
 import { keyringAtom } from 'store/api';
 import { wallets } from 'constants/wallets';
 
@@ -45,7 +46,6 @@ import {
 } from 'components/ui-kit/DropdownMenu';
 
 import styles from './ConnectWallet.module.scss';
-import { useRouter } from 'next/router';
 
 export function ConnectWallet() {
   const router = useRouter();
@@ -59,7 +59,7 @@ export function ConnectWallet() {
   const keyring = useAtomValue(keyringAtom);
   const setSubstrateAccount = useSetAtom(setCurrentSubstrateAccountAtom);
   const disconnectAccounts = useSetAtom(disconnectAccountsAtom);
-  const disconnectEmailAccount = useSetAtom(disconnectEmailAccountAtom);
+  const disconnectCurrentUser = useSetAtom(disconnectCurrentUserAtom);
 
   useEffect(() => {
     if (selectedAccountAddress) {
@@ -79,7 +79,7 @@ export function ConnectWallet() {
 
   const handleDisconnect = async () => {
     disconnectAccounts();
-    disconnectEmailAccount();
+    disconnectCurrentUser();
     router.push('/login');
   };
 

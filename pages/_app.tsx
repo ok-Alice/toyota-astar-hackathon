@@ -8,10 +8,10 @@ import 'styles/globals.scss';
 import { Preloader } from 'components/Preloader';
 import { useEffect } from 'react';
 import {
-  currentEmailAccountAtom,
-  emailAccountStorageKey,
-  setCurrentEmailAccountAtom
-} from 'store/emailAccount';
+  currentUserAtom,
+  setCurrentUserAtom,
+  USER_STORAGE_KEY
+} from 'store/db';
 
 const rajdhani = Rajdhani({
   subsets: ['latin'],
@@ -20,20 +20,20 @@ const rajdhani = Rajdhani({
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const emailAccount = useAtomValue(currentEmailAccountAtom);
-  const setEmailAccount = useSetAtom(setCurrentEmailAccountAtom);
+  const user = useAtomValue(currentUserAtom);
+  const setUser = useSetAtom(setCurrentUserAtom);
 
   useEffect(() => {
-    if (emailAccount) return;
-    const storedEmailAccount = localStorage.getItem(emailAccountStorageKey);
+    if (user) return;
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
 
-    if (!storedEmailAccount) {
+    if (!storedUser) {
       if (router.pathname === '/login') return;
       router.push('/login');
     } else {
-      setEmailAccount(JSON.parse(storedEmailAccount));
+      setUser(JSON.parse(storedUser));
     }
-  }, [router, emailAccount, setEmailAccount]);
+  }, [router, user, setUser]);
 
   return (
     <>

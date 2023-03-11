@@ -10,7 +10,7 @@ import { Link } from 'components/Link';
 import { Avatar } from 'components/ui-kit/Avatar';
 
 import { Project } from 'db/projects';
-import { projectsAtom } from 'store/projects';
+import { projectsAtom, usersAtom } from 'store/db';
 
 import styles from './Sidebar.module.scss';
 
@@ -19,6 +19,7 @@ export function Sidebar() {
   const currentAccount = useAtomValue(currentAccountAtom);
   const projects = useAtomValue(projectsAtom);
   const setProjects = useSetAtom(projectsAtom);
+  const setUsers = useSetAtom(usersAtom);
 
   const projectId = router.query.id as string;
 
@@ -28,13 +29,21 @@ export function Sidebar() {
     setProjects(apiProjects);
   }, [setProjects]);
 
+  const getUsers = useCallback(async () => {
+    const response = await fetch('/api/users');
+    const apiUsers = await response.json();
+    console.log(apiUsers);
+    setUsers(apiUsers);
+  }, [setUsers]);
+
   useEffect(() => {
     if (!currentAccount) {
       return;
     }
 
     getProjects();
-  }, [setProjects, currentAccount, getProjects]);
+    getUsers();
+  }, [setProjects, currentAccount, getProjects, getUsers]);
 
   if (!currentAccount) {
     return null;

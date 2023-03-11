@@ -4,6 +4,42 @@
     "address": "5Cf91mTzgrNoMN61PSxsPtgqjWUuP6QbmmXCXc7eJqGo2hJx",
     "name": "Toyota Projects",
     "description": "Main project used for project proposals",
-    "members": []
+    "members": [
+      {
+        "id": 0,
+        "userId": 0,
+        "role": "council"
+      },
+      {
+        "id": 1,
+        "userId": 1,
+        "role": "council"
+      },
+      {
+        "id": 2,
+        "userId": 2,
+        "role": "council"
+      },
+      {
+        "id": 3,
+        "userId": 3,
+        "role": "council"
+      },
+      {
+        "id": 4,
+        "userId": 4,
+        "role": "council"
+      },
+      {
+        "id": 5,
+        "userId": 5,
+        "role": "council"
+      },
+      {
+        "id": 6,
+        "userId": 6,
+        "role": "council"
+      }
+    ]
   }
 ]

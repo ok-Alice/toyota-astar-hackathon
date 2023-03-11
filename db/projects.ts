@@ -8,6 +8,7 @@ export type Member = {
   userId: number;
   role: string;
 };
+
 export type Project = {
   id?: number;
   address: string;

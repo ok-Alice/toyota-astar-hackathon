@@ -2,15 +2,12 @@ import { Button } from 'components/ui-kit/Button';
 import { Card } from 'components/ui-kit/Card';
 import { Input } from 'components/ui-kit/Input';
 import { Typography } from 'components/ui-kit/Typography';
+import { User } from 'db/users';
 import { useAtomValue, useSetAtom } from 'jotai';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { FormEvent, useEffect, useState } from 'react';
-import {
-  setCurrentEmailAccountAtom,
-  EmailAccount,
-  currentEmailAccountAtom
-} from 'store/emailAccount';
+import { currentUserAtom, setCurrentUserAtom } from 'store/db';
 import styles from './Login.module.scss';
 
 type Creds = {
@@ -19,8 +16,8 @@ type Creds = {
 };
 export default function Login() {
   const router = useRouter();
-  const emailAccount = useAtomValue(currentEmailAccountAtom);
-  const setEmailAccount = useSetAtom(setCurrentEmailAccountAtom);
+  const user = useAtomValue(currentUserAtom);
+  const setUser = useSetAtom(setCurrentUserAtom);
   const [creds, setCreds] = useState<Creds>({ email: '', password: '' });
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +35,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch('/api/user', {
+      const response = await fetch('/api/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -47,8 +44,8 @@ export default function Login() {
       });
 
       if (response.status === 200) {
-        const newEmailAccount = (await response.json()) as EmailAccount;
-        setEmailAccount(newEmailAccount);
+        const loggedInUser = (await response.json()) as User;
+        setUser(loggedInUser);
       } else {
         const err = await response.json();
         setError(err.message);
@@ -59,7 +56,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (emailAccount) {
+    if (user) {
       router.push('/');
     }
   });
