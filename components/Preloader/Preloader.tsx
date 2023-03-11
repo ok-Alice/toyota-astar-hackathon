@@ -61,7 +61,7 @@ export default function Preloader() {
       return;
     }
 
-    connect();
+    // connect();
     connectRef.current = true;
   }, [connect]);
 

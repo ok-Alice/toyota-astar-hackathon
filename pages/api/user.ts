@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { User, usersDB } from 'helpers/users';
+import { User, usersDB } from 'db/users';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email, password } = req.body;
-  const foundUser: User = usersDB.getByEmail(email);
+  const foundUser = usersDB.getByEmail(email) as User;
 
   switch (req.method) {
     case 'POST':

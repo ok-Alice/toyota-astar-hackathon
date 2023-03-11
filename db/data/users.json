@@ -1,35 +1,44 @@
 [
   {
+    "id": 0,
+    "address": "//ALICE",
     "email": "alice@astar.com",
     "displayName": "Alice",
     "password": "1234"
   },
   {
+    "id": 1,
+    "address": "//BOB",
     "email": "bob@astar.com",
     "displayName": "Bob",
     "password": "1234"
   },
   {
+    "id": 2,
     "email": "carol@astar.com",
     "displayName": "Carol",
     "password": "1234"
   },
   {
+    "id": 3,
     "email": "eve@astar.com",
     "displayName": "Eve",
     "password": "1234"
   },
   {
+    "id": 4,
     "email": "francis@astar.com",
     "displayName": "Francis",
     "password": "1234"
   },
   {
+    "id": 5,
     "email": "gregory@astar.com",
     "displayName": "Gregory",
     "password": "1234"
   },
   {
+    "id": 6,
     "email": "hailey@adobe.com",
     "displayName": "Hailey",
     "password": "1234"

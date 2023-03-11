@@ -1,5 +1,5 @@
 // users in JSON file for simplicity, store in a db for production applications
-const users = require('data/users.json');
+import users from './data/users.json';
 
 export type User = {
   email: string;

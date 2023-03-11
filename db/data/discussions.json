@@ -1,0 +1,26 @@
+[
+  {
+    "id": 0,
+    "projectId": 0,
+    "discussions": [
+      {
+        "id": 0,
+        "proposalId": 0,
+        "messages": [
+          {
+            "id": 0,
+            "userId": 0,
+            "message": "Hi everyone, i would like to start a project to redesign the Corolla UI, who wants to join?",
+            "timestamp": "2019-01-01T08:00:00.000Z"
+          },
+          {
+            "id": 1,
+            "userId": 1,
+            "message": "I'm interested!",
+            "timestamp": "2019-01-01T08:30:00.000Z"
+          }
+        ]
+      }
+    ]
+  }
+]
