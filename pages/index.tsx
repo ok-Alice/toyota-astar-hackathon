@@ -1,29 +1,12 @@
-import { useAtomValue, useSetAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useAtomValue } from 'jotai';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 
+import { setCurrentSubstrateAccountAtom } from 'store/substrateAccount';
 import Overview from 'components/Overview';
-import {
-  currentEmailAccountAtom,
-  emailAccountStorageKey,
-  setCurrentEmailAccountAtom
-} from 'store/emailAccount';
+import { Hero } from 'components/Hero';
 
 export default function Home() {
-  const router = useRouter();
-  const emailAccount = useAtomValue(currentEmailAccountAtom);
-  const setEmailAccount = useSetAtom(setCurrentEmailAccountAtom);
-
-  useEffect(() => {
-    if (emailAccount) return;
-    const storedEmailAccount = localStorage.getItem(emailAccountStorageKey);
-    if (!storedEmailAccount) {
-      router.push('/login');
-    } else {
-      setEmailAccount(JSON.parse(storedEmailAccount));
-    }
-  }, [router, emailAccount, setEmailAccount]);
+  const currentSubstrateAccount = useAtomValue(setCurrentSubstrateAccountAtom);
 
   return (
     <>
@@ -33,7 +16,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {emailAccount ? <Overview /> : <div />}
+      {currentSubstrateAccount ? <Overview /> : <Hero />}
     </>
   );
 }

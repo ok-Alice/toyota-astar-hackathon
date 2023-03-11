@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { appConfig } from 'config';
 import {
   apiAtom,
   apiConnectedAtom,
@@ -9,27 +8,68 @@ import {
   keyringAtom,
   socketAtom
 } from 'store/api';
+import {
+  substrateAccountAddressAtom,
+  setCurrentSubstrateAccountAtom,
+  disconnectAccountsAtom
+} from 'store/substrateAccount';
+import { appConfig } from 'config';
+import { retrieveChainInfo } from 'utils/retrieveChainInfo';
+import type { ApiPromise } from '@polkadot/api';
+import type { Keyring } from '@polkadot/ui-keyring';
 
-export default function Preloader() {
+export function Preloader() {
   const connectRef = useRef<boolean>(false);
   const [api, setApi] = useAtom(apiAtom);
   const [keyring, setKeyring] = useAtom(keyringAtom);
+  const persistSubstrateAccount = useAtomValue(substrateAccountAddressAtom);
   const socket = useAtomValue(socketAtom);
+  const setApiError = useSetAtom(apiErrorAtom);
   const setJsonRPC = useSetAtom(jsonrpcAtom);
   const setApiConnected = useSetAtom(apiConnectedAtom);
-  const setApiError = useSetAtom(apiErrorAtom);
+  const setCurrentSubstrateAccount = useSetAtom(setCurrentSubstrateAccountAtom);
+  const disconnectAccounts = useSetAtom(disconnectAccountsAtom);
 
-  const loadAccounts = useCallback(async () => {
-    const { keyring: uikeyring } = await import('@polkadot/ui-keyring');
+  const loadCurrentAccount = useCallback(
+    async (_keyring: Keyring, _substrateAccountAddress: string | null) => {
+      try {
+        if (_substrateAccountAddress) {
+          setCurrentSubstrateAccount(
+            _keyring.getPair(_substrateAccountAddress)
+          );
+        }
+      } catch (e) {
+        disconnectAccounts();
+        // eslint-disable-next-line no-console
+        console.error(e);
+      }
+    },
 
-    try {
-      uikeyring.loadAll({ isDevelopment: true });
-      setKeyring(uikeyring);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    }
-  }, [setKeyring]);
+    [disconnectAccounts, setCurrentSubstrateAccount]
+  );
+
+  const loadAccounts = useCallback(
+    async (_api: ApiPromise) => {
+      const { isTestChain } = await import('@polkadot/util');
+      const { keyring: uikeyring } = await import('@polkadot/ui-keyring');
+
+      try {
+        const { systemChain, systemChainType } = await retrieveChainInfo(_api);
+        const isDevelopment =
+          systemChainType.isDevelopment ||
+          systemChainType.isLocal ||
+          isTestChain(systemChain);
+
+        uikeyring.loadAll({ isDevelopment });
+
+        setKeyring(uikeyring);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      }
+    },
+    [setKeyring]
+  );
 
   const connect = useCallback(async () => {
     const jsonrpc = (await import('@polkadot/types/interfaces/jsonrpc'))
@@ -49,11 +89,19 @@ export default function Preloader() {
   }, [setApi, setApiConnected, setApiError, setJsonRPC, socket]);
 
   useEffect(() => {
+    if (!keyring) {
+      return;
+    }
+
+    loadCurrentAccount(keyring, persistSubstrateAccount);
+  }, [keyring, loadCurrentAccount, persistSubstrateAccount]);
+
+  useEffect(() => {
     if (!api || keyring) {
       return;
     }
 
-    loadAccounts();
+    loadAccounts(api);
   }, [api, keyring, loadAccounts]);
 
   useEffect(() => {
@@ -61,7 +109,7 @@ export default function Preloader() {
       return;
     }
 
-    // connect();
+    connect();
     connectRef.current = true;
   }, [connect]);
 

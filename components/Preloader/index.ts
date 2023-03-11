@@ -1,3 +1,1 @@
-import Preloader from './Preloader';
-
-export default Preloader;
+export * from './Preloader';
