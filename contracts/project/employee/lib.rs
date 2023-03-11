@@ -1,6 +1,14 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
+pub use self::rmrk_example_equippable::{
+    Rmrk,
+    RmrkRef,
+};
+
+
+
+
 #[openbrush::contract]
 pub mod rmrk_example_equippable {
     use ink::{
