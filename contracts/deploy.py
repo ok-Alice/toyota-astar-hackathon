@@ -120,7 +120,7 @@ def contract_call(msg, contract, keypair, fname, args):
     if contract_receipt.is_success:
         print(f'  😎 Call {msg} {fname} : Events {contract_receipt.contract_events}')
     else:
-        print(f'🤕 Error message: {contract_receipt.error_message}')
+        print(f'🤕 Error {msg} {fname}: {contract_receipt.error_message}')
         print(f'  ** Events {contract_receipt.contract_events}')
         quit()
         
