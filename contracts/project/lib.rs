@@ -6,7 +6,7 @@ pub mod project {
     use ink::storage::Mapping;
     use ink::prelude::vec::Vec;
 
-    use ink_env::hash::{Sha2x256, HashOutput};
+    use ink::env::hash::{Sha2x256, HashOutput};
 
     use openbrush::{
 
@@ -30,9 +30,6 @@ pub mod project {
         Canceled,
         Defeated,
         Succeeded,
-        Queued,
-        Expired,
-        Executed
     }
 
     type ProposalId = u32;
@@ -47,7 +44,6 @@ pub mod project {
     pub struct ProposalCore {
         pub vote_start: BlockNumber,
         pub vote_end:   BlockNumber,
-        pub executed: bool,
         pub canceled: bool,
         pub internal: bool,
     }
@@ -90,7 +86,7 @@ pub mod project {
         #[ink(message)]
         pub fn gen_title_id(&self, title: String) -> Result<u32, ProjectError> {
             let mut output = <Sha2x256 as HashOutput>::Type::default(); // 256-bit buffer
-            ink_env::hash_bytes::<Sha2x256>(&title, &mut output);
+            ink::env::hash_bytes::<Sha2x256>(&title, &mut output);
             Ok(u32::from_ne_bytes([output[0], output[1], output[2], output[3]]))
         }
 
@@ -107,7 +103,6 @@ pub mod project {
             let proposal = ProposalCore {
                 vote_start: self.env().block_timestamp() as u32 + self.voting_delay,
                 vote_end:   self.env().block_timestamp() as u32 + self.voting_delay + self.voting_period,
-                executed: false,
                 canceled: false,
                 internal,
             };
