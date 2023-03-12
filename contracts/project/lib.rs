@@ -51,6 +51,18 @@ pub mod project {
         pub internal: bool,
     }
 
+    #[derive(scale::Decode, scale::Encode)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub struct ProposalVote {
+        pub votes_against: u32,
+        pub votes_for:     u32,
+        pub votes_abstain: u32,
+        pub has_voted: Vec<AccountId>,
+    }
+
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -62,7 +74,8 @@ pub mod project {
         employee_function: Option<RmrkAssignmentRef>,
         employee_project: Mapping<ProjectId, RmrkAssignmentRef>,
         proposals: Mapping<(ProjectId, ProposalId), ProposalCore>,
-        proposal_ids: Mapping<ProjectId, Vec<ProposalId>>
+        proposal_ids: Mapping<ProjectId, Vec<ProposalId>>,
+        votes: Mapping<(ProjectId, ProposalId), ProposalVote>,
     }
 
     impl Project {
@@ -76,6 +89,7 @@ pub mod project {
             let proposals = Mapping::default();
             let proposal_ids = Mapping::default();
             let employee_project = Mapping::default();
+            let votes = Mapping::default();
 
             let salt = Self::env().block_number().to_le_bytes();
             let employee = RmrkEmployeeRef::new(
@@ -112,6 +126,7 @@ pub mod project {
                 employee: Some(employee),
                 employee_function: Some(function),
                 employee_project,
+                votes,
              }
         }
 
@@ -151,6 +166,8 @@ pub mod project {
         /// project token holder)
         #[ink(message)]
         pub fn create_proposal(&mut self, project_id: ProjectId, title: String, internal: bool) -> Result<(),ProjectError> {
+            //TODO: check caller holds NFT
+
             let proposal_id = self.gen_title_id(title)?;
 
             if self.proposals.get(&(project_id, proposal_id)).is_some() {
