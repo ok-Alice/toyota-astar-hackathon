@@ -1,5 +1,5 @@
 [package]
-name = "assignments"
+name = "assignment"
 version = "0.6.0"
 authors = ["Stake Technologies <devops@stake.co.jp>"]
 edition = "2021"
@@ -16,6 +16,8 @@ path = "lib.rs"
 crate-type = [
 	# Used for normal contract Wasm blobs.
 	"cdylib",
+    # Used for ABI generation.
+    "rlib",
 ]
 
 [features]

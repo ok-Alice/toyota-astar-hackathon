@@ -8,7 +8,8 @@ pub mod project {
 
     use ink::env::hash::{Sha2x256, HashOutput};
 
-    use employee::rmrk_example_equippable::RmrkRef;
+    use employee::rmrk_employee::RmrkEmployeeRef;
+    use assignment::rmrk_assignment::RmrkAssignmentRef;
 
     use openbrush::{
 

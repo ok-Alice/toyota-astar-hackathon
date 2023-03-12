@@ -10,7 +10,8 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
 scale-info = { version = "2.3", default-features = false, features = ["derive"], optional = true }
 openbrush = { tag = "3.0.0", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = ["access_control", "reentrancy_guard", "psp34"] }
 
-employee = { path = "employee", default-features = false, features = ["ink-as-dependency"] }
+employee   = { path = "employee", default-features = false, features = ["ink-as-dependency"] }
+assignment = { path = "assignment", default-features = false, features = [ "ink-as-dependency"]}
 
 [lib]
 path = "lib.rs"
@@ -27,11 +28,12 @@ std = [
     "scale-info/std",
     "openbrush/std",
     "employee/std",
+    "assignment/std",
 ]
 ink-as-dependency = []
 
 [workspace]
 members = [
-    "assignments",
+    "assignment",
     "employee"
 ]

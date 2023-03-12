@@ -1,16 +1,14 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
-pub use self::rmrk_example_equippable::{
-    Rmrk,
-    RmrkRef,
+pub use self::rmrk_employee::{
+    RmrkEmployee,
+    RmrkEmployeeRef,
 };
 
 
-
-
 #[openbrush::contract]
-pub mod rmrk_example_equippable {
+pub mod rmrk_employee { // from rmrk_example_equippable
     use ink::{
         codegen::{
             EmitEvent,
@@ -197,10 +195,10 @@ pub mod rmrk_example_equippable {
         parent: AccountId,
     }
 
-    // Rmrk contract storage
+    // RmrkEmployee contract storage
     #[ink(storage)]
     #[derive(Default, Storage)]
-    pub struct Rmrk {
+    pub struct RmrkEmployee {
         #[storage_field]
         psp34: psp34::Data<enumerable::Balances>,
         #[storage_field]
@@ -221,27 +219,27 @@ pub mod rmrk_example_equippable {
         equippable: EquippableData,
     }
 
-    impl PSP34 for Rmrk {}
+    impl PSP34 for RmrkEmployee {}
 
-    impl AccessControl for Rmrk {}
+    impl AccessControl for RmrkEmployee {}
 
-    impl PSP34Metadata for Rmrk {}
+    impl PSP34Metadata for RmrkEmployee {}
 
-    impl PSP34Enumerable for Rmrk {}
+    impl PSP34Enumerable for RmrkEmployee {}
 
-    impl Minting for Rmrk {}
+    impl Minting for RmrkEmployee {}
 
-    impl Nesting for Rmrk {}
+    impl Nesting for RmrkEmployee {}
 
-    impl MultiAsset for Rmrk {}
+    impl MultiAsset for RmrkEmployee {}
 
-    impl Base for Rmrk {}
+    impl Base for RmrkEmployee {}
 
-    impl Equippable for Rmrk {}
+    impl Equippable for RmrkEmployee {}
 
-    impl Query for Rmrk {}
+    impl Query for RmrkEmployee {}
 
-    impl Rmrk {
+    impl RmrkEmployee {
         /// Instantiate new RMRK contract
         #[allow(clippy::too_many_arguments)]
         #[ink(constructor)]
@@ -252,7 +250,7 @@ pub mod rmrk_example_equippable {
             max_supply: u64,
             collection_metadata: String,
         ) -> Self {
-            let mut instance = Rmrk::default();
+            let mut instance = RmrkEmployee::default();
             config::with_admin(&mut instance, Self::env().caller());
             config::with_collection(
                 &mut instance,
@@ -266,7 +264,7 @@ pub mod rmrk_example_equippable {
         }
     }
 
-    impl psp34::Internal for Rmrk {
+    impl psp34::Internal for RmrkEmployee {
         /// Emit Transfer event
         fn _emit_transfer_event(&self, from: Option<AccountId>, to: Option<AccountId>, id: Id) {
             self.env().emit_event(Transfer { from, to, id });
@@ -289,7 +287,7 @@ pub mod rmrk_example_equippable {
         }
     }
 
-    impl NestingEvents for Rmrk {
+    impl NestingEvents for RmrkEmployee {
         /// Emit ChildAdded event
         fn _emit_added_child_event(&self, to: &Id, collection: &AccountId, child: &Id) {
             self.env().emit_event(ChildAdded {
@@ -337,7 +335,7 @@ pub mod rmrk_example_equippable {
         }
     }
 
-    impl MultiAssetEvents for Rmrk {
+    impl MultiAssetEvents for RmrkEmployee {
         /// Used to notify listeners that an asset object is initialized at `assetId`.
         fn _emit_asset_set_event(&self, asset_id: &AssetId) {
             self.env().emit_event(AssetSet { asset: *asset_id });
@@ -390,7 +388,7 @@ pub mod rmrk_example_equippable {
         }
     }
 
-    impl EquippableEvents for Rmrk {
+    impl EquippableEvents for RmrkEmployee {
         /// Used to notify listeners that a child's asset has been equipped into one of its parent assets.
         fn emit_child_asset_equipped(
             &self,
@@ -442,9 +440,9 @@ pub mod rmrk_example_equippable {
     mod tests {
         use super::{
             Environment,
-            Rmrk,
+            RmrkEmployee,
         };
-        use crate::rmrk_example_equippable::PSP34Error::*;
+        use crate::rmrk_employee::PSP34Error::*;
 
         use openbrush::{
             contracts::{
@@ -488,7 +486,7 @@ pub mod rmrk_example_equippable {
             let collection_id = rmrk.collection_id();
             assert_eq!(
                 rmrk.get_attribute(collection_id.clone(), String::from("name")),
-                Some(String::from("Rmrk Project"))
+                Some(String::from("RmrkEmployee Project"))
             );
             assert_eq!(
                 rmrk.get_attribute(collection_id.clone(), String::from("symbol")),
@@ -501,9 +499,9 @@ pub mod rmrk_example_equippable {
             assert_eq!(rmrk.max_supply(), MAX_SUPPLY);
         }
 
-        fn init() -> Rmrk {
-            Rmrk::new(
-                String::from("Rmrk Project"),
+        fn init() -> RmrkEmployee {
+            RmrkEmployee::new(
+                String::from("RmrkEmployee Project"),
                 String::from("RMK"),
                 String::from(BASE_URI),
                 MAX_SUPPLY,
