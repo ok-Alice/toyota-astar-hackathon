@@ -5,6 +5,7 @@
 pub mod project {
     use ink::storage::Mapping;
     use ink::prelude::vec::Vec;
+    //use ink::prelude::string::ToString;
 
     use ink::env::hash::{Sha2x256, HashOutput};
 
@@ -76,6 +77,7 @@ pub mod project {
         proposals: Mapping<(ProjectId, ProposalId), ProposalCore>,
         proposal_ids: Mapping<ProjectId, Vec<ProposalId>>,
         votes: Mapping<(ProjectId, ProposalId), ProposalVote>,
+        assignment_hash: Hash,
     }
 
     impl Project {
@@ -127,6 +129,7 @@ pub mod project {
                 employee_function: Some(function),
                 employee_project,
                 votes,
+                assignment_hash,
              }
         }
 
@@ -145,13 +148,39 @@ pub mod project {
 
         #[ink(message)]
         pub fn create_project(&mut self, title: String) -> Result<(), ProjectError> {
+            // todo: check role
+            let project_id = self.gen_title_id(title.clone())?;
+
+            let project_code = String::from("P");
+            //todo: concat project_id
+
+            let salt = Self::env().block_number().to_le_bytes();
+            let project = RmrkAssignmentRef::new(
+                title,
+                project_code,
+                String::from("http://hello.world"),
+                0,
+                String::from("ipfs://over.there"),
+            )
+            .endowment(0)
+            .code_hash(self.assignment_hash)
+            .salt_bytes(salt)
+            .instantiate();
+            
+            self.employee_project.insert(project_id, &project);
+
             Ok(())
         }
 
 
         #[ink(message)]
         pub fn project_colection(&self, project_id: ProjectId) -> Result<AccountId, ProjectError> {
-            Ok(self.env().account_id()) // mock
+            let employee_project = match self.employee_project.get(project_id) {
+                Some(ep) => ep,
+                None => return Err(ProjectError::Custom(String::from("Project does not exist"))),
+            };
+            
+            Ok(employee_project.account_id())
         }
     
 
