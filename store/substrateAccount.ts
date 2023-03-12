@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import type { KeyringPair } from '@polkadot/keyring/types';
+import { keyringAtom } from './api';
 
 export const SUBSTRATE_ACCOUNT_STORAGE_KEY = 'substrateAccountStorageKey';
 
@@ -29,3 +30,5 @@ export const disconnectSubstrateAccountAtom = atom(null, (_get, _set) => {
   _set(substrateAccountAtom, null);
   _set(substrateAccountAddressAtom, null);
 });
+
+export const accountsAtom = atom((_get) => _get(keyringAtom)?.getPairs());
