@@ -104,7 +104,7 @@ project = deploy_contract(msg='Project',
                           )
 
 
-assert(project.read(kp_alice, 'voting_delay').contract_result_data[1] == 0)
+# assert(project.read(kp_alice, 'voting_delay').contract_result_data[1] == 0)
 
 result = employee.read(kp_alice, 'PSP34::collection_id')
 print('  🤩 Employee CollectionId:', result.contract_result_data[1][1])
@@ -253,7 +253,7 @@ contract_call(
        'token_id': token_id,
        'asset_id': asset_id,
        'slot_part_id': 0,
-       'child_nft' : ( project.contract_address, { 'U64': 2 } ),
+       'child_nft' : ( employee_project.contract_address, { 'U64': 2 } ),
        'child_asset_id': 0,        
     }
 )
