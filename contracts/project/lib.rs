@@ -85,8 +85,8 @@ pub mod project {
         #[ink(constructor)]
         pub fn new(
             name: String,
-            employee_hash: Hash,
             assignment_hash: Hash,
+            employee_hash: Hash,
         ) -> Self {
             let proposals = Mapping::default();
             let proposal_ids = Mapping::default();
@@ -147,9 +147,8 @@ pub mod project {
         }
 
         #[ink(message)]
-        pub fn create_project(&mut self, title: String) -> Result<(), ProjectError> {
+        pub fn create_project(&mut self, project_id: ProjectId) -> Result<(), ProjectError> {
             // todo: check role
-            let project_id = self.gen_title_id(title.clone())?;
 
             match self.employee_project.get(project_id) {
                 Some(_) => return Err(ProjectError::Custom(String::from("Project already exists"))),
@@ -161,7 +160,7 @@ pub mod project {
 
             let salt = Self::env().block_number().to_le_bytes();
             let project = RmrkAssignmentRef::new(
-                title,
+                Vec::from(project_id.to_be_bytes()),
                 project_code,
                 String::from("http://hello.world"),
                 0,
