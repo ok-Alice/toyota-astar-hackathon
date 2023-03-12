@@ -151,6 +151,11 @@ pub mod project {
             // todo: check role
             let project_id = self.gen_title_id(title.clone())?;
 
+            match self.employee_project.get(project_id) {
+                Some(_) => return Err(ProjectError::Custom(String::from("Project already exists"))),
+                None => (),
+            };
+
             let project_code = String::from("P");
             //todo: concat project_id
 
