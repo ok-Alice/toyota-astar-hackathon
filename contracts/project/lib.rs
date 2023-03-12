@@ -207,6 +207,8 @@ pub mod project {
         /// vote for given proposal Id
         #[ink(message)]
         pub fn vote(&mut self, project_id: ProjectId,  proposal: ProposalId) -> Result<(), ProjectError> {
+            // todo: check caller has the required rights
+
             Ok(())
         }
 
