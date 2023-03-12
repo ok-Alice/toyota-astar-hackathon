@@ -12,6 +12,10 @@
   padding: 1rem 1.5rem;
 }
 
+.members {
+  max-height: 35rem;
+  overflow-y: scroll;
+}
 .member {
   border-top: 0.0625rem solid #{colors.$grayscale-95};
   padding: 1rem 1.5rem;

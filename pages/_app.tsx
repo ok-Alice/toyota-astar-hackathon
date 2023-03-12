@@ -1,11 +1,5 @@
 import type { AppProps } from 'next/app';
-import { Rajdhani } from '@next/font/google';
-import {
-  Provider as JotaiProvider,
-  useAtom,
-  useAtomValue,
-  useSetAtom
-} from 'jotai';
+import { Provider as JotaiProvider, useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import Layout from 'components/Layout';
 
@@ -17,11 +11,7 @@ import {
   setCurrentUserAtom,
   USER_STORAGE_KEY
 } from 'store/db';
-
-const rajdhani = Rajdhani({
-  subsets: ['latin'],
-  weight: ['500', '600', '700']
-});
+import Head from 'next/head';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -42,11 +32,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <style jsx global>{`
-        :root {
-          --rajdhani-font: ${rajdhani.style.fontFamily};
-        }
-      `}</style>
+      <Head>
+        <link href="https://fonts.cdnfonts.com/css/avenir" rel="stylesheet" />
+      </Head>
       <JotaiProvider>
         {router.pathname === '/login' ? (
           <Component {...pageProps} />

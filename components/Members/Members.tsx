@@ -7,9 +7,9 @@ import { Typography } from 'components/ui-kit/Typography';
 import { Button } from 'components/ui-kit/Button';
 import { Icon } from 'components/ui-kit/Icon';
 import { Chip } from 'components/ui-kit/Chip';
+import { maskAddress } from 'utils/maskAddress';
 
 import styles from './Members.module.scss';
-import { maskAddress } from 'utils/maskAddress';
 
 export function Members() {
   const currentProject = useAtomValue(currentProjectAtom);
