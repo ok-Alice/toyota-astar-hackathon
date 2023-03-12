@@ -3,12 +3,13 @@ import secrets
 
 from substrateinterface.contracts import ContractCode, ContractInstance
 from substrateinterface import SubstrateInterface, Keypair
+from substrateinterface.exceptions import SubstrateRequestException
 
 from scalecodec.types import *
 
 # # Enable for debugging purposes
 import logging
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.INFO)
 
 
 substrate = SubstrateInterface(
@@ -22,7 +23,7 @@ kp_charlie = Keypair.create_from_uri('//Charlie')
 
 #### Deploy Assignments for Projects & Functions
 
-def deploy_contract(msg, contractname, kp, args):
+def deploy_contract(msg, contractname, kp, args, endowment = 0):
     code = ContractCode.create_from_contract_files(
         metadata_file=os.path.join(os.path.dirname(__file__), 'project', 'target', 'ink',  contractname + '.json'),
         wasm_file=os.path.join(os.path.dirname(__file__), 'project', 'target', 'ink',  contractname + '.wasm'),
@@ -31,7 +32,7 @@ def deploy_contract(msg, contractname, kp, args):
 
     contract = code.deploy(
         keypair=kp,
-        endowment=0,
+        endowment=endowment,
         gas_limit= 621923532800,
         storage_deposit_limit=1310720000000,
         constructor="new",
@@ -43,6 +44,40 @@ def deploy_contract(msg, contractname, kp, args):
     print("✅ Deployed", contractname, "as", msg, ":", contract.contract_address, "CodeHash:", contract.metadata.source['hash']);
 
     return contract
+
+def transfer_balance(kp_from, to, value):    
+    call = substrate.compose_call(
+        call_module='Balances',
+        call_function='transfer',
+        call_params={
+            'dest': to,
+            'value': value,
+        }
+    )
+
+    extrinsic = substrate.create_signed_extrinsic(
+        call=call,
+        keypair=kp_from,
+        era={'period': 64}
+    )
+
+    try:
+        receipt = substrate.submit_extrinsic(extrinsic, wait_for_inclusion=True)
+
+        if receipt.is_success:
+
+            print('✅ Success, triggered events:')
+            for event in receipt.triggered_events:
+                print(f'* {event.value}')
+
+        else:
+            print('⚠️ Extrinsic Failed: ', receipt.error_message)
+
+
+    except SubstrateRequestException as e:
+        print("Failed to send: {}".format(e))    
+
+
 
 
 # Alice deploys Assignments to obtain Hash
@@ -84,9 +119,11 @@ project = deploy_contract(msg='Project',
                             'name': "Project",
                             'employee_hash': employee_hash,
                             'assignment_hash': assignment_hash,
-                            }
+                            },
+                        endowment=0
                         )
 
+transfer_balance(kp_alice, project.contract_address, 1 * 10**15)
 
 employee_address = project.read(kp_alice, 'employee_address').contract_result_data[1]
 print("Employee:", employee_address)
