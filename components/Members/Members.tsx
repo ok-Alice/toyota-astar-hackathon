@@ -41,8 +41,13 @@ export function Members() {
 
           return (
             <li className={styles.member} key={user?.displayName}>
+              <span>
+                <Typography variant="title4">
+                  {user?.displayName || ''}
+                </Typography>
+              </span>
               <span className={styles['member-title']}>
-                <Typography variant="title5">
+                <Typography variant="title6">
                   {maskAddress(user?.address || '')}
                 </Typography>
                 <Button
@@ -55,16 +60,11 @@ export function Members() {
                 </Button>
               </span>
 
-              <Chip variant="group" color="orange">
-                <Typography variant="title8">{member.role}</Typography>
-              </Chip>
-
               {user?.badges.map((badge) => (
                 <Chip
                   key={`${user.displayName}-${badge}`}
                   variant="group"
                   color="orange"
-                  style={{ marginLeft: '8px' }}
                 >
                   <Typography variant="title8">{badge}</Typography>
                 </Chip>

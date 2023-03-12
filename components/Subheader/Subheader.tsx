@@ -14,8 +14,9 @@ import { Avatar } from 'components/ui-kit/Avatar';
 import { Button } from 'components/ui-kit/Button';
 import { NavLink } from 'components/ui-kit/NavLink';
 
+import { CreateProposal } from '../CreateProposal';
+
 import styles from './Subheader.module.scss';
-// import { CreateProposal } from '../CreateProposal';
 
 type Navigation = {
   icon: IconNamesType;
@@ -103,11 +104,11 @@ export function Subheader() {
             />
           ))}
         </div>
-        {/* <div className={styles['right-container']}>
+        <div className={styles['right-container']}>
           {router.pathname.includes('create-proposal') ? null : (
-            <CreateProposal daoId={daoId as string} />
+            <CreateProposal projectId={projectId} />
           )}
-        </div> */}
+        </div>
       </div>
     </div>
   );

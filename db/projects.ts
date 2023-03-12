@@ -6,7 +6,6 @@ import { saveData } from './utils';
 export type Member = {
   id?: number;
   userId: number;
-  role: string;
 };
 
 export type Project = {

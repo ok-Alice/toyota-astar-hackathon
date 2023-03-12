@@ -31,7 +31,7 @@ function pickTextColorBasedOnBgColor(
 }
 
 export function stringAvatar(name: string) {
-  const backgroundColor = stringToColor(name);
+  const backgroundColor = '#ec0c1c';
   const color = pickTextColorBasedOnBgColor(backgroundColor);
 
   const splitName = name.split(' ');

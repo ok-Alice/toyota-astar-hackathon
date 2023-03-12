@@ -1,4 +1,4 @@
-@use "styles/colors";
+@use 'styles/colors';
 
 .card {
   display: flex;
@@ -12,7 +12,6 @@
   padding: 1rem 1.5rem;
 }
 
-
 .member {
   border-top: 0.0625rem solid #{colors.$grayscale-95};
   padding: 1rem 1.5rem;
@@ -23,4 +22,3 @@
   display: flex;
   padding-bottom: 0.5rem;
 }
-
