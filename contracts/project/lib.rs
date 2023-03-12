@@ -23,7 +23,15 @@ pub mod project {
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum ProjectError {
         Custom(String),
-    } 
+    }
+
+    #[derive(scale::Encode, scale::Decode, Debug, PartialEq, Eq, Copy, Clone)]
+    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+    pub enum VoteType {
+        Against,
+        For,
+        Abstain
+    }
 
     #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -237,9 +245,36 @@ pub mod project {
 
         /// vote for given proposal Id
         #[ink(message)]
-        pub fn vote(&mut self, project_id: ProjectId,  proposal: ProposalId) -> Result<(), ProjectError> {
+        pub fn vote(&mut self, vote_type: VoteType, project_id: ProjectId,  proposal_id: ProposalId) -> Result<(), ProjectError> {
             // todo: check caller has the required rights
 
+            let caller = self.env().caller();
+            //TODO: check caller holds NFT
+
+            if !self.proposals.contains((project_id, proposal_id)) {
+                return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
+            }
+
+            if self.proposal_state(project_id, proposal_id)? != ProposalState::Active {
+                return Err(ProjectError::Custom(String::from("Project / Proposal not open for voting")));
+            }
+
+            let mut vote_status = self.votes.get((project_id, proposal_id)).unwrap();
+            if vote_status.has_voted.contains(&caller) {
+                return Err(ProjectError::Custom(String::from("Caller has already voted")));
+            }
+
+            let voting_power = self.get_caller_voting_power();
+            match vote_type {
+                VoteType::Against => vote_status.votes_against += voting_power,
+                VoteType::For     => vote_status.votes_for     += voting_power,
+                VoteType::Abstain => vote_status.votes_abstain += voting_power,
+            };
+
+            vote_status.has_voted.push(caller);
+            self.votes.insert((project_id, proposal_id), &vote_status);
+
+            // self._emit_vote_cast(caller,proposal_id,vote);
             Ok(())
         }
 
@@ -291,6 +326,9 @@ pub mod project {
             Ok(())
         }
 
-
+        fn get_caller_voting_power(&self) -> u32 {
+            // TODO: Implement PRJ voting factor  * FNC voting factor but not sure where to get these values from
+            return 1;
+        }
     }
 }
