@@ -12,7 +12,6 @@ pub mod project {
     use assignment::rmrk_assignment::RmrkAssignmentRef;
 
     use openbrush::{
-
         traits::{
             Storage,
             String,
@@ -62,7 +61,6 @@ pub mod project {
         pub votes_abstain: u32,
         pub has_voted: Vec<AccountId>,
     }
-
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -212,10 +210,29 @@ pub mod project {
 
         /// Current state of proposal
         #[ink(message)]
-        pub fn proposal_state(&mut self, project_id: ProjectId, _proposal: ProposalId) -> Result<ProposalState, ProjectError> {
-            Ok(ProposalState::Active)
-        }
+        pub fn proposal_state(&mut self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalState, ProjectError> {
+            assert!(self.proposals.contains((project_id, proposal_id)), "Proposal does noet exist");
+            let proposal = self.proposals.get((project_id, proposal_id)).unwrap();
 
+            if proposal.canceled {
+                return Ok(ProposalState::Canceled);
+            }
+
+            if proposal.vote_start > self.env().block_timestamp() as u32 {
+                return Ok(ProposalState::Pending);
+            }
+
+            if proposal.vote_end > self.env().block_timestamp() as u32 {
+                return Ok(ProposalState::Active);
+            }
+
+            let vote = self.votes.get((project_id, proposal_id)).unwrap();
+            if vote.votes_for > vote.votes_against {
+                return Ok(ProposalState::Succeeded);
+            }
+
+            return Ok(ProposalState::Defeated);
+        }
 
         #[ink(message)]
         pub fn voting_delay(&self) -> BlockNumber {
