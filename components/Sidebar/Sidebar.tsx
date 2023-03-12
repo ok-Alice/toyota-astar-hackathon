@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 
 import { useAtomValue, useSetAtom } from 'jotai';
-import { currentAccountAtom } from 'store/substrateAccount';
+import { currentSubstrateAccountAtom } from 'store/substrateAccount';
 
 import { Icon } from 'components/ui-kit/Icon';
 import { Link } from 'components/Link';
@@ -16,7 +16,7 @@ import styles from './Sidebar.module.scss';
 
 export function Sidebar() {
   const router = useRouter();
-  const currentAccount = useAtomValue(currentAccountAtom);
+  const currentAccount = useAtomValue(currentSubstrateAccountAtom);
   const projects = useAtomValue(projectsAtom);
   const setProjects = useSetAtom(projectsAtom);
   const setUsers = useSetAtom(usersAtom);
@@ -32,7 +32,6 @@ export function Sidebar() {
   const getUsers = useCallback(async () => {
     const response = await fetch('/api/users');
     const apiUsers = await response.json();
-    console.log(apiUsers);
     setUsers(apiUsers);
   }, [setUsers]);
 
@@ -63,7 +62,7 @@ export function Sidebar() {
         {projects?.map((project) => (
           <li key={project.id}>
             <Link
-              href={`/projects/${project.id}`}
+              href={`/projects/${project.id}/dashboard`}
               active={!!projectId && parseInt(projectId, 10) === project.id}
               variant="nav"
             >

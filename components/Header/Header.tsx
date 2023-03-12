@@ -1,4 +1,6 @@
 import { ConnectWallet } from 'components/ConnectWallet';
+import { Subheader } from 'components/Subheader';
+
 import styles from './Header.module.scss';
 
 export function Header() {
@@ -10,6 +12,7 @@ export function Header() {
           <ConnectWallet />
         </div>
       </div>
+      <Subheader />
     </header>
   );
 }

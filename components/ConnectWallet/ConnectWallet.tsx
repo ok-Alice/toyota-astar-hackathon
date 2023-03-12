@@ -12,7 +12,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import {
   setCurrentSubstrateAccountAtom,
   substrateAccountAtom,
-  disconnectAccountsAtom
+  disconnectSubstrateAccountAtom
 } from 'store/substrateAccount';
 import { disconnectCurrentUserAtom } from 'store/db';
 import { keyringAtom } from 'store/api';
@@ -58,7 +58,7 @@ export function ConnectWallet() {
   const currentSubstrateAccount = useAtomValue(substrateAccountAtom);
   const keyring = useAtomValue(keyringAtom);
   const setSubstrateAccount = useSetAtom(setCurrentSubstrateAccountAtom);
-  const disconnectAccounts = useSetAtom(disconnectAccountsAtom);
+  const disconnectSubstrateAccount = useSetAtom(disconnectSubstrateAccountAtom);
   const disconnectCurrentUser = useSetAtom(disconnectCurrentUserAtom);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export function ConnectWallet() {
   }, [keyring, selectedAccountAddress, setSubstrateAccount]);
 
   const handleDisconnect = async () => {
-    disconnectAccounts();
+    disconnectSubstrateAccount();
     disconnectCurrentUser();
     router.push('/login');
   };

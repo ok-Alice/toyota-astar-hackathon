@@ -1,12 +1,25 @@
 import { useAtomValue } from 'jotai';
 import Head from 'next/head';
 
-import { setCurrentSubstrateAccountAtom } from 'store/substrateAccount';
+import { currentSubstrateAccountAtom } from 'store/substrateAccount';
 import Overview from 'components/Overview';
 import { Hero } from 'components/Hero';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { projectsAtom } from 'store/db';
 
 export default function Home() {
-  const currentSubstrateAccount = useAtomValue(setCurrentSubstrateAccountAtom);
+  const currentSubstrateAccount = useAtomValue(currentSubstrateAccountAtom);
+  const projects = useAtomValue(projectsAtom);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!projects?.length || !currentSubstrateAccount) {
+      return;
+    }
+
+    router.push(`/projects/${projects[0].id}/dashboard`);
+  }, [currentSubstrateAccount, projects, router]);
 
   return (
     <>

@@ -1,12 +1,12 @@
 import { atom } from 'jotai';
 import type { KeyringPair } from '@polkadot/keyring/types';
 
-const substrateAccountStorageKey = 'substrateAccountStorageKey';
+export const SUBSTRATE_ACCOUNT_STORAGE_KEY = 'substrateAccountStorageKey';
 
 // Substrate
 export const substrateAccountAddressAtom = atom<string | null>(
   typeof window !== 'undefined'
-    ? localStorage.getItem(substrateAccountStorageKey)
+    ? localStorage.getItem(SUBSTRATE_ACCOUNT_STORAGE_KEY)
     : null
 );
 export const substrateAccountAtom = atom<KeyringPair | null>(null);
@@ -16,14 +16,16 @@ export const setCurrentSubstrateAccountAtom = atom(
     _set(substrateAccountAtom, _account);
     _set(substrateAccountAddressAtom, _account?.address.toString());
 
-    localStorage.setItem(substrateAccountStorageKey, _account.address);
+    localStorage.setItem(SUBSTRATE_ACCOUNT_STORAGE_KEY, _account.address);
   }
 );
 
-export const currentAccountAtom = atom((_get) => _get(substrateAccountAtom));
+export const currentSubstrateAccountAtom = atom((_get) =>
+  _get(substrateAccountAtom)
+);
 
-export const disconnectAccountsAtom = atom(null, (_get, _set) => {
-  localStorage.removeItem(substrateAccountStorageKey);
+export const disconnectSubstrateAccountAtom = atom(null, (_get, _set) => {
+  localStorage.removeItem(SUBSTRATE_ACCOUNT_STORAGE_KEY);
   _set(substrateAccountAtom, null);
   _set(substrateAccountAddressAtom, null);
 });

@@ -4,6 +4,7 @@
     "address": "5Cf91mTzgrNoMN61PSxsPtgqjWUuP6QbmmXCXc7eJqGo2hJx",
     "name": "Toyota Projects",
     "description": "Main project used for project proposals",
+    "proposalPeriod": -1,
     "members": [
       {
         "id": 0,

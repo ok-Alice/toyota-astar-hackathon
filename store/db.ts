@@ -5,7 +5,7 @@ import { User } from 'db/users';
 export const USER_STORAGE_KEY = 'userStorageKey';
 
 export const projectsAtom = atom<Project[] | null>(null);
-export const currentProject = atom<Project | null>(null);
+export const currentProjectAtom = atom<Project | null>(null);
 
 export const usersAtom = atom<User[] | null>(null);
 export const userAtom = atom<User | null>(null);

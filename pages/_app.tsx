@@ -1,6 +1,11 @@
 import type { AppProps } from 'next/app';
 import { Rajdhani } from '@next/font/google';
-import { Provider as JotaiProvider, useAtomValue, useSetAtom } from 'jotai';
+import {
+  Provider as JotaiProvider,
+  useAtom,
+  useAtomValue,
+  useSetAtom
+} from 'jotai';
 import { useRouter } from 'next/router';
 import Layout from 'components/Layout';
 
@@ -30,9 +35,9 @@ export default function App({ Component, pageProps }: AppProps) {
     if (!storedUser) {
       if (router.pathname === '/login') return;
       router.push('/login');
-    } else {
-      setUser(JSON.parse(storedUser));
+      return;
     }
+    setUser(JSON.parse(storedUser));
   }, [router, user, setUser]);
 
   return (

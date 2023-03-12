@@ -4,6 +4,7 @@ import userData from './data/users.json';
 export type User = {
   id: number;
   email: string;
+  address?: string;
   password?: string;
   displayName: string;
   badges: string[];

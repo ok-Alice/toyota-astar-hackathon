@@ -16,6 +16,7 @@ export type Project = {
   description: string;
   proposals?: Proposal[];
   members?: Member[];
+  proposalPeriod: number;
 };
 
 const getProposals = (projectId: number) =>

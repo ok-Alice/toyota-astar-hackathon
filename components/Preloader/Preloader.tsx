@@ -9,9 +9,11 @@ import {
   socketAtom
 } from 'store/api';
 import {
-  substrateAccountAddressAtom,
   setCurrentSubstrateAccountAtom,
-  disconnectAccountsAtom
+  disconnectSubstrateAccountAtom,
+  currentSubstrateAccountAtom,
+  substrateAccountAddressAtom,
+  SUBSTRATE_ACCOUNT_STORAGE_KEY
 } from 'store/substrateAccount';
 import { appConfig } from 'config';
 import { retrieveChainInfo } from 'utils/retrieveChainInfo';
@@ -22,13 +24,15 @@ export function Preloader() {
   const connectRef = useRef<boolean>(false);
   const [api, setApi] = useAtom(apiAtom);
   const [keyring, setKeyring] = useAtom(keyringAtom);
-  const persistSubstrateAccount = useAtomValue(substrateAccountAddressAtom);
+
   const socket = useAtomValue(socketAtom);
   const setApiError = useSetAtom(apiErrorAtom);
   const setJsonRPC = useSetAtom(jsonrpcAtom);
   const setApiConnected = useSetAtom(apiConnectedAtom);
+  const substrateAccountAddress = useAtomValue(substrateAccountAddressAtom);
   const setCurrentSubstrateAccount = useSetAtom(setCurrentSubstrateAccountAtom);
-  const disconnectAccounts = useSetAtom(disconnectAccountsAtom);
+  const currentSubstrateAccount = useAtomValue(currentSubstrateAccountAtom);
+  const disconnectSubstrateAccount = useSetAtom(disconnectSubstrateAccountAtom);
 
   const loadCurrentAccount = useCallback(
     async (_keyring: Keyring, _substrateAccountAddress: string | null) => {
@@ -37,15 +41,23 @@ export function Preloader() {
           setCurrentSubstrateAccount(
             _keyring.getPair(_substrateAccountAddress)
           );
+        } else {
+          const storedAccount = localStorage.getItem(
+            SUBSTRATE_ACCOUNT_STORAGE_KEY
+          );
+
+          if (storedAccount) {
+            setCurrentSubstrateAccount(_keyring.getPair(storedAccount));
+          }
         }
       } catch (e) {
-        disconnectAccounts();
+        disconnectSubstrateAccount();
         // eslint-disable-next-line no-console
         console.error(e);
       }
     },
 
-    [disconnectAccounts, setCurrentSubstrateAccount]
+    [disconnectSubstrateAccount, setCurrentSubstrateAccount]
   );
 
   const loadAccounts = useCallback(
@@ -89,12 +101,17 @@ export function Preloader() {
   }, [setApi, setApiConnected, setApiError, setJsonRPC, socket]);
 
   useEffect(() => {
-    if (!keyring) {
+    if (!keyring || currentSubstrateAccount) {
       return;
     }
 
-    loadCurrentAccount(keyring, persistSubstrateAccount);
-  }, [keyring, loadCurrentAccount, persistSubstrateAccount]);
+    loadCurrentAccount(keyring, substrateAccountAddress);
+  }, [
+    keyring,
+    substrateAccountAddress,
+    loadCurrentAccount,
+    currentSubstrateAccount
+  ]);
 
   useEffect(() => {
     if (!api || keyring) {

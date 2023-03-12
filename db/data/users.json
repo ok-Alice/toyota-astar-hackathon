@@ -25,7 +25,7 @@
   },
   {
     "id": 3,
-    "account": "5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy",
+    "address": "5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy",
     "email": "dave@astar.com",
     "displayName": "Dave",
     "password": "1234",
@@ -33,7 +33,7 @@
   },
   {
     "id": 4,
-    "account": "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
+    "address": "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
     "email": "eve@astar.com",
     "displayName": "Eve",
     "password": "1234",
@@ -41,14 +41,15 @@
   },
   {
     "id": 5,
-    "account": "5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL",
+    "address": "5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL",
     "email": "ferdie@astar.com",
     "displayName": "Ferdie",
     "password": "1234",
     "badges": ["Junior Frontend Dev"]
   },
   {
-    "id": 7,
+    "id": 6,
+    "address": "1GcbsHZQQYWjDNjhF4o3v1IeKmRXl3tL1DUUveiHhfJzgjg5",
     "email": "hailey@adobe.com",
     "displayName": "Hailey",
     "password": "1234",

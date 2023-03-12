@@ -10,10 +10,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       // Check given credentials
       if (foundUser) {
         if (foundUser.password === password) {
-          res.status(200).json({
-            displayName: foundUser.displayName,
-            email: foundUser.email
-          });
+          res.status(200).json(usersDB.get(foundUser.id));
         } else {
           res.status(401).json({ message: 'Invalid email or password.' });
         }

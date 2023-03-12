@@ -4,12 +4,14 @@ import { saveData } from './utils';
 export type Proposal = {
   id: number;
   projectId: number;
+  userId: number;
   address: string;
   name: string;
   description: string;
   yesVotes: number;
   noVotes: number;
-  endDate: string;
+  status: 'ACTIVE' | 'PASSED' | 'DECLINED';
+  blockNumber: number;
 };
 
 const listProjectProposals = (projectId: number) =>
@@ -19,7 +21,8 @@ const createProposal = (
   projectId: number,
   address: string,
   name: string,
-  description: string
+  description: string,
+  blockNumber: number
 ) => {
   const proposal = {
     id: proposalData.length,
@@ -29,7 +32,7 @@ const createProposal = (
     description,
     yesVotes: 0,
     noVotes: 0,
-    endDate: new Date().toISOString()
+    blockNumber
   } as Proposal;
   // @ts-ignore
   proposalData.push(proposal);
