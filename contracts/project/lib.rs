@@ -60,6 +60,9 @@ pub mod project {
         proposal_ids: Vec<ProposalId>,
         voting_delay: BlockNumber,
         voting_period: BlockNumber,
+        employee: Option<RmrkEmployeeRef>,
+        employee_function: Option<RmrkAssignmentRef>,
+        employee_project: Mapping<ProjectId, RmrkAssignmentRef>,
     }
 
     impl Project {
@@ -67,11 +70,62 @@ pub mod project {
         #[ink(constructor)]
         pub fn new(
             name: String,
-            _employee: AccountId,
+            employee_hash: Hash,
+            assignment_hash: Hash,
         ) -> Self {
             let proposals = Mapping::default();
             let proposal_ids = Vec::new();
-            Project { name, proposals, proposal_ids, voting_delay: 0, voting_period: 10 }
+            let employee_project = Mapping::default();
+
+            let salt = Self::env().block_number().to_le_bytes();
+            let employee = RmrkEmployeeRef::new(
+                String::from("Employee"),
+                String::from("EMP"),
+                String::from("http://hello.world/"),
+                0,
+                String::from("ipfs://over.there/"),
+            )
+            .endowment(0)
+            .code_hash(employee_hash)
+            .salt_bytes(salt)
+            .instantiate();
+
+            let function = RmrkAssignmentRef::new(
+                String::from("Function"),
+                String::from("FNC"),
+                String::from("http://hello.world"),
+                0,
+                String::from("ipfs://over.there"),
+            )
+            .endowment(0)
+            .code_hash(assignment_hash)
+            .salt_bytes(salt)
+            .instantiate();
+
+
+            Self { 
+                name, 
+                proposals, 
+                proposal_ids, 
+                voting_delay: 0, 
+                voting_period: 10,
+                employee: Some(employee),
+                employee_function: Some(function),
+                employee_project,
+             }
+        }
+
+
+        /// Return the AccountId of the instantiated Employee contract
+        #[ink(message)]
+        pub fn employee_address(&self) -> AccountId {
+            self.employee.clone().unwrap().account_id()
+        }
+
+        /// Return the AccountId of the instantiated Function (from assignment) contract
+        #[ink(message)]
+        pub fn function_address(&self) -> AccountId {
+            self.employee.clone().unwrap().account_id()
         }
 
         #[ink(message)]

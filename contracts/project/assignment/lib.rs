@@ -110,6 +110,11 @@ pub mod rmrk_assignment { // from rmrk_example_mintable
             );
             instance
         }
+
+        #[ink(message)]
+        pub fn account_id(&self) -> AccountId {
+            self.env().account_id()
+        }
     }
 
     impl psp34::Internal for RmrkAssignment {

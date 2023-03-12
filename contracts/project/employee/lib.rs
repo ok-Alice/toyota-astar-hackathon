@@ -262,6 +262,11 @@ pub mod rmrk_employee { // from rmrk_example_equippable
             );
             instance
         }
+
+        #[ink(message)]
+        pub fn account_id(&self) -> AccountId {
+            self.env().account_id()
+        }
     }
 
     impl psp34::Internal for RmrkEmployee {

@@ -20,16 +20,14 @@ kp_alice = Keypair.create_from_uri('//Alice')
 kp_bob = Keypair.create_from_uri('//Bob')
 kp_charlie = Keypair.create_from_uri('//Charlie')
 
-
 #### Deploy Assignments for Projects & Functions
 
 def deploy_contract(msg, contractname, kp, args):
     code = ContractCode.create_from_contract_files(
-        metadata_file=os.path.join(os.path.dirname(__file__), '..', 'target', 'ink', contractname , contractname + '.json'),
-        wasm_file=os.path.join(os.path.dirname(__file__), '..', 'target', 'ink', contractname, contractname + '.wasm'),
+        metadata_file=os.path.join(os.path.dirname(__file__), 'project', 'target', 'ink',  contractname + '.json'),
+        wasm_file=os.path.join(os.path.dirname(__file__), 'project', 'target', 'ink',  contractname + '.wasm'),
         substrate=substrate
     )
-
 
     contract = code.deploy(
         keypair=kp,
@@ -47,50 +45,35 @@ def deploy_contract(msg, contractname, kp, args):
     return contract
 
 
-# Alice deploys EmployeeProject
+# Alice deploys Assignments to obtain Hash
 
-employee_project = deploy_contract(msg='EmployeeProject', 
-                          contractname='assignments', 
+assignment = deploy_contract(msg='Assigment for Hash', 
+                          contractname='assignment/assignment', 
                           kp=kp_alice, 
                           args={
-                            'name': "EmployeeProject",
-                            'symbol': "PRJ",
-                            'base_uri': "http://hello.world/",
-                            'max_supply': 100,
-                            'collection_metadata': "ipfs://over.there/"  
+                            'name': "NA",
+                            'symbol': "NA",
+                            'base_uri': "",
+                            'max_supply': 0,
+                            'collection_metadata': ""  
                             })
 
-assert(employee_project.read(kp_alice, 'PSP34::total_supply').contract_result_data[1] == 0)
+assignment_hash = assignment.metadata.source['hash']
 
-# Alice deploys EmployeeFunction
+# Alice deploys Employee to obtain Hash
 
-employee_function = deploy_contract(msg='EmployeeFunction', 
-                           contractname='assignments', 
+employee = deploy_contract(msg='Employee for Hash', 
+                           contractname='employee/employee', 
                            kp=kp_alice,     
                            args={
-                            'name': "EmployeeFunction",
-                            'symbol': "FNC",
-                            'base_uri': "http://hello.world/",
-                            'max_supply': 100,
-                            'collection_metadata': "ipfs://over.there/"  
+                            'name': "NA",
+                            'symbol': "NA",
+                            'base_uri': "",
+                            'max_supply': 0,
+                            'collection_metadata': ""  
                             },)
 
-assert(employee_function.read(kp_alice, 'PSP34::total_supply').contract_result_data[1] == 0)
-
-# Alice deploys Employee
-
-employee = deploy_contract(msg='Employee', 
-                           contractname='employee', 
-                           kp=kp_alice,     
-                           args={
-                            'name': "Employee",
-                            'symbol': "EMP",
-                            'base_uri': "http://hello.world/",
-                            'max_supply': 10000,
-                            'collection_metadata': "ipfs://over.there/"  
-                            },)
-
-assert(employee.read(kp_alice, 'PSP34::total_supply').contract_result_data[1] == 0)
+employee_hash = employee.metadata.source['hash']
 
 # Alice deploys Project
 
@@ -99,10 +82,16 @@ project = deploy_contract(msg='Project',
                           kp=kp_alice,
                           args={
                             'name': "Project",
-                            '_employee': employee.contract_address,  
-                          }
-                          )
+                            'employee_hash': employee_hash,
+                            'assignment_hash': assignment_hash,
+                            }
+                        )
 
+
+employee_address = project.read(kp_alice, 'employee_address').contract_result_data[1]
+print("Employee:", employee_address)
+
+quit()
 
 # assert(project.read(kp_alice, 'voting_delay').contract_result_data[1] == 0)
 
