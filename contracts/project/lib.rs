@@ -56,13 +56,13 @@ pub mod project {
     #[derive(Default, Storage)]
     pub struct Project {
         name: String,
-        proposals: Mapping<ProposalId, ProposalCore>,
-        proposal_ids: Vec<ProposalId>,
         voting_delay: BlockNumber,
         voting_period: BlockNumber,
         employee: Option<RmrkEmployeeRef>,
         employee_function: Option<RmrkAssignmentRef>,
         employee_project: Mapping<ProjectId, RmrkAssignmentRef>,
+        proposals: Mapping<(ProjectId, ProposalId), ProposalCore>,
+        proposal_ids: Mapping<ProjectId, Vec<ProposalId>>
     }
 
     impl Project {
@@ -74,7 +74,7 @@ pub mod project {
             assignment_hash: Hash,
         ) -> Self {
             let proposals = Mapping::default();
-            let proposal_ids = Vec::new();
+            let proposal_ids = Mapping::default();
             let employee_project = Mapping::default();
 
             let salt = Self::env().block_number().to_le_bytes();
@@ -153,7 +153,7 @@ pub mod project {
         pub fn create_proposal(&mut self, project_id: ProjectId, title: String, internal: bool) -> Result<(),ProjectError> {
             let proposal_id = self.gen_title_id(title)?;
 
-            if self.proposals.get(&proposal_id).is_some() {
+            if self.proposals.get(&(project_id, proposal_id)).is_some() {
                 return Err(ProjectError::Custom(String::from("Proposal already exists")));
             }
 
@@ -164,22 +164,26 @@ pub mod project {
                 internal,
             };
 
-            self.proposals.insert(proposal_id, &proposal);
+            self.proposals.insert((project_id, proposal_id), &proposal);
 
             Ok(())
         } 
 
         /// List all open proposals for given project 
         #[ink(message)]
-        pub fn list_proposal_ids(&self, project_id: ProjectId, ) -> Vec<ProposalId> {
-            self.proposal_ids.clone()
+        pub fn list_proposal_ids(&self, project_id: ProjectId, ) -> Result<Vec<ProposalId>, ProjectError> {
+            match self.proposal_ids.get(&project_id) {
+                Some(pis) => Ok(pis),
+                None => Err(ProjectError::Custom(String::from("Project does not exist")))
+            }
+        
         }
 
         #[ink(message)]
         pub fn get_proposal_details(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalCore, ProjectError> {
-            match self.proposals.get(proposal_id) {
+            match self.proposals.get((project_id, proposal_id)) {
                 Some(pc) => Ok(pc),
-                None => Err(ProjectError::Custom(String::from("Proposal does not exist")))
+                None => Err(ProjectError::Custom(String::from("Project / Proposal does not exist")))
             }
         }
 
