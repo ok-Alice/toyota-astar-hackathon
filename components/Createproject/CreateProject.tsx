@@ -24,12 +24,7 @@ import { Button } from 'components/ui-kit/Button';
 import { Notification } from 'components/ui-kit/Notifications';
 import { TxButton } from 'components/TxButton';
 import { formLinkByProjectId } from 'utils/formLinkByProjectId';
-import {
-  DaoGovernanceState,
-  DaoInfoState,
-  DaoMembersState,
-  ProposalPeriod
-} from './types';
+import { DaoInfoState, DaoMembersState } from './types';
 // import { DaoInfo } from './DaoInfo';
 // import { DaoMembers } from './DaoMembers';
 // import { DaoToken } from './DaoToken';
@@ -39,21 +34,7 @@ import styles from './CreateProject.module.scss';
 
 const initialInfoState: DaoInfoState = {
   name: '',
-  purpose: ''
-};
-
-const initialGovernanceState: DaoGovernanceState = {
-  approveOrigin: '1/2',
-  enactmentPeriod: '',
-  launchPeriod: '',
-  proposalPeriod: '',
-  voteLockingPeriod: '',
-  votingPeriod: '',
-  proposalPeriodType: ProposalPeriod.DAYS,
-  enactmentPeriodType: ProposalPeriod.DAYS,
-  launchPeriodType: ProposalPeriod.DAYS,
-  voteLockingPeriodType: ProposalPeriod.DAYS,
-  votingPeriodType: ProposalPeriod.DAYS
+  description: ''
 };
 
 const initialMembersState: DaoMembersState = {
@@ -65,8 +46,6 @@ export function CreateProject() {
   const [nextProjectId, setNextProjectId] = useState<number>(0);
   const [projectInfo, setProjectInfo] =
     useState<DaoInfoState>(initialInfoState);
-  const [projectGovernance, setprojectGovernance] =
-    useState<DaoGovernanceState>(initialGovernanceState);
   const [projectMembers, setProjectMembers] =
     useState<DaoMembersState>(initialMembersState);
   const api = useAtomValue(apiAtom);
@@ -80,6 +59,8 @@ export function CreateProject() {
     null
   );
   const createdRef = useRef<boolean>(false);
+
+  console.log('accounts', accounts);
 
   // const daoContract = useDaoContract();
 
@@ -99,7 +80,7 @@ export function CreateProject() {
     toast.success(
       <Notification
         title="You've successfully created a new Project"
-        body="You can create new DAO and perform other actions."
+        body="You can now create/discuss proposals in the project."
         variant="success"
       />
     );
@@ -134,11 +115,7 @@ export function CreateProject() {
   };
 
   const disabled =
-    !projectInfo.name ||
-    !projectInfo.purpose ||
-    !projectMembers.members ||
-    !projectGovernance.proposalPeriod ||
-    !projectGovernance.proposalPeriodType;
+    !projectInfo.name || !projectInfo.description || !projectMembers.members;
 
   return (
     <div className={styles.container}>

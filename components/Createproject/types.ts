@@ -20,7 +20,7 @@ export type DaoGovernanceState = {
 
 export type DaoInfoState = {
   name: string;
-  purpose: string;
+  description: string;
 };
 
 export enum ApproveOrigin {
