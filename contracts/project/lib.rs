@@ -5,9 +5,11 @@
 pub mod project {
     use ink::storage::Mapping;
     use ink::prelude::vec::Vec;
-    //use ink::prelude::string::ToString;
+  
 
     use ink::env::hash::{Sha2x256, HashOutput};
+
+    use rmrk::traits::*;
 
     use employee::rmrk_employee::RmrkEmployeeRef;
     use assignment::rmrk_assignment::RmrkAssignmentRef;
@@ -184,7 +186,7 @@ pub mod project {
 
 
         #[ink(message)]
-        pub fn project_colection(&self, project_id: ProjectId) -> Result<AccountId, ProjectError> {
+        pub fn project_collection(&self, project_id: ProjectId) -> Result<AccountId, ProjectError> {
             let employee_project = match self.employee_project.get(project_id) {
                 Some(ep) => ep,
                 None => return Err(ProjectError::Custom(String::from("Project does not exist"))),
@@ -236,7 +238,7 @@ pub mod project {
         }
 
         #[ink(message)]
-        pub fn get_proposal_details(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalCore, ProjectError> {
+        pub fn proposal_details(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalCore, ProjectError> {
             match self.proposals.get((project_id, proposal_id)) {
                 Some(pc) => Ok(pc),
                 None => Err(ProjectError::Custom(String::from("Project / Proposal does not exist")))
@@ -330,5 +332,11 @@ pub mod project {
             // TODO: Implement PRJ voting factor  * FNC voting factor but not sure where to get these values from
             return 1;
         }
+
+        // #[ink(message)]
+        // pub fn mint_employee(&mut self, to: AccountId) -> Result<(), ProjectError> {
+        //     //self.employee.unwrap().mint(to);
+        //     //RmrkEmployeeRef::mint(to);
+        // }
     }
 }
