@@ -4,10 +4,11 @@ import userData from './data/users.json';
 export type User = {
   id: number;
   email: string;
-  address?: string;
+  address: string;
   password?: string;
   displayName: string;
   badges: string[];
+  avatar: string;
 };
 
 const getSanitizedUser = (user: User) => {

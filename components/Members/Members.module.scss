@@ -16,6 +16,24 @@
   max-height: 35rem;
   overflow-y: scroll;
 }
+
+.memberinfo {
+  display: flex;
+}
+
+.avatar {
+  height: 5rem;
+  position: relative;
+  width: 5rem;
+  margin-right: 0.5rem;
+
+  embed {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+  }
+}
+
 .member {
   border-top: 0.0625rem solid #{colors.$grayscale-95};
   padding: 1rem 1.5rem;

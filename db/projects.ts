@@ -3,19 +3,13 @@ import projectData from './data/projects.json';
 import proposalData from './data/proposals.json';
 import { saveData } from './utils';
 
-export type Member = {
-  id?: number;
-  userId: number;
-};
-
 export type Project = {
   id?: number;
   address: string;
   name: string;
   description: string;
   proposals?: Proposal[];
-  members?: Member[];
-  proposalPeriod: number;
+  members?: number[];
 };
 
 const getProposals = (projectId: number) =>
@@ -31,16 +25,14 @@ const createProject = (
   address: string,
   name: string,
   description: string,
-  members: Member[]
+  members: number[]
 ) => {
   const project = {
     id: projectData.length,
     address,
     name,
     description,
-    members: members.map(
-      (member, index) => ({ id: index, ...member } as Member)
-    )
+    members
   };
   // @ts-ignore
   projectData.push(project);

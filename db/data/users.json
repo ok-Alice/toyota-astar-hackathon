@@ -5,7 +5,8 @@
     "email": "alice@astar.com",
     "displayName": "Alice",
     "password": "1234",
-    "badges": ["Lead Frontend"]
+    "badges": ["Lead Frontend Dev"],
+    "avatar": "/nfts/Aiko/Aiko.svg"
   },
   {
     "id": 1,
@@ -13,7 +14,8 @@
     "email": "bob@astar.com",
     "displayName": "Bob",
     "password": "1234",
-    "badges": ["Lead Backend Dev"]
+    "badges": ["Lead Backend Dev"],
+    "avatar": "/nfts/Bob/Bob.svg"
   },
   {
     "id": 2,
@@ -21,7 +23,8 @@
     "email": "charlie@astar.com",
     "displayName": "Charlie",
     "password": "1234",
-    "badges": ["Full Stack Dev"]
+    "badges": ["Full Stack Dev"],
+    "avatar": "/nfts/Gaya/Gaya.svg"
   },
   {
     "id": 3,
@@ -29,7 +32,8 @@
     "email": "dave@astar.com",
     "displayName": "Dave",
     "password": "1234",
-    "badges": ["Medior Backend Dev"]
+    "badges": ["Medior Backend Dev"],
+    "avatar": "/nfts/Dave/Dave.svg"
   },
   {
     "id": 4,
@@ -37,22 +41,16 @@
     "email": "eve@astar.com",
     "displayName": "Eve",
     "password": "1234",
-    "badges": ["UX Designer"]
+    "badges": ["UX Designer"],
+    "avatar": "/nfts/Carol/Carol.svg"
   },
   {
     "id": 5,
     "address": "5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL",
-    "email": "ferdie@astar.com",
-    "displayName": "Ferdie",
+    "email": "Hassan@adobe.com",
+    "displayName": "Hassan",
     "password": "1234",
-    "badges": ["Junior Frontend Dev"]
-  },
-  {
-    "id": 6,
-    "address": "1GcbsHZQQYWjDNjhF4o3v1IeKmRXl3tL1DUUveiHhfJzgjg5",
-    "email": "hailey@adobe.com",
-    "displayName": "Hailey",
-    "password": "1234",
-    "badges": ["External"]
+    "badges": ["Adobe UI Designer"],
+    "avatar": "/nfts/Hassan/Hassan.svg"
   }
 ]
