@@ -106,8 +106,9 @@ pub mod project {
                 String::from("Employee"),
                 String::from("EMP"),
                 String::from("http://hello.world/"),
-                0,
+                100,
                 String::from("ipfs://over.there/"),
+                Self::env().caller(),
             )
             .endowment(0)
             .code_hash(employee_hash)
@@ -118,8 +119,9 @@ pub mod project {
                 String::from("Function"),
                 String::from("FNC"),
                 String::from("http://hello.world"),
-                0,
+                100,
                 String::from("ipfs://over.there"),
+                Self::env().caller(),
             )
             .endowment(0)
             .code_hash(assignment_hash)
@@ -171,8 +173,9 @@ pub mod project {
                 Vec::from(project_id.to_be_bytes()),
                 project_code,
                 String::from("http://hello.world"),
-                0,
+                100,
                 String::from("ipfs://over.there"),
+                Self::env().caller(),
             )
             .endowment(0)
             .code_hash(self.assignment_hash)

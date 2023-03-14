@@ -90,7 +90,8 @@ assignment = deploy_contract(msg='Assigment for Hash',
                             'symbol': "NA",
                             'base_uri': "",
                             'max_supply': 0,
-                            'collection_metadata': ""  
+                            'collection_metadata': "" ,
+                            'admin': kp_alice.ss58_address,
                             })
 
 assignment_hash = assignment.metadata.source['hash']
@@ -105,7 +106,8 @@ employee = deploy_contract(msg='Employee for Hash',
                             'symbol': "NA",
                             'base_uri': "",
                             'max_supply': 0,
-                            'collection_metadata': ""  
+                            'collection_metadata': "",
+                            'admin': kp_alice.ss58_address,
                             },)
 
 employee_hash = employee.metadata.source['hash']

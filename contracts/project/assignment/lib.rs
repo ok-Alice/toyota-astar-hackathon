@@ -97,9 +97,11 @@ pub mod rmrk_assignment { // from rmrk_example_mintable
             base_uri: String,
             max_supply: u64,
             collection_metadata: String,
+            admin: AccountId,
         ) -> Self {
             let mut instance = RmrkAssignment::default();
-            config::with_admin(&mut instance, Self::env().caller());
+            config::with_admin(&mut instance, admin);
+            config::with_contributor(&mut instance, Self::env().caller());
             config::with_collection(
                 &mut instance,
                 name,

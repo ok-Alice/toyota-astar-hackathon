@@ -249,9 +249,11 @@ pub mod rmrk_employee { // from rmrk_example_equippable
             base_uri: String,
             max_supply: u64,
             collection_metadata: String,
+            admin: AccountId,
         ) -> Self {
             let mut instance = RmrkEmployee::default();
-            config::with_admin(&mut instance, Self::env().caller());
+            config::with_admin(&mut instance, admin);
+            config::with_contributor(&mut instance, Self::env().caller());
             config::with_collection(
                 &mut instance,
                 name,
