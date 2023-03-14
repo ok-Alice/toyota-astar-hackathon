@@ -42,6 +42,7 @@
   gap: 4rem;
 }
 
+.members-roles,
 .members-addresses {
   align-items: center;
   display: flex;
@@ -70,10 +71,6 @@
   padding: 0;
 }
 
-.quantity-of-tokens-inputs {
-  width: calc(50% - 2rem);
-}
-
 .proposal-period-container {
   display: flex;
   gap: 4rem;
@@ -84,11 +81,6 @@
   display: flex;
   flex-direction: column;
   width: calc(50% - 2rem);
-}
-
-.token-info-inputs {
-  display: flex;
-  gap: 4rem;
 }
 
 .proposal-period-dropdown {
@@ -106,18 +98,6 @@
   align-items: center;
   display: flex;
   justify-content: center;
-}
-
-.token-type-radio-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.token-type-radio {
-  align-items: center;
-  display: flex;
-  gap: 0.5rem;
 }
 
 .dropdown-card {

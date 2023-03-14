@@ -8,10 +8,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       break;
     case 'POST':
       // eslint-disable-next-line no-case-declarations
-      const { address, name, description, members } = req.body;
+      const { name, description, attribute, members } = req.body;
       res
         .status(201)
-        .json(projectsDB.create(address, name, description, members));
+        .json(projectsDB.create(name, description, attribute, members));
       break;
     default:
       res.setHeader('Allow', ['POST']);

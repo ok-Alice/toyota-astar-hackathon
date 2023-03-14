@@ -3,10 +3,9 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 
-import { useAtomValue } from 'jotai';
-import { apiAtom, keyringAtom } from 'store/api';
-import { projectsAtom } from 'store/db';
-import { accountsAtom, substrateAccountAtom } from 'store/substrateAccount';
+import { useAtom, useAtomValue } from 'jotai';
+import { projectsAtom, usersAtom } from 'store/db';
+import { substrateAccountAtom } from 'store/substrateAccount';
 
 // import { useDaoContract } from 'hooks/useDaoContract';
 // import { ssToEvmAddress } from 'utils/ssToEvmAddress';
@@ -22,36 +21,36 @@ import { accountsAtom, substrateAccountAtom } from 'store/substrateAccount';
 import { Typography } from 'components/ui-kit/Typography';
 import { Button } from 'components/ui-kit/Button';
 import { Notification } from 'components/ui-kit/Notifications';
-import { TxButton } from 'components/TxButton';
+// import { TxButton } from 'components/TxButton';
 import { formLinkByProjectId } from 'utils/formLinkByProjectId';
-import { DaoInfoState, DaoMembersState } from './types';
-// import { DaoInfo } from './DaoInfo';
-// import { DaoMembers } from './DaoMembers';
+import { InfoState, MembersState } from './types';
+import { ProjectInfo } from './ProjectInfo';
+import { ProjectMembers } from './ProjectMembers';
+
 // import { DaoToken } from './DaoToken';
 // import { DaoGovernance } from './DaoGovernance';
 
 import styles from './CreateProject.module.scss';
+import { ProjectAttribute } from './ProjectAttribute';
+import { Project } from 'db/projects';
 
-const initialInfoState: DaoInfoState = {
+const initialInfoState: InfoState = {
   name: '',
   description: ''
 };
 
-const initialMembersState: DaoMembersState = {
-  members: []
+const initialMembersState: MembersState = {
+  members: [{ address: '', role: '', voteWeight: '1' }]
 };
 
 export function CreateProject() {
   const router = useRouter();
-  const [nextProjectId, setNextProjectId] = useState<number>(0);
-  const [projectInfo, setProjectInfo] =
-    useState<DaoInfoState>(initialInfoState);
+  const [projectInfo, setProjectInfo] = useState<InfoState>(initialInfoState);
   const [projectMembers, setProjectMembers] =
-    useState<DaoMembersState>(initialMembersState);
-  const api = useAtomValue(apiAtom);
-  const keyring = useAtomValue(keyringAtom);
-  const projects = useAtomValue(projectsAtom);
-  const accounts = useAtomValue(accountsAtom);
+    useState<MembersState>(initialMembersState);
+  const [projectAttribute, setProjectAttribute] = useState<string>('');
+  const [projects, setProjects] = useAtom(projectsAtom);
+  const users = useAtomValue(usersAtom);
   const substrateAccount = useAtomValue(substrateAccountAtom);
 
   const [createdProjectId, setCreatedProjectId] = useState<number | null>(null);
@@ -60,7 +59,11 @@ export function CreateProject() {
   );
   const createdRef = useRef<boolean>(false);
 
-  console.log('accounts', accounts);
+  const getProjects = async () => {
+    const response = await fetch('/api/projects');
+    const apiProjects = (await response.json()) as Project[];
+    setProjects(apiProjects);
+  };
 
   // const daoContract = useDaoContract();
 
@@ -98,28 +101,55 @@ export function CreateProject() {
     return undefined;
   }, [proposedProjectId]);
 
-  useEffect(() => {
-    // Todo fetch projects and set next id
-  }, [api, nextProjectId]);
-
   const handleOnSuccess = async () => {
     createdRef.current = true;
-    setProposedProjectId(nextProjectId);
-    toast.success(
-      <Notification
-        title="Transaction created"
-        body="Project will be created soon."
-        variant="success"
-      />
-    );
+
+    const parsedMembers = projectMembers.members.map((member) => ({
+      userId: users?.find((user) => user.address === member.address)?.id,
+      role: member.role,
+      voteWeight: member.voteWeight
+    }));
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: projectInfo.name,
+          description: projectInfo.description,
+          members: parsedMembers,
+          attribute: projectAttribute
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create project');
+      }
+
+      toast.success(
+        <Notification
+          title="Transaction created"
+          body="Project will be created soon."
+          variant="success"
+        />
+      );
+      const createdProject = (await response.json()) as Project;
+      await getProjects();
+      setProposedProjectId(createdProject.id as number);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const disabled =
-    !projectInfo.name || !projectInfo.description || !projectMembers.members;
+    !projectInfo.name ||
+    !projectInfo.description ||
+    !projectMembers.members[0].address;
 
   return (
     <div className={styles.container}>
-      <Link href="/" className={styles['cancel-button']}>
+      <Link href="/projects/0/dashboard/" className={styles['cancel-button']}>
         <Button variant="outlined" color="destructive" size="sm">
           Cancel Project creation
         </Button>
@@ -130,15 +160,21 @@ export function CreateProject() {
           Create Project
         </Typography>
 
-        {/* <DaoInfo state={daoInfo} setState={setDaoInfo} />
-        <DaoMembers state={daoMembers} setState={setDaoMembers} />
+        <ProjectInfo state={projectInfo} setState={setProjectInfo} />
+        <ProjectAttribute
+          state={projectAttribute}
+          setState={setProjectAttribute}
+        />
+        <ProjectMembers state={projectMembers} setState={setProjectMembers} />
+        {/*
+
 
         <DaoToken state={daoToken} setState={setDaoToken} />
 
         <DaoGovernance state={daoGovernance} setState={setDaoGovernance} /> */}
 
         <div className={styles['create-proposal']}>
-          <TxButton
+          {/* <TxButton
             onSuccess={handleOnSuccess}
             disabled={disabled}
             accountId={substrateAccount?.address}
@@ -147,7 +183,10 @@ export function CreateProject() {
             className={styles['create-button']}
           >
             Create Project
-          </TxButton>
+          </TxButton> */}
+          <Button disabled={disabled} onClick={handleOnSuccess}>
+            Create Project
+          </Button>
         </div>
       </div>
     </div>

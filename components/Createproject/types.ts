@@ -1,10 +1,13 @@
-import { Member } from 'db/projects';
-
-export type DaoMembersState = {
-  members: Member[];
+export type MemberState = {
+  address: string;
+  role: string;
+  voteWeight: string;
+};
+export type MembersState = {
+  members: MemberState[];
 };
 
-export type DaoGovernanceState = {
+export type GovernanceState = {
   approveOrigin: keyof typeof ApproveOrigin;
   proposalPeriod: string;
   proposalPeriodType: ProposalPeriod;
@@ -18,7 +21,7 @@ export type DaoGovernanceState = {
   launchPeriodType: ProposalPeriod;
 };
 
-export type DaoInfoState = {
+export type InfoState = {
   name: string;
   description: string;
 };
@@ -33,10 +36,6 @@ export enum ApproveOrigin {
 export enum ProposalPeriod {
   DAYS = 'Days',
   HOURS = 'Hours'
-}
-
-export enum TokenType {
-  NON_FUNGIBLE_TOKEN = 'Non Fungible Token'
 }
 
 export type PeriodName =

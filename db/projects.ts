@@ -3,13 +3,18 @@ import projectData from './data/projects.json';
 import proposalData from './data/proposals.json';
 import { saveData } from './utils';
 
+export type Member = {
+  userId: number;
+  role: string;
+  voteWeight: string;
+};
 export type Project = {
   id?: number;
-  address: string;
   name: string;
   description: string;
-  proposals?: Proposal[];
-  members?: number[];
+  attribute: string;
+  members?: Member[];
+  proposals?: number[];
 };
 
 const getProposals = (projectId: number) =>
@@ -22,16 +27,16 @@ const getProject = (id: number) => {
 };
 
 const createProject = (
-  address: string,
   name: string,
   description: string,
+  attribute: string,
   members: number[]
 ) => {
   const project = {
     id: projectData.length,
-    address,
     name,
     description,
+    attribute,
     members
   };
   // @ts-ignore
