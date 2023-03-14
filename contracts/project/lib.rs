@@ -150,7 +150,7 @@ pub mod project {
         /// Return the AccountId of the instantiated Function (from assignment) contract
         #[ink(message)]
         pub fn function_address(&self) -> AccountId {
-            self.employee.clone().unwrap().account_id()
+            self.employee_function.clone().unwrap().account_id()
         }
 
         #[ink(message)]
