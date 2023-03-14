@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { useAtomValue } from 'jotai';
 import { currentProjectAtom } from 'store/db';
 
-import { generateRandomGradient } from 'utils/generateRandomGradient';
 import { formLinkByProjectId } from 'utils/formLinkByProjectId';
 
 import type { Href } from 'types';
@@ -50,15 +49,12 @@ export function Subheader() {
     navigator.clipboard.writeText(currentProject.address);
   };
 
-  const [angle, color1, color2, color3] = generateRandomGradient(
-    currentProject.name
-  );
-
   return (
     <div className={styles.root}>
       <div
         style={{
-          background: `linear-gradient(${angle}, ${color1}, ${color2}, ${color3})`
+          background:
+            'linear-gradient(164deg, rgba(172,4,140,1) 10%, rgba(236,12,28,1) 70%)'
         }}
         className={styles['top-container']}
       />
