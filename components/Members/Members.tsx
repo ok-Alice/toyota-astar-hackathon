@@ -41,7 +41,7 @@ export function Members() {
 
       <ul className={styles.members}>
         {currentProject?.members?.map((member) => {
-          const user = getUser(member);
+          const user = getUser(member.userId);
           if (!user) return null;
           const account = getAccount(user.address);
 
@@ -53,11 +53,14 @@ export function Members() {
                 </div>
                 <div>
                   <span>
-                    <Typography variant="title4">
+                    <Typography
+                      variant="title4"
+                      className={styles['member-name']}
+                    >
                       {user?.displayName || ''}
                     </Typography>
                   </span>
-                  <span className={styles['member-title']}>
+                  <span className={styles['member-address']}>
                     <Typography variant="title6">
                       {maskAddress(account?.address || '')}
                     </Typography>
@@ -70,15 +73,25 @@ export function Members() {
                       <Icon name="copy" size="xs" />
                     </Button>
                   </span>
-                  {user?.badges.map((badge) => (
+                  <div className={styles.badges}>
+                    {user?.badges.map((badge) => (
+                      <Chip
+                        key={`${user.displayName}-${badge}`}
+                        variant="group"
+                        color="orange"
+                      >
+                        <Typography variant="title8">{badge}</Typography>
+                      </Chip>
+                    ))}
+
                     <Chip
-                      key={`${user.displayName}-${badge}`}
+                      key={`${user.displayName}-${member.role}`}
                       variant="group"
-                      color="orange"
+                      color="blue"
                     >
-                      <Typography variant="title8">{badge}</Typography>
+                      <Typography variant="title8">{member.role}</Typography>
                     </Chip>
-                  ))}
+                  </div>
                 </div>
               </div>
             </li>

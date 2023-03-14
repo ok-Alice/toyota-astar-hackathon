@@ -39,8 +39,24 @@
   padding: 1rem 1.5rem;
 }
 
-.member-title {
+.member-name {
+  padding-left: 0.5rem !important;
+}
+
+.member-address {
   align-items: center;
   display: flex;
-  padding-bottom: 0.5rem;
+
+  padding-left: 0.5rem;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+
+  div {
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    margin-top: 0.5rem;
+  }
 }
