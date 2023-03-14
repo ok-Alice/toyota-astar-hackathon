@@ -5,11 +5,8 @@
 pub mod project {
     use ink::storage::Mapping;
     use ink::prelude::vec::Vec;
-  
 
     use ink::env::hash::{Sha2x256, HashOutput};
-
-    use rmrk::traits::*;
 
     use employee::rmrk_employee::RmrkEmployeeRef;
     use assignment::rmrk_assignment::RmrkAssignmentRef;
