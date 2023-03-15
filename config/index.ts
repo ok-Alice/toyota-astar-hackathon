@@ -8,15 +8,21 @@ export type AppConfig = {
   proposalVotingPeriod: number;
 };
 
-const appName = process.env.NEXT_APP_NAME;
-const providerSocket = process.env.NEXT_PROVIDER_SOCKET;
-const proposalVotingDelay = process.env.NEXT_PROPOSAL_VOTING_DELAY;
-const proposalVotingPeriod = process.env.NEXT_PROPOSAL_VOTING_PERIOD;
+const appName = process.env.NEXT_PUBLIC_APP_NAME;
+const providerSocket = process.env.NEXT_PUBLIC_PROVIDER_SOCKET;
+const proposalVotingDelay = process.env.NEXT_PUBLIC_PROPOSAL_VOTING_DELAY;
+const proposalVotingPeriod = process.env.NEXT_PUBLIC_PROPOSAL_VOTING_PERIOD;
 
-assert(appName, 'APP_NAME was not provided.');
-assert(providerSocket, 'PROVIDER_SOCKET was not provided.');
-assert(proposalVotingDelay, 'NEXT_PROPOSAL_VOTING_DELAY was not provided.');
-assert(proposalVotingPeriod, 'NEXT_PROPOSAL_VOTING_PERIOD was not provided.');
+assert(appName, 'NEXT_PUBLIC_APP_NAME was not provided.');
+assert(providerSocket, 'NEXT_PUBLIC_PROVIDER_SOCKET was not provided.');
+assert(
+  proposalVotingDelay,
+  'NEXT_PUBLIC_PROPOSAL_VOTING_DELAY was not provided.'
+);
+assert(
+  proposalVotingPeriod,
+  'NEXT_PUBLIC_PROPOSAL_VOTING_PERIOD was not provided.'
+);
 
 export const appConfig: AppConfig = {
   appName,
