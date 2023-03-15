@@ -80,7 +80,7 @@ pub mod rmrk_assignment { // from rmrk_example_mintable
         metadata: metadata::Data,
         #[storage_field]
         minting: MintingData,
-        voting_power: Mapping<Id, u64>,
+        voting_power: Mapping<Id, u128>,
     }
 
     impl PSP34 for RmrkAssignment {}
@@ -127,9 +127,7 @@ pub mod rmrk_assignment { // from rmrk_example_mintable
             self.env().account_id()
         }
 
-
-        #[ink(message)]
-        pub fn set_token_voting_power(&mut self, token_id: Id, voting_factor: u64) -> Result<(), AssignmentError> {
+        fn set_token_voting_power(&mut self, token_id: Id, voting_factor: u128) -> Result<(), AssignmentError> {
             if !self.ensure_exists_and_get_owner(&token_id).is_ok() {
                 return Err(AssignmentError::Custom("Invalid token id".into()));
             }
@@ -138,12 +136,26 @@ pub mod rmrk_assignment { // from rmrk_example_mintable
         }
 
         #[ink(message)]
-        pub fn token_voting_power(&self, token_id: Id) -> Result<u64, AssignmentError> {
+        pub fn token_voting_power(&self, token_id: Id) -> Result<u128, AssignmentError> {
             if !self.ensure_exists_and_get_owner(&token_id).is_ok() {
                 return Err(AssignmentError::Custom("Invalid token id".into()));
             }
             let token_voting_power = self.voting_power.get(token_id).unwrap();
             Ok(token_voting_power)
+        }
+
+        #[ink(message)]
+        pub fn add_employee_function(&mut self, account_id: AccountId, title: String, voting_factor: u128) -> Result<Id, AssignmentError> {
+            let token_id = Minting::mint(self, account_id).or_else(|_|
+                Err(AssignmentError::Custom("Failed to mint".into()))
+            )?;
+            self.assign_metadata(token_id.clone(), title).or_else(|_|
+                Err(AssignmentError::Custom("Failed to assign metadata".into()))
+            )?;
+            self.set_token_voting_power(token_id.clone(), voting_factor).or_else(|_|
+                Err(AssignmentError::Custom("Failed to assign voting factor".into()))
+            )?;
+            Ok(token_id)
         }
     }
 

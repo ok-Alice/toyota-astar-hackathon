@@ -223,7 +223,7 @@ pub mod rmrk_employee { // from rmrk_example_equippable
         base: BaseData,
         #[storage_field]
         equippable: EquippableData,
-        voting_power: Mapping<Id, u64>,
+        voting_power: Mapping<Id, u128>,
     }
 
     impl PSP34 for RmrkEmployee {}
@@ -280,8 +280,7 @@ pub mod rmrk_employee { // from rmrk_example_equippable
             self.env().account_id()
         }
 
-        #[ink(message)]
-        pub fn set_token_voting_power(&mut self, token_id: Id, voting_factor: u64) -> Result<(), EmployeeError> {
+        fn set_token_voting_power(&mut self, token_id: Id, voting_factor: u128) -> Result<(), EmployeeError> {
             if !self.ensure_exists_and_get_owner(&token_id).is_ok() {
                 return Err(EmployeeError::Custom("Invalid token id".into()));
             }
@@ -290,12 +289,26 @@ pub mod rmrk_employee { // from rmrk_example_equippable
         }
 
         #[ink(message)]
-        pub fn token_voting_power(&self, token_id: Id) -> Result<u64, EmployeeError> {
+        pub fn token_voting_power(&self, token_id: Id) -> Result<u128, EmployeeError> {
             if !self.ensure_exists_and_get_owner(&token_id).is_ok() {
                 return Err(EmployeeError::Custom("Invalid token id".into()));
             }
             let token_voting_power = self.voting_power.get(token_id).unwrap();
             Ok(token_voting_power)
+        }
+
+        #[ink(message)]
+        pub fn add_project_function(&mut self, account_id: AccountId, title: String, voting_factor: u128) -> Result<Id, EmployeeError> {
+            let token_id = Minting::mint(self, account_id).or_else(|_|
+                Err(EmployeeError::Custom("Failed to mint".into()))
+            )?;
+            self.assign_metadata(token_id.clone(), title).or_else(|_|
+                Err(EmployeeError::Custom("Failed to assign metadata".into()))
+            )?;
+            self.set_token_voting_power(token_id.clone(), voting_factor).or_else(|_|
+                Err(EmployeeError::Custom("Failed to assign voting factor".into()))
+            )?;
+            Ok(token_id)
         }
     }
 
