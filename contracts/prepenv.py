@@ -7,7 +7,7 @@ from substrateinterface import SubstrateInterface, Keypair
 from substrateinterface.exceptions import SubstrateRequestException
 
 
-verbose = 0
+verbose = 1
 
 ########## Generic Functions
 
@@ -23,8 +23,27 @@ def contract_from_address(contract_address, contract_name):
     return contract
 
 
+def show_events(events):
+    first = True
+    
+    result = ""
+    for event in events:
+        if first:
+            first = False
+        else:
+            result += "\n"
+        result = event['name'] + " : "
+
+        for arg in event['args']:
+            result += arg['label'] + ':' + str(arg['value']) + " "
+        
+        
+    return result
+
 def contract_call(msg, keypair, contract, fname, allow_fail, args):
-    print("Call:", fname, args)
+    if verbose:
+        print("♎ Call:", fname, args)
+    
     gas_predict = contract.read(keypair, fname, args)
     
     gas_predict.gas_required['ref_time'] *= 100;
@@ -33,10 +52,9 @@ def contract_call(msg, keypair, contract, fname, allow_fail, args):
     contract_receipt = contract.exec(keypair, fname, args)
     
     if contract_receipt.is_success:
-        print(f'  😎 Call {msg} {fname} : Events {contract_receipt.contract_events}')
+        print(f'  😎 Call {msg} {fname} : Events { show_events(contract_receipt.contract_events) }')
     else:
         print(f'  🤕 Error {msg} {fname}: {contract_receipt.error_message}')
-        print(f'    ** Events {contract_receipt.contract_events}')
         if not allow_fail:
             quit()
         
@@ -52,10 +70,9 @@ def contract_mint_to(msg, keypair, contract, dest: str) -> int:
     contract_receipt = contract.exec(keypair, fname, args={ 'to': dest })
 
     if contract_receipt.is_success:
-        print(f'  😎 Call {msg} {fname} : Events {contract_receipt.contract_events}')
+        print(f'  😎 Call {msg} {fname} : Events { show_events(contract_receipt.contract_events)}')
     else:
         print(f'  🤕 Error {msg} {fname}: {contract_receipt.error_message}')
-        print(f'    ** Events {contract_receipt.contract_events}')
         quit()
 
     return contract_receipt.contract_events[0]['args'][2]['value']['U64']
@@ -84,9 +101,7 @@ def transfer_balance(kp_from, to, value):
 
             print('✅ Successful transfer from',kp_from, 'to', to, 'for', value)
             if verbose > 0:
-                for event in receipt.triggered_events:
-                    print(f'   -> {event.value}')
-
+                print("Transfer Events:", receipt.triggered_events)
         else:
             print('⚠️ Extrinsic Failed: ', receipt.error_message)
 
@@ -217,7 +232,7 @@ contract_call(
 
 # Alice creates two assets on employee, one for function, one for project
 function_asset_id =  random.randint(0, 2**32 -1)
-project_asset_id =  random.randint(0, 2**32 -1)
+#project_asset_id =  random.randint(0, 2**32 -1)
 group_id = 1
 
 contract_call(
@@ -234,19 +249,34 @@ contract_call(
     },
 )
 
+# contract_call(
+#     "Employee add_asset_entry",
+#     kp['alice'],
+#     employee,
+#     'MultiAsset::add_asset_entry',
+#     allow_fail=True,
+#     args={
+#         'id': project_asset_id,
+#         'equippable_group_id': group_id,
+#         'asset_uri': 'asset_uri/',
+#         'part_ids': [0]
+#     },
+# )
+
 contract_call(
-    "Employee add_asset_entry",
+    "Employee add_asset_to_token",
     kp['alice'],
     employee,
-    'MultiAsset::add_asset_entry',
-    allow_fail=True,
+    'MultiAsset::add_asset_to_token',
+    allow_fail=False,
     args={
-        'id': project_asset_id,
-        'equippable_group_id': group_id,
-        'asset_uri': 'asset_uri/',
-        'part_ids': [0]
+        'token_id': { 'U64' : ids['alice']['employee'] }, 
+        'asset_id': function_asset_id,
+        'replaces_asset_with_id': None
     },
 )
+
+# Alice tries to equipe herself with function
 
 contract_call(
     "Employee by Alice",
@@ -255,16 +285,13 @@ contract_call(
     'Equippable::equip',
     allow_fail=False,
     args={
-    'token_id': str(ids['alice']['employee']),
-    'asset_id': str(function_asset_id),
+    'token_id':  { 'U64' : ids['alice']['employee'] },
+    'asset_id': function_asset_id,
     'slot_part_id': 0,
     'child_nft' : ( employee_function.contract_address, { 'U64': ids['alice']['function'] } ),
     'child_asset_id': 0,        
     }
 )
-
-
-
 
 quit()
 
