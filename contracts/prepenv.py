@@ -7,6 +7,37 @@ from substrateinterface import SubstrateInterface, Keypair
 from substrateinterface.exceptions import SubstrateRequestException
 
 
+# Config
+
+members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
+
+titles = { 'alice' : { 
+                'function': 'UI dev',
+                'project': 'UI Front-end 1'
+            },
+            'bob' : { 
+                'function': 'UI dev',
+                'project': 'UI Front-end 1'
+            },
+            'charlie' : { 
+                'function': 'UI dev',
+                'project': 'UI Front-end 1'
+            },
+            'dave' : { 
+                'function': 'UI dev',
+                'project': 'UI Front-end 1'
+            },
+            'eve' : { 
+                'function': 'UI dev',
+                'project': 'UI Front-end 1'
+            },
+            'ferdie' : { 
+                'function': 'UI dev',
+                'project': 'UI Front-end 1'
+            },
+        }
+
+
 verbose = 0
 
 ########## Generic Functions
@@ -42,10 +73,7 @@ def show_events(events):
         
     return result
 
-def contract_call(msg, keypair, contract, fname, allow_fail, args):
-    if verbose:
-        print("♎ Call:", fname, args)
-    
+def contract_call(msg, keypair, contract, fname,  args):
     gas_predict = contract.read(keypair, fname, args)
     
     gas_predict.gas_required['ref_time'] *= 100;
@@ -57,8 +85,8 @@ def contract_call(msg, keypair, contract, fname, allow_fail, args):
         print(f'  😎 Call {msg} {fname} : Events { show_events(contract_receipt.contract_events) }')
     else:
         print(f'  🤕 Error {msg} {fname}: {contract_receipt.error_message}')
-        if not allow_fail:
-            quit()
+        print("      Args: ", args)
+
         
     
 def contract_mint_to(msg, keypair, contract, dest: str) -> int:
@@ -174,7 +202,7 @@ transfer_balance(kp['alice'], str(function_address), 10**17)
 
 ## Employee_project from create project, and send it some funds from Alice
 
-contract_call("Create Project", kp['alice'], project, 'create_project', False, args = {
+contract_call("Create Project", kp['alice'], project, 'create_project', args = {
     'project_id': project_id,
     })
 
@@ -196,9 +224,16 @@ ids = {}
 
 for member in members:
     ids[member] = {}
+    
+    # Mint employee and set name
     ids[member]['employee'] = contract_mint_to('Mint Employee for ' + member, kp['alice'], employee, kp[member].ss58_address) 
+    contract_call("Employee metadata " + member, kp['alice'], employee, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee']}, 'metadata': member})
+    
     ids[member]['function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
+    contract_call("Employee metadata " + member, kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['function']}, 'metadata': titles[member]['function']})  
+    
     ids[member]['project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
+    contract_call("Employee metadata " + member, kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['project']}, 'metadata': titles[member]['project']})
 
 #ids['Alice']['employee'] = contract_mint_to('Mint Employee-project for Alice', kp['alice'], employee, alice.ss58_address)
 
@@ -212,7 +247,6 @@ contract_call(
     kp['alice'], 
     employee, 
     'Base::add_part_list', 
-    allow_fail=False,
     args={
         'parts' : [  {
             'part_type': 'Slot',
@@ -242,7 +276,6 @@ contract_call(
     kp['alice'],
     employee,
     'MultiAsset::add_asset_entry',
-    allow_fail=True,
     args={
         'id': function_asset_id,
         'equippable_group_id': group_id,
@@ -270,7 +303,6 @@ contract_call(
     kp['alice'],
     employee,
     'Base::add_equippable_addresses',
-    allow_fail=False,
     args={ 
         'part_id': 0,
         'equippable_address' : [ employee_function.contract_address ],
@@ -278,36 +310,39 @@ contract_call(
     }
 )
 
+for member in members:
 
-contract_call(
-    "Employee add_asset_to_token",
-    kp['alice'],
-    employee,
-    'MultiAsset::add_asset_to_token',
-    allow_fail=False,
-    args={
-        'token_id': { 'U64' : ids['alice']['employee'] }, 
+
+    contract_call(
+        "Employee " + member + " add_asset_to_token",
+        kp['alice'],
+        employee,
+        'MultiAsset::add_asset_to_token',
+        args={
+            'token_id': { 'U64' : ids[member]['employee'] }, 
+            'asset_id': function_asset_id,
+            'replaces_asset_with_id': None
+        },
+    )
+
+    # Alice tries to equipe herself with function
+
+    contract_call(
+        "Equip function for "+member,
+        kp['alice'],
+        employee,
+        'Equippable::equip',
+        args={
+        'token_id':  { 'U64' : ids[member]['employee'] },
         'asset_id': function_asset_id,
-        'replaces_asset_with_id': None
-    },
-)
+        'slot_part_id': 0,
+        'child_nft' : ( employee_function.contract_address, { 'U64': ids[member]['function'] } ),
+        'child_asset_id': 0,        
+        }
+    )
 
-# Alice tries to equipe herself with function
 
-contract_call(
-    "Employee by Alice",
-    kp['alice'],
-    employee,
-    'Equippable::equip',
-    allow_fail=False,
-    args={
-    'token_id':  { 'U64' : ids['alice']['employee'] },
-    'asset_id': function_asset_id,
-    'slot_part_id': 0,
-    'child_nft' : ( employee_function.contract_address, { 'U64': ids['alice']['function'] } ),
-    'child_asset_id': 0,        
-    }
-)
+
 
 quit()
 
