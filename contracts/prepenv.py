@@ -264,6 +264,16 @@ contract_call(
 # )
 
 contract_call(
+    "Mint Employee for Alice",
+    employee,
+    kp['alice'],
+    'Minting::mint',
+    args={
+        'to': kp['alice'].ss58_address,
+    }
+)
+
+contract_call(
     "Employee add_asset_to_token",
     kp['alice'],
     employee,
