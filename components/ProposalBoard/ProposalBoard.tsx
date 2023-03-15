@@ -9,9 +9,10 @@ import type { u32 } from '@polkadot/types';
 import { Card } from 'components/ui-kit/Card';
 import { Typography } from 'components/ui-kit/Typography';
 import { Button } from 'components/ui-kit/Button';
-import { TaskCard } from 'components/TaskCard';
+import { ProposalCard } from 'components/ProposalCard';
+import { Proposal } from 'db/proposals';
 
-import styles from './TaskBoard.module.scss';
+import styles from './ProposalBoard.module.scss';
 
 type FilterVariant = 'All' | 'In Progress' | 'Completed';
 
@@ -25,9 +26,10 @@ const filterOptions: FilterOption[] = [
   { title: 'Completed' }
 ];
 
-export function TaskBoard() {
+export function ProposalBoard() {
   const api = useAtomValue(apiAtom);
   const currentProject = useAtomValue(currentProjectAtom);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
   const [currentBlock, setCurrentBlock] = useState<number | null>(null);
   const [filter, setFilter] = useState<FilterVariant>('All');
 
@@ -47,9 +49,20 @@ export function TaskBoard() {
   const handleFilterClick: MouseEventHandler<HTMLButtonElement> = (e) =>
     setFilter((e.target as HTMLButtonElement).innerText as FilterVariant);
 
-  const proposals =
-    currentProject?.proposals?.sort((a, b) => b.blockNumber - a.blockNumber) ||
-    [];
+  const getProposals = async () => {
+    const response = await fetch(
+      `/api/projects/${currentProject?.id}/proposals`
+    );
+    setProposals(await response.json());
+  };
+
+  useEffect(() => {
+    if (!currentProject) {
+      return;
+    }
+    getProposals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentProject]);
 
   return (
     <>
@@ -81,8 +94,8 @@ export function TaskBoard() {
             return proposal;
           })
           .map((proposal) => (
-            <TaskCard
-              key={`${proposal.name}-${proposal.id}`}
+            <ProposalCard
+              key={`${proposal.title}-${proposal.id}`}
               proposal={proposal}
               currentBlock={currentBlock}
             />

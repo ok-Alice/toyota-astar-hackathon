@@ -6,7 +6,10 @@
     "description": "We need to redesign the UI of the Corolla app",
     "yesVotes": 0,
     "noVotes": 0,
-    "internal": false
+    "internal": false,
+    "status": "ACTIVE",
+    "createdAtBlock": 10,
+    "proposer": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
   },
   {
     "id": 1,
@@ -15,6 +18,9 @@
     "description": "Woopie i made another one",
     "yesVotes": 0,
     "noVotes": 0,
-    "internal": true
+    "internal": true,
+    "createdAtBlock": 0,
+    "status": "COMPLETED",
+    "proposer": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
   }
 ]

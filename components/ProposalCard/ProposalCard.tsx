@@ -5,26 +5,31 @@ import { Proposal } from 'db/proposals';
 import { Card } from 'components/ui-kit/Card';
 import { Icon } from 'components/ui-kit/Icon';
 import { Typography } from 'components/ui-kit/Typography';
-import { Countdown } from 'components/Countdown';
 
 import { useAtomValue } from 'jotai';
-import { currentProjectAtom, usersAtom } from 'store/db';
+import { currentProjectAtom } from 'store/db';
 import { maskAddress } from 'utils/maskAddress';
+import { keyringAtom } from 'store/api';
+import { KeyringPair } from '@polkadot/keyring/types';
+import { Chip } from 'components/ui-kit/Chip';
 
-import styles from './TaskCard.module.scss';
+import styles from './ProposalCard.module.scss';
 
-export interface TaskCardProps {
+export interface ProposalCardProps {
   proposal: Proposal;
   currentBlock: number | null;
 }
 
-export function TaskCard({ proposal, currentBlock }: TaskCardProps) {
-  const title = proposal?.name;
+export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
+  const title = proposal?.title;
   const description = proposal?.description;
   const currentProject = useAtomValue(currentProjectAtom);
-  const users = useAtomValue(usersAtom);
+  const keyring = useAtomValue(keyringAtom);
 
-  const getUser = (userId: number) => users?.find((user) => user.id === userId);
+  const getUser = (address: string) =>
+    keyring
+      ?.getPairs()
+      .find((keypair: KeyringPair) => keypair.address === address);
 
   return (
     <Card className={styles.card}>
@@ -43,17 +48,12 @@ export function TaskCard({ proposal, currentBlock }: TaskCardProps) {
         </div>
         {proposal.status === 'ACTIVE' && currentProject && currentBlock && (
           <div className={styles.countdown}>
-            <Countdown
-              end={
-                (proposal.blockNumber +
-                  currentProject.proposalPeriod -
-                  currentBlock) *
-                1000 *
-                appConfig.expectedBlockTimeInSeconds
-              }
-              typography="value5"
-            />
-            <Typography variant="body2">left</Typography>
+            <Typography variant="value5">
+              {proposal.createdAtBlock +
+                appConfig.proposalVotingPeriod -
+                currentBlock}
+            </Typography>
+            <Typography variant="body2">blocks left</Typography>
           </div>
         )}
       </div>
@@ -63,6 +63,13 @@ export function TaskCard({ proposal, currentBlock }: TaskCardProps) {
             <Icon name="proposals" className={styles['proposal-icon']} />
             <div className={styles.title}>
               <Typography variant="title4">{title}</Typography>
+              <span>
+                <Chip variant="proposal" color="dark-blue">
+                  <Typography variant="title6">
+                    {proposal.internal ? 'Members Only' : 'Everyone'}
+                  </Typography>
+                </Chip>
+              </span>
             </div>
           </div>
           {title && <Typography variant="title5">{title}</Typography>}
@@ -76,7 +83,9 @@ export function TaskCard({ proposal, currentBlock }: TaskCardProps) {
               <span className={styles['proposal-item']}>
                 <Icon name="user-profile" size="xs" />
                 <Typography variant="title5">
-                  {maskAddress(getUser(proposal.userId)?.address || '')}
+                  {`${
+                    getUser(proposal.proposer)?.meta.name || ''
+                  } - ${maskAddress(proposal.proposer)}`}
                 </Typography>
               </span>
             </span>

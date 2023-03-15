@@ -166,24 +166,8 @@ export function CreateProject() {
           setState={setProjectAttribute}
         />
         <ProjectMembers state={projectMembers} setState={setProjectMembers} />
-        {/*
-
-
-        <DaoToken state={daoToken} setState={setDaoToken} />
-
-        <DaoGovernance state={daoGovernance} setState={setDaoGovernance} /> */}
 
         <div className={styles['create-proposal']}>
-          {/* <TxButton
-            onSuccess={handleOnSuccess}
-            disabled={disabled}
-            accountId={substrateAccount?.address}
-            params={[]}
-            tx={null}
-            className={styles['create-button']}
-          >
-            Create Project
-          </TxButton> */}
           <Button disabled={disabled} onClick={handleOnSuccess}>
             Create Project
           </Button>

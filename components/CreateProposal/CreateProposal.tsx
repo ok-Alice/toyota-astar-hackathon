@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
+import { useAtomValue } from 'jotai';
+import { apiAtom } from 'store/api';
+import { substrateAccountAddressAtom } from 'store/substrateAccount';
+
 import { Button } from 'components/ui-kit/Button';
 import { Typography } from 'components/ui-kit/Typography';
 
@@ -17,10 +21,7 @@ import {
 import { State } from './types';
 import { ProposalInputs } from './ProposalInputs';
 
-// import { ProposalVotingAccess } from './ProposalVotingAccess';
 import styles from './CreateProposal.module.scss';
-import { useAtomValue } from 'jotai';
-import { apiAtom } from 'store/api';
 
 export interface CreateProposalProps {
   projectId: number;
@@ -34,6 +35,7 @@ const INITIAL_STATE: State = {
 
 export function CreateProposal({ projectId }: CreateProposalProps) {
   const api = useAtomValue(apiAtom);
+  const substrateAccountAddress = useAtomValue(substrateAccountAddressAtom);
   const [modalOpen, setModalOpen] = useState(false);
   const [state, setState] = useState<State>(INITIAL_STATE);
   const [curBlockNumber, setCurBlockNumber] = useState<number>(0);
@@ -63,7 +65,11 @@ export function CreateProposal({ projectId }: CreateProposalProps) {
   const handleCreateClick = async () => {
     if (disabled) return;
 
-    const newProposal = { ...state, blockNumber: curBlockNumber };
+    const newProposal = {
+      ...state,
+      blockNumber: curBlockNumber,
+      proposer: substrateAccountAddress
+    };
     try {
       const response = await fetch(`/api/projects/${projectId}/proposals`, {
         method: 'POST',

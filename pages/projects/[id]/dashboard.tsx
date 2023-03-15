@@ -1,15 +1,15 @@
 import Head from 'next/head';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { currentProjectAtom } from 'store/db';
 
 import { About } from 'components/About';
 import { Members } from 'components/Members';
-import { TaskBoard } from 'components/TaskBoard';
+import { ProposalBoard } from 'components/ProposalBoard';
+import { currentSubstrateAccountAtom } from 'store/substrateAccount';
 
 import styles from 'styles/pages/dashboard.module.scss';
-import { currentSubstrateAccountAtom } from 'store/substrateAccount';
 
 export default function DaoDashboard() {
   const router = useRouter();
@@ -59,7 +59,7 @@ export default function DaoDashboard() {
           <About />
         </div>
         <div className={styles['center-container']}>
-          <TaskBoard />
+          <ProposalBoard />
         </div>
         <div className={styles['right-container']}>
           <Members />

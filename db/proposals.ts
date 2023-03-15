@@ -4,7 +4,6 @@ import { saveData } from './utils';
 export type Proposal = {
   id: number;
   projectId: number;
-  userId: number;
   title: string;
   description: string;
   yesVotes: number;
@@ -12,6 +11,7 @@ export type Proposal = {
   status: 'ACTIVE' | 'COMPLETED' | 'DECLINED';
   createdAtBlock: number;
   internal: boolean;
+  proposer: string;
 };
 
 const getProjectProposal = (projectId: number, proposalId: number) => {
@@ -29,7 +29,8 @@ const createProposal = (
   description: string,
   projectId: number,
   createdAtBlock: number,
-  internal: boolean
+  internal: boolean,
+  proposer: string
 ) => {
   const proposal = {
     id: proposalData.length,
@@ -38,8 +39,10 @@ const createProposal = (
     description,
     yesVotes: 0,
     noVotes: 0,
+    internal,
+    status: 'ACTIVE',
     createdAtBlock,
-    internal
+    proposer
   } as Proposal;
   // @ts-ignore
   proposalData.push(proposal);

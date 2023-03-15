@@ -74,7 +74,7 @@ export function ProposalInputs({ state, setState }: ProposalInputsProps) {
       <div className={styles['proposal-input-vote-access']}>
         <Select onValueChange={onProposalTypeValueChange}>
           <SelectTrigger className={styles.trigger}>
-            <SelectValue placeholder={InputLabel.PROPOSAL_VOTING_ACCESS} />
+            <SelectValue>{ProposalVotingAccessEnum.MEMBER}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Object.entries(ProposalVotingAccessEnum).map(
