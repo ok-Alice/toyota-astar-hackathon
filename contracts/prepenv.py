@@ -7,7 +7,7 @@ from substrateinterface import SubstrateInterface, Keypair
 from substrateinterface.exceptions import SubstrateRequestException
 
 
-verbose = 1
+verbose = 0
 
 ########## Generic Functions
 
@@ -26,17 +26,19 @@ def contract_from_address(contract_address, contract_name):
 def show_events(events):
     first = True
     
+    
     result = ""
     for event in events:
         if first:
             first = False
         else:
             result += "\n"
-        result = event['name'] + " : "
+        result = "{" + event['name'] + " : "
 
         for arg in event['args']:
             result += arg['label'] + ':' + str(arg['value']) + " "
-        
+            
+        result += "}  "
         
     return result
 
@@ -200,7 +202,7 @@ for member in members:
 
 #ids['Alice']['employee'] = contract_mint_to('Mint Employee-project for Alice', kp['alice'], employee, alice.ss58_address)
 
-print("** IDs:", ids)
+print("♐ IDs:", ids)
 
 
 # Alice adds the part slots to employee
@@ -264,15 +266,18 @@ contract_call(
 # )
 
 contract_call(
-    "Mint Employee for Alice",
+    'Employee ',
     kp['alice'],
     employee,
-    'Minting::mint',
+    'Base::add_equippable_addresses',
     allow_fail=False,
-    args={
-        'to': kp['alice'].ss58_address,
+    args={ 
+        'part_id': 0,
+        'equippable_address' : [ employee_function.contract_address ],
+    
     }
 )
+
 
 contract_call(
     "Employee add_asset_to_token",
