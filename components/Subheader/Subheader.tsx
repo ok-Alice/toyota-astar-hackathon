@@ -45,10 +45,6 @@ export function Subheader() {
     return null;
   }
 
-  const handleOnClick = () => {
-    navigator.clipboard.writeText(currentProject.address);
-  };
-
   return (
     <div className={styles.root}>
       <div
@@ -76,14 +72,6 @@ export function Subheader() {
                 ? 'members'
                 : 'member'}
             </Typography>
-            <span className={styles['address-container']}>
-              <Typography variant="caption3">
-                {currentProject.address}
-              </Typography>
-              <Button variant="icon" size="xs" onClick={handleOnClick}>
-                <Icon name="copy" size="xs" />
-              </Button>
-            </span>
           </div>
         </div>
         <div className={styles['center-container']}>
@@ -102,7 +90,7 @@ export function Subheader() {
         </div>
         <div className={styles['right-container']}>
           {router.pathname.includes('create-proposal') ? null : (
-            <CreateProposal projectId={projectId} />
+            <CreateProposal projectId={parseInt(projectId as string, 10)} />
           )}
         </div>
       </div>

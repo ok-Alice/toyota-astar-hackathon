@@ -5,12 +5,13 @@ export type Proposal = {
   id: number;
   projectId: number;
   userId: number;
-  name: string;
+  title: string;
   description: string;
   yesVotes: number;
   noVotes: number;
   status: 'ACTIVE' | 'COMPLETED' | 'DECLINED';
   createdAtBlock: number;
+  internal: boolean;
 };
 
 const getProjectProposal = (projectId: number, proposalId: number) => {
@@ -24,19 +25,21 @@ const listProjectProposals = (projectId: number) =>
   proposalData.filter((proposal: Proposal) => proposal.projectId === projectId);
 
 const createProposal = (
-  name: string,
+  title: string,
   description: string,
   projectId: number,
-  createdAtBlock: number
+  createdAtBlock: number,
+  internal: boolean
 ) => {
   const proposal = {
     id: proposalData.length,
     projectId,
-    name,
+    title,
     description,
     yesVotes: 0,
     noVotes: 0,
-    createdAtBlock
+    createdAtBlock,
+    internal
   } as Proposal;
   // @ts-ignore
   proposalData.push(proposal);

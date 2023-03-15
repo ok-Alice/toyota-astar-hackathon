@@ -1,16 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-
-import { useAtomValue } from 'jotai';
-import { apiAtom } from 'store/api';
-import { substrateAccountAtom } from 'store/substrateAccount';
-
-import { LENGTH_BOUND } from 'constants/transaction';
-import { stringToHex } from '@polkadot/util';
 
 import { Button } from 'components/ui-kit/Button';
 import { Typography } from 'components/ui-kit/Typography';
-import { TxButton } from 'components/TxButton';
+
 import { Notification } from 'components/ui-kit/Notifications';
 import { Icon } from 'components/ui-kit/Icon';
 import {
@@ -21,64 +14,29 @@ import {
   DialogTrigger
 } from 'components/ui-kit/Dialog';
 
-import { ProposalEnum, ProposalVotingAccessEnum, State } from './types';
+import { State } from './types';
+import { ProposalInputs } from './ProposalInputs';
+
+// import { ProposalVotingAccess } from './ProposalVotingAccess';
 import styles from './CreateProposal.module.scss';
+import { useAtomValue } from 'jotai';
+import { apiAtom } from 'store/api';
 
 export interface CreateProposalProps {
-  daoId: string;
+  projectId: number;
 }
 
 const INITIAL_STATE: State = {
-  amount: '',
   description: '',
-  target: '',
   title: '',
-  balance: ''
+  internal: false
 };
 
-export function CreateProposal({ daoId }: CreateProposalProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const [proposalVotingAccess, setProposalVotingAccess] =
-    useState<ProposalVotingAccessEnum | null>(null);
-  const [proposalType, setProposalType] = useState<ProposalEnum | null>(null);
-
+export function CreateProposal({ projectId }: CreateProposalProps) {
   const api = useAtomValue(apiAtom);
-  const substrateAccount = useAtomValue(substrateAccountAtom);
-
+  const [modalOpen, setModalOpen] = useState(false);
   const [state, setState] = useState<State>(INITIAL_STATE);
-
-  const getProposalTx = useCallback(() => {
-    // eslint-disable-next-line prefer-destructuring
-    const target = state.target;
-
-    const amount = parseInt(state.amount, 10);
-
-    switch (proposalType) {
-      case ProposalEnum.PROPOSE_ADD_MEMBER: {
-        return api?.tx.daoCouncilMembers.addMember(daoId, target);
-      }
-      case ProposalEnum.PROPOSE_REMOVE_MEMBER: {
-        return api?.tx.daoCouncilMembers.removeMember(daoId, target);
-      }
-      case ProposalEnum.PROPOSE_TRANSFER: {
-        return api?.tx.daoTreasury.spend(daoId, amount, target);
-      }
-      case ProposalEnum.PROPOSE_TRANSFER_GOVERNANCE_TOKEN: {
-        return api?.tx.daoTreasury.transferToken(daoId, amount, target);
-      }
-      default: {
-        throw new Error('No such extrinsic method exists.');
-      }
-    }
-  }, [
-    api?.tx.daoCouncilMembers,
-    api?.tx.daoTreasury,
-    daoId,
-    proposalType,
-    state.amount,
-    state.target
-  ]);
+  const [curBlockNumber, setCurBlockNumber] = useState<number>(0);
 
   const proposalCreatedHandler = useCallback(() => {
     setTimeout(
@@ -92,51 +50,53 @@ export function CreateProposal({ daoId }: CreateProposalProps) {
         ),
       1000
     );
-    setProposalVotingAccess(null);
-    setProposalType(null);
     setState(INITIAL_STATE);
     setModalOpen(false);
   }, []);
 
   const handleCancelClick = () => setModalOpen(false);
 
-  const handleTransform = useCallback(() => {
-    const meta = stringToHex(
-      JSON.stringify({
-        title: state.title.trim(),
-        description: state.description.trim()
-      })
-    );
-
-    const _tx = getProposalTx();
-
-    if (proposalVotingAccess === ProposalVotingAccessEnum.Council) {
-      return [daoId, _tx, LENGTH_BOUND, meta];
-    }
-
-    return [daoId, { Inline: _tx?.method.toHex() }, state.balance, meta];
-  }, [
-    daoId,
-    getProposalTx,
-    proposalVotingAccess,
-    state.balance,
-    state.description,
-    state.title
-  ]);
-
-  const disabled =
-    !proposalVotingAccess ||
-    !proposalType ||
-    !state.title ||
-    !state.description ||
-    ((proposalType === ProposalEnum.PROPOSE_TRANSFER ||
-      proposalType === ProposalEnum.PROPOSE_TRANSFER_GOVERNANCE_TOKEN) &&
-      (!state.amount || !state.target)) ||
-    ((proposalType === ProposalEnum.PROPOSE_ADD_MEMBER ||
-      proposalType === ProposalEnum.PROPOSE_REMOVE_MEMBER) &&
-      !state.target);
+  const disabled = !state.title || !state.description;
 
   const onSuccess = () => proposalCreatedHandler();
+
+  const handleCreateClick = async () => {
+    if (disabled) return;
+
+    const newProposal = { ...state, blockNumber: curBlockNumber };
+    try {
+      const response = await fetch(`/api/projects/${projectId}/proposals`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newProposal)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create prposal');
+      }
+
+      onSuccess();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    let unsubscribe: any | null = null;
+
+    api?.derive.chain
+      .bestNumber((number) => {
+        setCurBlockNumber(number.toNumber());
+      })
+      .then((unsub) => {
+        unsubscribe = unsub;
+      })
+      .catch(console.error);
+
+    return () => unsubscribe && unsubscribe();
+  }, [api]);
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -157,24 +117,24 @@ export function CreateProposal({ daoId }: CreateProposalProps) {
         <DialogDescription asChild>
           <div className={styles.container}>
             <div className={styles.content}>
+              <ProposalInputs state={state} setState={setState} />
               <div className={styles['buttons-container']}>
                 <Button
-                  variant="outlined"
+                  variant="text"
                   color="destructive"
                   onClick={handleCancelClick}
                 >
                   Cancel
                 </Button>
 
-                <TxButton
-                  accountId={substrateAccount?.address}
-                  params={handleTransform}
+                <Button
+                  variant="filled"
+                  color="destructive"
                   disabled={disabled}
-                  tx={() => {}}
-                  onSuccess={onSuccess}
+                  onClick={handleCreateClick}
                 >
-                  Submit
-                </TxButton>
+                  Create
+                </Button>
               </div>
             </div>
           </div>

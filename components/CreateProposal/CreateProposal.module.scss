@@ -1,3 +1,7 @@
+@use 'styles/typography';
+@use 'styles/colors';
+@use 'styles/mixins';
+
 .container {
   display: flex;
   flex-direction: column;
@@ -66,6 +70,13 @@
   gap: 1.25rem;
 }
 
+.proposal-input-vote-access {
+  margin-top: 1rem;
+
+  button {
+    border: 0.0625rem solid #{colors.$grayscale-55};
+  }
+}
 .proposal-input-transfer {
   display: flex;
   gap: 5rem;
@@ -104,7 +115,7 @@
   align-items: center;
   display: flex;
   gap: 1.25rem;
-  justify-content: center
+  justify-content: center;
 }
 
 .button-content {
@@ -115,12 +126,12 @@
 }
 
 .title {
-  text-align: center
+  text-align: center;
 }
 
 .proposal-settings {
   display: flex;
-  gap: 82px
+  gap: 82px;
 }
 
 .dialog-content {

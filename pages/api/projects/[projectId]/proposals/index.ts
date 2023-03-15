@@ -10,15 +10,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       break;
     case 'POST':
       // eslint-disable-next-line no-case-declarations
-      const { name, description, createdAtBlock } = req.body;
+      const { title, description, createdAtBlock, internal } = req.body;
       res
         .status(201)
         .json(
           proposalDB.create(
-            name,
+            title,
             description,
             projectId,
-            createdAtBlock as number
+            createdAtBlock as number,
+            internal as boolean
           )
         );
       break;
