@@ -265,9 +265,10 @@ contract_call(
 
 contract_call(
     "Mint Employee for Alice",
-    employee,
     kp['alice'],
+    employee,
     'Minting::mint',
+    allow_fail=False,
     args={
         'to': kp['alice'].ss58_address,
     }
