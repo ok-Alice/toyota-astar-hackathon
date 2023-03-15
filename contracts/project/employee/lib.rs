@@ -5,8 +5,6 @@ pub use self::rmrk_employee::{
     RmrkEmployee,
     RmrkEmployeeRef,
 };
-
-
 #[openbrush::contract]
 pub mod rmrk_employee { // from rmrk_example_equippable
     use ink::{
@@ -16,6 +14,7 @@ pub mod rmrk_employee { // from rmrk_example_equippable
         },
         prelude::vec::Vec,
     };
+    use ink::storage::Mapping;
     use openbrush::{
         contracts::{
             access_control::*,
@@ -37,7 +36,14 @@ pub mod rmrk_employee { // from rmrk_example_equippable
         storage::*,
         traits::*,
         types::*,
+        utils::*,
     };
+
+    #[derive(Debug, scale::Encode, scale::Decode)]
+    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+    pub enum EmployeeError {
+        Custom(String),
+    }
 
     /// Event emitted when a token transfer occurs.
     #[ink(event)]
@@ -217,6 +223,7 @@ pub mod rmrk_employee { // from rmrk_example_equippable
         base: BaseData,
         #[storage_field]
         equippable: EquippableData,
+        voting_power: Mapping<Id, u64>,
     }
 
     impl PSP34 for RmrkEmployee {}
@@ -238,6 +245,8 @@ pub mod rmrk_employee { // from rmrk_example_equippable
     impl Equippable for RmrkEmployee {}
 
     impl Query for RmrkEmployee {}
+
+    impl Utils for RmrkEmployee {}
 
     impl RmrkEmployee {
         /// Instantiate new RMRK contract
@@ -262,12 +271,31 @@ pub mod rmrk_employee { // from rmrk_example_equippable
                 collection_metadata,
                 max_supply,
             );
+            instance.voting_power = Mapping::default();
             instance
         }
 
         #[ink(message)]
         pub fn account_id(&self) -> AccountId {
             self.env().account_id()
+        }
+
+        #[ink(message)]
+        pub fn set_token_voting_power(&mut self, token_id: Id, voting_factor: u64) -> Result<(), EmployeeError> {
+            if !self.ensure_exists_and_get_owner(&token_id).is_ok() {
+                return Err(EmployeeError::Custom("Invalid token id".into()));
+            }
+            self.voting_power.insert(&token_id, &voting_factor);
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn token_voting_power(&self, token_id: Id) -> Result<u64, EmployeeError> {
+            if !self.ensure_exists_and_get_owner(&token_id).is_ok() {
+                return Err(EmployeeError::Custom("Invalid token id".into()));
+            }
+            let token_voting_power = self.voting_power.get(token_id).unwrap();
+            Ok(token_voting_power)
         }
     }
 
