@@ -11,12 +11,16 @@ pub mod project {
     use employee::rmrk_employee::RmrkEmployeeRef;
     use assignment::rmrk_assignment::RmrkAssignmentRef;
 
+    use openbrush::contracts::psp34::Id;
     use openbrush::{
         traits::{
             Storage,
             String,
         },
     };
+
+    // use sp_arithmetic::{FixedU128, FixedPointNumber, traits::One, traits::Saturating, traits::Zero};
+    // use scale::CompactAs;
 
     #[derive(Debug, scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -244,11 +248,19 @@ pub mod project {
 
         /// vote for given proposal Id
         #[ink(message)]
-        pub fn vote(&mut self, vote_type: VoteType, project_id: ProjectId,  proposal_id: ProposalId) -> Result<(), ProjectError> {
+        pub fn vote(&mut self, vote_type: VoteType, project_id: ProjectId, proposal_id: ProposalId, project_token_id: Id, function_token_id: Id) -> Result<(), ProjectError> {
             // todo: check caller has the required rights
 
             let caller = self.env().caller();
-            //TODO: check caller holds NFT
+
+            let assignment_ref = self.employee_project.get(project_id).unwrap();
+            if !assignment_ref.ensure_exists_and_owner_of(caller, project_token_id.clone()).is_ok() {
+                return Err(ProjectError::Custom(String::from("Invalid project_token_id")));
+            }
+
+            if !self.employee_function.clone().unwrap().ensure_exists_and_owner_of(caller, function_token_id.clone()).is_ok() {
+                return Err(ProjectError::Custom(String::from("Invalid function_token_id")));
+            }
 
             if !self.proposals.contains((project_id, proposal_id)) {
                 return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
@@ -263,7 +275,7 @@ pub mod project {
                 return Err(ProjectError::Custom(String::from("Caller has already voted")));
             }
 
-            let voting_power = self.get_caller_voting_power();
+            let voting_power = self.get_caller_voting_power(project_id, project_token_id, function_token_id);
             match vote_type {
                 VoteType::Against => vote_status.votes_against += voting_power,
                 VoteType::For     => vote_status.votes_for     += voting_power,
@@ -325,9 +337,13 @@ pub mod project {
             Ok(())
         }
 
-        fn get_caller_voting_power(&self) -> u32 {
+        fn get_caller_voting_power(&self, project_id: ProjectId, project_token_id: Id, function_token_id: Id) -> u32 {
+            // TODO: These are lazy and horrible castings, also should we use FixedU128 to handle decimals?
+            let assignment_ref = self.employee_project.get(project_id).unwrap();
+            let function_voting_power = self.employee_function.clone().unwrap().token_voting_power(function_token_id).unwrap_or(0) as u32;
+            let project_voting_power = assignment_ref.token_voting_power(project_token_id).unwrap_or(0) as u32;
             // TODO: Implement PRJ voting factor  * FNC voting factor but not sure where to get these values from
-            return 1;
+            return function_voting_power + project_voting_power;
         }
 
         // #[ink(message)]
