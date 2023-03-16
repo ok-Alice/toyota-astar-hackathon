@@ -1,26 +1,28 @@
 [
-  {
-    "id": 0,
-    "projectId": 0,
-    "title": "Corolla UI team",
-    "description": "We need to redesign the UI of the Corolla app",
-    "yesVotes": 0,
-    "noVotes": 0,
-    "internal": false,
-    "status": "ACTIVE",
-    "createdAtBlock": 10,
-    "proposer": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
-  },
-  {
-    "id": 1,
-    "projectId": 0,
-    "title": "second",
-    "description": "Woopie i made another one",
-    "yesVotes": 0,
-    "noVotes": 0,
-    "internal": true,
-    "createdAtBlock": 0,
-    "status": "COMPLETED",
-    "proposer": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
-  }
+    {
+        "id": 0,
+        "projectId": 0,
+        "title": "Corolla UI team",
+        "description": "We need to redesign the UI of the Corolla app",
+        "yesVotes": 2,
+        "noVotes": 4,
+        "abstainVotes": 2,
+        "status": "ACTIVE",
+        "createdAtBlock": 10,
+        "internal": false,
+        "proposer": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+    },
+    {
+        "id": 1,
+        "projectId": 0,
+        "title": "second",
+        "description": "Woopie i made another one",
+        "yesVotes": 3,
+        "noVotes": 2,
+        "abstainVotes": 0,
+        "status": "COMPLETED",
+        "createdAtBlock": 0,
+        "internal": true,
+        "proposer": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
+    }
 ]

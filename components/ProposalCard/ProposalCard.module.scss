@@ -112,3 +112,44 @@
   gap: 8px;
   justify-content: space-between;
 }
+
+.vertical-break {
+  background: #{colors.$purple-5};
+  width: 0.0625rem;
+}
+
+.button-vote {
+  padding: 0;
+  width: 2.5rem;
+}
+
+.proposal-vote-buttons {
+  align-items: stretch;
+  border-color: #{colors.$purple-5};
+  border-radius: 1.5rem 0 0 0;
+  border-style: solid;
+  border-width: 0.0625rem 0 0 0.0625rem;
+  display: flex;
+  gap: 1.25rem;
+  justify-content: space-between;
+  margin-right: -1.2rem;
+  padding: 0.875rem 2rem;
+}
+
+.proposal-vote-button-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.buttons-container {
+  display: flex;
+  gap: 20px;
+}
+
+.vote-access {
+  background-color: #{colors.$purple-1};
+  color: white;
+}

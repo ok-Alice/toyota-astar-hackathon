@@ -8,10 +8,12 @@ import { Typography } from 'components/ui-kit/Typography';
 
 import { useAtomValue } from 'jotai';
 import { currentProjectAtom } from 'store/db';
+
 import { maskAddress } from 'utils/maskAddress';
 import { keyringAtom } from 'store/api';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { Chip } from 'components/ui-kit/Chip';
+import { ProposalActions } from './ProposalActions';
 
 import styles from './ProposalCard.module.scss';
 
@@ -64,7 +66,7 @@ export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
             <div className={styles.title}>
               <Typography variant="title4">{title}</Typography>
               <span>
-                <Chip variant="proposal" color="dark-blue">
+                <Chip variant="proposal" className={styles['vote-access']}>
                   <Typography variant="title6">
                     {proposal.internal ? 'Members Only' : 'Everyone'}
                   </Typography>
@@ -89,6 +91,8 @@ export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
                 </Typography>
               </span>
             </span>
+
+            <ProposalActions proposal={proposal} />
           </div>
         </div>
       </div>

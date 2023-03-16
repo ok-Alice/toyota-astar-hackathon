@@ -8,6 +8,7 @@ export type Proposal = {
   description: string;
   yesVotes: number;
   noVotes: number;
+  abstainVotes: number;
   status: 'ACTIVE' | 'COMPLETED' | 'DECLINED';
   createdAtBlock: number;
   internal: boolean;
@@ -16,13 +17,14 @@ export type Proposal = {
 
 const getProjectProposal = (projectId: number, proposalId: number) => {
   const proposal = proposalData.find(
-    (x: Proposal) => x.id === proposalId && x.projectId === projectId
+    (_proposal) =>
+      _proposal.id === proposalId && _proposal.projectId === projectId
   );
   return proposal;
 };
 
 const listProjectProposals = (projectId: number) =>
-  proposalData.filter((proposal: Proposal) => proposal.projectId === projectId);
+  proposalData.filter((_proposal) => _proposal.projectId === projectId);
 
 const createProposal = (
   title: string,
@@ -39,6 +41,7 @@ const createProposal = (
     description,
     yesVotes: 0,
     noVotes: 0,
+    abstainVotes: 0,
     internal,
     status: 'ACTIVE',
     createdAtBlock,
@@ -50,12 +53,17 @@ const createProposal = (
   return proposal;
 };
 
-const doVote = (projectId: number, proposalId: number, vote: 'yes' | 'no') => {
+const doVote = (
+  projectId: number,
+  proposalId: number,
+  vote: 'yes' | 'no' | 'abstain'
+) => {
   const proposal = getProjectProposal(projectId, proposalId);
   if (!proposal) return;
 
   if (vote === 'yes') (proposal as Proposal).yesVotes += 1;
   if (vote === 'no') (proposal as Proposal).noVotes += 1;
+  if (vote === 'abstain') (proposal as Proposal).abstainVotes += 1;
   saveData(proposalData, 'proposals.json');
 };
 

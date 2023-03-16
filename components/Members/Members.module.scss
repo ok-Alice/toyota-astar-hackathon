@@ -23,14 +23,14 @@
 }
 
 .avatar {
-  height: 5rem;
+  height: 80px;
   position: relative;
-  width: 5rem;
+  width: 65px;
   margin-right: 0.5rem;
 
   embed {
-    height: 100%;
-    width: 100%;
+    width: 65px;
+    height: 80px;
     position: absolute;
   }
 }
