@@ -3,49 +3,31 @@ import { saveData } from './utils';
 
 export type Message = {
   id: number;
-  userId: string;
+  userId: number;
   message: string;
   timestamp: string;
 };
 
 export type Discussion = {
   id: number;
-  proposalId: number;
+  projectId: number;
   messages: Message[];
 };
 
-export type ProposalDiscussions = {
-  id: number;
-  projectId: number;
-  discussions: Discussion[];
-};
-
-const getProjectDiscussions = (projectId: number) =>
+const getDiscussion = (projectId: number) =>
   discussionData.find((x) => x.projectId === projectId);
 
-const getProposalDiscussion = (projectId: number, proposalId: number) => {
-  const projectDiscussions = getProjectDiscussions(projectId);
-  if (!projectDiscussions) return null;
-  return projectDiscussions.discussions.find(
-    (x) => x.proposalId === proposalId
-  );
-};
-
-const addMessage = (
-  projectId: number,
-  proposalId: number,
-  message: string,
-  userId: number
-) => {
-  const projectDiscussions = getProjectDiscussions(projectId);
-  let discussion = getProposalDiscussion(projectId, proposalId);
+const addMessage = (projectId: number, message: string, userId: number) => {
+  let discussion = getDiscussion(projectId);
 
   if (!discussion) {
     discussion = {
-      id: projectDiscussions?.discussions.length || 0,
-      proposalId,
+      id: discussionData.length || 0,
+      projectId,
       messages: []
     };
+
+    discussionData.push(discussion);
   }
 
   const newMessage = {
@@ -56,14 +38,12 @@ const addMessage = (
   };
 
   discussion.messages.push(newMessage);
-  projectDiscussions?.discussions.push(discussion);
 
   saveData(discussionData, 'discussions.json');
   return newMessage;
 };
 
 export const discussionsDB = {
-  list: getProjectDiscussions,
-  get: getProposalDiscussion,
-  create: addMessage
+  get: getDiscussion,
+  addMessage
 };

@@ -40,3 +40,7 @@ next-env.d.ts
 # VSCode
 .history
 .vscode
+
+
+# stopping json db from being pushed to github
+/db/data/*.json

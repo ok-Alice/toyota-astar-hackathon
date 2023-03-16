@@ -153,3 +153,9 @@
   background-color: #{colors.$purple-1};
   color: white;
 }
+
+.top-right-container {
+  align-items: center;
+  display: flex;
+  gap: 15px;
+}

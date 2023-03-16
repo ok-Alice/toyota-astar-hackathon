@@ -3,15 +3,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { currentProjectAtom } from 'store/db';
-
-import { About } from 'components/About';
-import { Members } from 'components/Members';
-import { ProposalBoard } from 'components/ProposalBoard';
 import { currentSubstrateAccountAtom } from 'store/substrateAccount';
 
-import styles from 'styles/pages/dashboard.module.scss';
+import { Discussions } from 'components/Discussions';
+import styles from 'styles/pages/discussions.module.scss';
 
-export default function ProjectDashboard() {
+export default function ProjectDiscussions() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const currentProject = useAtomValue(currentProjectAtom);
@@ -44,7 +41,6 @@ export default function ProjectDashboard() {
   }, [currentSubstrateAccount, router]);
 
   if (loading) {
-    // TODO @asanzyb create a loader
     return null;
   }
 
@@ -55,14 +51,8 @@ export default function ProjectDashboard() {
       </Head>
 
       <div className={styles.container}>
-        <div className={styles['left-container']}>
-          <About />
-        </div>
-        <div className={styles['center-container']}>
-          <ProposalBoard />
-        </div>
-        <div className={styles['right-container']}>
-          <Members />
+        <div className={styles['full-width-container']}>
+          <Discussions />
         </div>
       </div>
     </>

@@ -67,7 +67,7 @@ export function CreateProposal({ projectId }: CreateProposalProps) {
 
     const newProposal = {
       ...state,
-      blockNumber: curBlockNumber,
+      createdAtBlock: curBlockNumber,
       proposer: substrateAccountAddress
     };
     try {

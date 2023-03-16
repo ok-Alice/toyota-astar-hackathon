@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 import { useAtom, useAtomValue } from 'jotai';
 import { projectsAtom, usersAtom } from 'store/db';
+import { Project } from 'db/projects';
 import { substrateAccountAtom } from 'store/substrateAccount';
 
 // import { useDaoContract } from 'hooks/useDaoContract';
@@ -26,32 +27,34 @@ import { formLinkByProjectId } from 'utils/formLinkByProjectId';
 import { InfoState, MembersState } from './types';
 import { ProjectInfo } from './ProjectInfo';
 import { ProjectMembers } from './ProjectMembers';
+import { ProjectAttribute } from './ProjectAttribute';
 
 // import { DaoToken } from './DaoToken';
 // import { DaoGovernance } from './DaoGovernance';
 
 import styles from './CreateProject.module.scss';
-import { ProjectAttribute } from './ProjectAttribute';
-import { Project } from 'db/projects';
 
 const initialInfoState: InfoState = {
   name: '',
   description: ''
 };
 
-const initialMembersState: MembersState = {
-  members: [{ address: '', role: '', voteWeight: '1' }]
-};
-
 export function CreateProject() {
+  const substrateAccount = useAtomValue(substrateAccountAtom);
   const router = useRouter();
   const [projectInfo, setProjectInfo] = useState<InfoState>(initialInfoState);
-  const [projectMembers, setProjectMembers] =
-    useState<MembersState>(initialMembersState);
+  const [projectMembers, setProjectMembers] = useState<MembersState>({
+    members: [
+      {
+        address: substrateAccount?.address || '',
+        role: 'Creator',
+        voteWeight: '1'
+      }
+    ]
+  });
   const [projectAttribute, setProjectAttribute] = useState<string>('');
   const [projects, setProjects] = useAtom(projectsAtom);
   const users = useAtomValue(usersAtom);
-  const substrateAccount = useAtomValue(substrateAccountAtom);
 
   const [createdProjectId, setCreatedProjectId] = useState<number | null>(null);
   const [proposedProjectId, setProposedProjectId] = useState<number | null>(
@@ -64,8 +67,6 @@ export function CreateProject() {
     const apiProjects = (await response.json()) as Project[];
     setProjects(apiProjects);
   };
-
-  // const daoContract = useDaoContract();
 
   useEffect(() => {
     if (!createdRef.current || createdProjectId === null) {

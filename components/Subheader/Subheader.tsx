@@ -8,9 +8,8 @@ import { formLinkByProjectId } from 'utils/formLinkByProjectId';
 import type { Href } from 'types';
 
 import { Typography } from 'components/ui-kit/Typography';
-import { Icon, IconNamesType } from 'components/ui-kit/Icon';
+import { IconNamesType } from 'components/ui-kit/Icon';
 import { Avatar } from 'components/ui-kit/Avatar';
-import { Button } from 'components/ui-kit/Button';
 import { NavLink } from 'components/ui-kit/NavLink';
 
 import { CreateProposal } from '../CreateProposal';
@@ -30,9 +29,9 @@ const navigations: Navigation[] = [
     href: 'dashboard'
   },
   {
-    icon: 'governance',
-    title: 'Governance',
-    href: 'governance'
+    icon: 'chat',
+    title: 'Discussions',
+    href: 'discussions'
   }
 ];
 

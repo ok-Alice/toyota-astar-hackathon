@@ -8,11 +8,13 @@ import { Typography } from 'components/ui-kit/Typography';
 
 import { useAtomValue } from 'jotai';
 import { currentProjectAtom } from 'store/db';
+import { currentSubstrateAccountAtom } from 'store/substrateAccount';
 
 import { maskAddress } from 'utils/maskAddress';
 import { keyringAtom } from 'store/api';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { Chip } from 'components/ui-kit/Chip';
+import { Button } from 'components/ui-kit/Button';
 import { ProposalActions } from './ProposalActions';
 
 import styles from './ProposalCard.module.scss';
@@ -26,6 +28,7 @@ export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
   const title = proposal?.title;
   const description = proposal?.description;
   const currentProject = useAtomValue(currentProjectAtom);
+  const currentAccount = useAtomValue(currentSubstrateAccountAtom);
   const keyring = useAtomValue(keyringAtom);
 
   const getUser = (address: string) =>
@@ -48,16 +51,20 @@ export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
           />
           <Typography variant="title7">{proposal?.status}</Typography>
         </div>
-        {proposal.status === 'ACTIVE' && currentProject && currentBlock && (
-          <div className={styles.countdown}>
-            <Typography variant="value5">
-              {proposal.createdAtBlock +
-                appConfig.proposalVotingPeriod -
-                currentBlock}
-            </Typography>
-            <Typography variant="body2">blocks left</Typography>
-          </div>
-        )}
+        <div className={styles['top-right-container']}>
+          {proposal.status === 'ACTIVE' && currentProject && currentBlock && (
+            <div className={styles.countdown}>
+              <Typography variant="value5">
+                {proposal.createdAtBlock +
+                  appConfig.proposalVotingPeriod -
+                  currentBlock}
+              </Typography>
+              <Typography variant="body2">blocks left</Typography>
+            </div>
+          )}
+          {currentAccount?.address === proposal.proposer &&
+            proposal.status === 'ACTIVE' && <Button size="xs">Delete</Button>}
+        </div>
       </div>
       <div className={styles.content}>
         <div className={styles['description-container']}>
