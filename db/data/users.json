@@ -6,7 +6,7 @@
     "displayName": "Alice",
     "password": "1234",
     "badges": ["Lead Frontend Dev"],
-    "avatar": "/nfts/Aiko/Aiko.svg"
+    "avatar": "/nfts/Alice/Alice.svg"
   },
   {
     "id": 1,
@@ -24,7 +24,7 @@
     "displayName": "Charlie",
     "password": "1234",
     "badges": ["Full Stack Dev"],
-    "avatar": "/nfts/Gaya/Gaya.svg"
+    "avatar": "/nfts/Charlie/Charlie.svg"
   },
   {
     "id": 3,
@@ -42,15 +42,15 @@
     "displayName": "Eve",
     "password": "1234",
     "badges": ["UX Designer"],
-    "avatar": "/nfts/Carol/Carol.svg"
+    "avatar": "/nfts/Eve/Eve.svg"
   },
   {
     "id": 5,
     "address": "5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL",
-    "email": "Hassan@adobe.com",
-    "displayName": "Hassan",
+    "email": "Ferdie@adobe.com",
+    "displayName": "Ferdie",
     "password": "1234",
     "badges": ["Adobe UI Designer"],
-    "avatar": "/nfts/Hassan/Hassan.svg"
+    "avatar": "/nfts/Ferdie/Ferdie.svg"
   }
 ]

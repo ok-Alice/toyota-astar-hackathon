@@ -7,32 +7,32 @@
     "members": [
       {
         "userId": 0,
-        "role": "Council",
+        "role": "Employee",
         "voteWeight": "1"
       },
       {
         "userId": 1,
-        "role": "Council",
+        "role": "Employee",
         "voteWeight": "1"
       },
       {
         "userId": 2,
-        "role": "Council",
+        "role": "Employee",
         "voteWeight": "1"
       },
       {
         "userId": 3,
-        "role": "Council",
+        "role": "Employee",
         "voteWeight": "1"
       },
       {
         "userId": 4,
-        "role": "Council",
+        "role": "Employee",
         "voteWeight": "1"
       },
       {
         "userId": 5,
-        "role": "Council",
+        "role": "Employee",
         "voteWeight": "1"
       }
     ]
