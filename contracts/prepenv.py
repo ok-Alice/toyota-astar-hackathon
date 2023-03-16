@@ -13,27 +13,40 @@ members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
 
 titles = { 'alice' : { 
                 'function': 'UI dev',
-                'project': 'UI Front-end 1'
+                'project': 'UI Front-end 1',
+                'function_voting_power': 1100,
+                'project_voting_power': 1050,
+
             },
             'bob' : { 
                 'function': 'UI dev',
-                'project': 'UI Front-end 1'
+                'project': 'UI Front-end 1',
+                'function_voting_power': 1100,
+                'project_voting_power': 1050,
             },
             'charlie' : { 
                 'function': 'UI dev',
-                'project': 'UI Front-end 1'
+                'project': 'UI Front-end 1',
+                'function_voting_power': 1100,
+                'project_voting_power': 1050,
             },
             'dave' : { 
                 'function': 'UI dev',
-                'project': 'UI Front-end 1'
+                'project': 'UI Front-end 1',
+                'function_voting_power': 1100,
+                'project_voting_power': 1050,
             },
             'eve' : { 
                 'function': 'UI dev',
-                'project': 'UI Front-end 1'
+                'project': 'UI Front-end 1',
+                'function_voting_power': 1100,
+                'project_voting_power': 1050,
             },
             'ferdie' : { 
                 'function': 'UI dev',
-                'project': 'UI Front-end 1'
+                'project': 'UI Front-end 1',
+                'function_voting_power': 1100,
+                'project_voting_power': 1050,
             },
         }
 
@@ -230,10 +243,12 @@ for member in members:
     contract_call("Employee metadata " + member, kp['alice'], employee, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee']}, 'metadata': member})
     
     ids[member]['function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
-    contract_call("Employee metadata " + member, kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['function']}, 'metadata': titles[member]['function']})  
+    contract_call("Employee_function metadata " + member,     kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['function']}, 'metadata': titles[member]['function']}) 
+    contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
     
     ids[member]['project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
-    contract_call("Employee metadata " + member, kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['project']}, 'metadata': titles[member]['project']})
+    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['project']}, 'metadata': titles[member]['project']})
+    contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
 
 #ids['Alice']['employee'] = contract_mint_to('Mint Employee-project for Alice', kp['alice'], employee, alice.ss58_address)
 
@@ -266,13 +281,15 @@ contract_call(
         },
 )
 
-# Alice creates two assets on employee, one for function, one for project
 function_asset_id =  random.randint(0, 2**32 -1)
-#project_asset_id =  random.randint(0, 2**32 -1)
+project_asset_id =  random.randint(0, 2**32 -1)
 group_id = 1
 
+
+# Alice creates assets and equippable_address on project_function
+
 contract_call(
-    "Employee add_asset_entry",
+    "Employee add_asset_entry on employee",
     kp['alice'],
     employee,
     'MultiAsset::add_asset_entry',
@@ -284,22 +301,9 @@ contract_call(
     },
 )
 
-# contract_call(
-#     "Employee add_asset_entry",
-#     kp['alice'],
-#     employee,
-#     'MultiAsset::add_asset_entry',
-#     allow_fail=True,
-#     args={
-#         'id': project_asset_id,
-#         'equippable_group_id': group_id,
-#         'asset_uri': 'asset_uri/',
-#         'part_ids': [0]
-#     },
-# )
 
 contract_call(
-    'Employee ',
+    'add_equippable address on employee for employee_funcion',
     kp['alice'],
     employee,
     'Base::add_equippable_addresses',
@@ -310,8 +314,37 @@ contract_call(
     }
 )
 
+# Alice creates assets and equippable_address on project_employee
+
+contract_call(
+     "Employee add_asset_entry on employee",
+     kp['alice'],
+     employee,
+     'MultiAsset::add_asset_entry',
+     args={
+         'id': project_asset_id,
+         'equippable_group_id': group_id,
+         'asset_uri': 'asset_uri/',
+         'part_ids': [1]
+     },
+)
+
+
+contract_call(
+    'add_equippable address on employee for employee_project', 
+    kp['alice'],
+    employee,
+    'Base::add_equippable_addresses',
+    args={ 
+        'part_id': 1,
+        'equippable_address' : [ employee_project.contract_address ],
+    
+    }
+)
+
 for member in members:
 
+    # Member tries to equip with function
 
     contract_call(
         "Employee " + member + " add_asset_to_token",
@@ -325,11 +358,11 @@ for member in members:
         },
     )
 
-    # Alice tries to equipe herself with function
 
+    # ? currently only works for alice?
     contract_call(
         "Equip function for "+member,
-        kp['alice'],
+        kp[member],
         employee,
         'Equippable::equip',
         args={
@@ -341,56 +374,66 @@ for member in members:
         }
     )
 
-
-
-
-quit()
-
-for member in members:
-    #asset_id = ids[member]['employee']
-    
-    token_id = { 'U64': ids[member]['Function']}
+    # Member tries to equip with project
 
     contract_call(
-        "Employee by Alice",
-        kp['alice'],
+        "Employee " + member + " add_asset_to_token",
+        kp[member],
+        employee,
+        'MultiAsset::add_asset_to_token',
+        args={
+            'token_id': { 'U64' : ids[member]['employee'] }, 
+            'asset_id': project_asset_id,
+            'replaces_asset_with_id': None
+        },
+    )
+
+    # ? currently only works for alice?
+    contract_call(
+        "Equip project for "+member,
+        kp[member],
         employee,
         'Equippable::equip',
-        allow_fail=False,
         args={
-        'token_id': token_id,
-        'asset_id': asset_id,
-        'slot_part_id': 0,
-        'child_nft' : ( employee_project.contract_address, { 'U64': 1 } ),
+        'token_id':  { 'U64' : ids[member]['employee'] },
+        'asset_id': project_asset_id,
+        'slot_part_id': 1,
+        'child_nft' : ( employee_project.contract_address, { 'U64': ids[member]['project'] } ),
         'child_asset_id': 0,        
         }
     )
 
-
-quit()
-
-
-## Mint employee nft to bob
+# Alice creates proposal
 
 contract_call(
-    "Employee add_asset_to_token",
-    alice,
-    employee,
-    'MultiAsset::add_asset_to_token',
-    allow_fail=True,
-    args={
-        'token_id': token_id,
-        'asset_id': asset_id,
-        'replaces_asset_with_id': None
-    },
+    "Alice creates proposal",
+    kp['alice'],
+    project,
+    'create_proposal',
+    args = {
+        'project_id' : project_id,
+        'proposal_id': 1,
+        'internal': False,
+    }
 )
 
+state = project.read(kp['alice'], 'proposal_details', args = { 'project_id': project_id, 'proposal_id': 1}).contract_result_data[1]
 
 
+# Alice votes
 
-#contract_call('Mint Employee-project for Alice', alice, employee_project, 'Minting::mint', False, args={ 'to': alice.ss58_address})
-#contract_call('Mint Employee-project for Bob', alice, employee_project, 'Minting::mint', False, args={ 'to': kp_bob.ss58_address})
-#contract_call('Mint Employee-project for Charlie', alice, employee_project, 'Minting::mint', False, args={ 'to': kp_charlie.ss58_address})
+contract_call(
+    "Alice votes FOR",
+    kp['alice'],
+    project,
+    'vote',
+    args = {
+        'vote_type': "For" ,
+        'project_id': project_id,
+        'proposal_id': 1,
+    }
+)
+
 
 
 

@@ -125,7 +125,7 @@ project = deploy_contract(msg='Project',
                         endowment=0
                         )
 
-transfer_balance(kp_alice, project.contract_address, 1 * 10**15)
+#transfer_balance(kp_alice, project.contract_address, 1 * 10**15)
 
 employee_address = project.read(kp_alice, 'employee_address').contract_result_data[1]
 print("Employee:", employee_address)
