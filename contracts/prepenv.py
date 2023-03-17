@@ -219,6 +219,7 @@ transfer_balance(kp['alice'], str(function_address), 10**17)
 ## Employee_project from create project, and send it some funds from Alice
 
 contract_call("Create Project", kp['alice'], project, 'create_project', args = {
+    'project_title': "My New project!",
     'project_id': project_id,
     })
 
