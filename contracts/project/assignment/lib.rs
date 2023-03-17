@@ -122,7 +122,8 @@ pub mod rmrk_assignment { // from rmrk_example_mintable
             instance
         }
 
-        fn set_token_voting_power(&mut self, token_id: Id, voting_factor: u128) -> Result<(), AssignmentError> {
+        #[ink(message)]
+        pub fn set_token_voting_power(&mut self, token_id: Id, voting_factor: u128) -> Result<(), AssignmentError> {
             if !self.ensure_exists_and_get_owner(&token_id).is_ok() {
                 return Err(AssignmentError::Custom("Invalid token id".into()));
             }

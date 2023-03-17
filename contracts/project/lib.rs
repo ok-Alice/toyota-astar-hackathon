@@ -337,7 +337,14 @@ pub mod project {
                 return Err(ProjectError::Custom(String::from("Project / Proposal not open for voting")));
             }
 
-            let mut vote_status = self.votes.get((project_id, proposal_id)).unwrap();
+            let mut vote_status = self.votes.get((project_id, proposal_id)).unwrap_or(
+                ProposalVote {
+                    votes_against: 0,
+                    votes_for:     0,
+                    votes_abstain: 0,
+                    has_voted: Vec::new()
+                }
+            );
             if vote_status.has_voted.contains(&caller) {
                 ink::env::debug_println!("Caller has already voted");
                 return Err(ProjectError::Custom(String::from("Caller has already voted")));
