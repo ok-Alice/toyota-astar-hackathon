@@ -1,9 +1,14 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
+
 #[openbrush::contract]
 pub mod project {
     use ink::storage::Mapping;
+    use ink::EnvAccess;
+    use ink::env::DefaultEnvironment;
+    use ink::codegen::EmitEvent;
+
     use ink::prelude::vec::Vec;
 
     use ink::env::hash::{Sha2x256, HashOutput};
@@ -21,6 +26,9 @@ pub mod project {
 
     // use sp_arithmetic::{FixedU128, FixedPointNumber, traits::One, traits::Saturating, traits::Zero};
     // use scale::CompactAs;
+
+
+
 
     #[derive(Debug, scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -50,6 +58,31 @@ pub mod project {
     type ProjectId = u32;
 
 
+    /// Event emmited at project creation
+    #[ink(event)]
+    pub struct ProjectCreated {
+        #[ink(topic)]
+        creator: AccountId,
+        #[ink(topic)]
+        project_id: ProjectId,
+        #[ink(topic)]
+        employee_project: AccountId,
+    }
+
+    /// Event emmited at proposal creation
+    #[ink(event)]
+    pub struct ProposalCreated {
+        #[ink(topic)]
+        creator: AccountId,
+        #[ink(topic)]
+        project_id: ProjectId,
+        #[ink(topic)]
+        proposal_id: ProposalId,
+        vote_start: BlockNumber,
+        vote_end: BlockNumber,
+    }
+
+
     #[derive(scale::Decode, scale::Encode)]
     #[cfg_attr(
         feature = "std",
@@ -74,6 +107,8 @@ pub mod project {
         pub has_voted: Vec<AccountId>,
     }
 
+   
+
     #[ink(storage)]
     #[derive(Default, Storage)]
     pub struct Project {
@@ -83,6 +118,7 @@ pub mod project {
         employee: Option<RmrkEmployeeRef>,
         employee_function: Option<RmrkAssignmentRef>,
         employee_project: Mapping<ProjectId, RmrkAssignmentRef>,
+        projects: Vec<ProjectId>,
         proposals: Mapping<(ProjectId, ProposalId), ProposalCore>,
         proposal_ids: Mapping<ProjectId, Vec<ProposalId>>,
         votes: Mapping<(ProjectId, ProposalId), ProposalVote>,
@@ -101,6 +137,7 @@ pub mod project {
             let proposal_ids = Mapping::default();
             let employee_project = Mapping::default();
             let votes = Mapping::default();
+            let projects = Vec::default();
 
             let salt = Self::env().block_number().to_le_bytes();
             let employee = RmrkEmployeeRef::new(
@@ -132,13 +169,14 @@ pub mod project {
 
             Self { 
                 name, 
-                proposals, 
-                proposal_ids, 
                 voting_delay: 0, 
                 voting_period: 10,
                 employee: Some(employee),
                 employee_function: Some(function),
                 employee_project,
+                projects,
+                proposals, 
+                proposal_ids, 
                 votes,
                 assignment_hash,
              }
@@ -158,7 +196,7 @@ pub mod project {
         }
 
         #[ink(message)]
-        pub fn create_project(&mut self, project_id: ProjectId) -> Result<(), ProjectError> {
+        pub fn create_project(&mut self, project_title: String, project_id: ProjectId) -> Result<(), ProjectError> {
             // todo: check role
 
             match self.employee_project.get(project_id) {
@@ -166,12 +204,14 @@ pub mod project {
                 None => (),
             };
 
+            self.projects.push(project_id);
+
             let project_code = String::from("P");
             //todo: concat project_id
 
             let salt = Self::env().block_number().to_le_bytes();
-            let project = RmrkAssignmentRef::new(
-                Vec::from(project_id.to_be_bytes()),
+            let employee_project = RmrkAssignmentRef::new(
+                project_title,
                 project_code,
                 String::from("http://hello.world"),
                 100,
@@ -183,7 +223,14 @@ pub mod project {
             .salt_bytes(salt)
             .instantiate();
             
-            self.employee_project.insert(project_id, &project);
+            self.employee_project.insert(project_id, &employee_project);
+
+            <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<ProjectCreated>(self.env(), 
+                ProjectCreated {
+                    creator: Self::env().caller(),
+                    project_id,
+                    employee_project: employee_project.account_id(),
+                });
 
             Ok(())
         }
@@ -225,8 +272,24 @@ pub mod project {
 
             self.proposals.insert((project_id, proposal_id), &proposal);
 
+            <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<ProposalCreated>(self.env(), 
+            ProposalCreated {
+                creator: self.env().caller(),
+                project_id: project_id,
+                proposal_id: proposal_id,
+                vote_start: proposal.vote_start,
+                vote_end: proposal.vote_end,
+            });
+
             Ok(())
         } 
+
+
+        /// List all active projects
+        #[ink(message)]
+        pub fn list_project_ids(&self) -> Result<Vec<ProjectId>,ProjectError> {
+            Ok(self.projects.clone())
+        }
 
         /// List all open proposals for given project 
         #[ink(message)]
@@ -293,6 +356,23 @@ pub mod project {
             // self._emit_vote_cast(caller,proposal_id,vote);
             Ok(())
         }
+
+
+        /// Cancel the current proposal
+        #[ink(message)]
+        pub fn cancel_proposal(&mut self, project_id: ProjectId, proposal_id: ProposalId) -> Result<(), ProjectError> {
+            if !self.proposals.contains((project_id, proposal_id)) {
+                return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
+            }
+
+            let mut proposal = self.proposals.get((project_id, proposal_id)).unwrap();
+            proposal.canceled = true;
+
+            self.proposals.insert((project_id, proposal_id),&proposal);
+
+            Ok(())
+        }
+
 
         /// Current state of proposal
         #[ink(message)]

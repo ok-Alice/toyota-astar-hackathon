@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import random
 
 from substrateinterface.contracts import ContractCode, ContractInstance
@@ -12,39 +13,39 @@ from substrateinterface.exceptions import SubstrateRequestException
 members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
 
 titles = { 'alice' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
 
             },
             'bob' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'charlie' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'dave' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'eve' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'ferdie' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
@@ -95,7 +96,10 @@ def contract_call(msg, keypair, contract, fname,  args):
     contract_receipt = contract.exec(keypair, fname, args)
     
     if contract_receipt.is_success:
-        print(f'  😎 Call {msg} {fname} : Events { show_events(contract_receipt.contract_events) }')
+        print(f'  😎 Call {msg} {fname}', end='')
+        if contract_receipt.contract_events:
+            print(f': Events { show_events(contract_receipt.contract_events) }', end='')
+        print()
     else:
         print(f'  🤕 Error {msg} {fname}: {contract_receipt.error_message}')
         print("      Args: ", args)
@@ -155,11 +159,12 @@ def transfer_balance(kp_from, to, value):
 ########## Cmdline & setup
 
 
-if len(sys.argv) != 2:
-    print("Usage: ", sys.argv[0], " [project-address]")
+if len(sys.argv) != 3:
+    print("Usage: ", sys.argv[0], " [project-address] [outfile.json]")
     sys.exit(1)
     
 project_address = sys.argv[1]
+outfile_json = sys.argv[2]
 
 substrate = SubstrateInterface(
     url="ws://127.0.0.1:9944",
@@ -216,6 +221,7 @@ transfer_balance(kp['alice'], str(function_address), 10**17)
 ## Employee_project from create project, and send it some funds from Alice
 
 contract_call("Create Project", kp['alice'], project, 'create_project', args = {
+    'project_title': "My New project!",
     'project_id': project_id,
     })
 
@@ -232,7 +238,6 @@ transfer_balance(kp['alice'], str(eproject_address), 10**17)
 
 ## Setting up employees
 
-
 ids = {}
 
 for member in members:
@@ -242,17 +247,25 @@ for member in members:
     ids[member]['employee'] = contract_mint_to('Mint Employee for ' + member, kp['alice'], employee, kp[member].ss58_address) 
     contract_call("Employee metadata " + member, kp['alice'], employee, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee']}, 'metadata': member})
     
-    ids[member]['function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
-    contract_call("Employee_function metadata " + member,     kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['function']}, 'metadata': titles[member]['function']}) 
-    contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
+    ids[member]['employee_function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
+    contract_call("Employee_function metadata " + member,     kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'metadata': titles[member]['employee_function']}) 
+    #contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
     
-    ids[member]['project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
-    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['project']}, 'metadata': titles[member]['project']})
-    contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
+    ids[member]['employee_project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
+    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'metadata': titles[member]['employee_project']})
+    #contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
 
-#ids['Alice']['employee'] = contract_mint_to('Mint Employee-project for Alice', kp['alice'], employee, alice.ss58_address)
+
+ids['contract'] = {}
+ids['contract']['project'] = project_address
+ids['contract']['employee'] = str(employee_address)
+ids['contract']['employee_function'] = str(function_address)
+ids['contract']['employee_project'] = str(eproject_address)
 
 print("♐ IDs:", ids)
+
+with open(outfile_json, "w") as outfile:
+    json.dump(ids, outfile)
 
 
 # Alice adds the part slots to employee
@@ -369,7 +382,7 @@ for member in members:
         'token_id':  { 'U64' : ids[member]['employee'] },
         'asset_id': function_asset_id,
         'slot_part_id': 0,
-        'child_nft' : ( employee_function.contract_address, { 'U64': ids[member]['function'] } ),
+        'child_nft' : ( employee_function.contract_address, { 'U64': ids[member]['employee_function'] } ),
         'child_asset_id': 0,        
         }
     )
@@ -398,7 +411,7 @@ for member in members:
         'token_id':  { 'U64' : ids[member]['employee'] },
         'asset_id': project_asset_id,
         'slot_part_id': 1,
-        'child_nft' : ( employee_project.contract_address, { 'U64': ids[member]['project'] } ),
+        'child_nft' : ( employee_project.contract_address, { 'U64': ids[member]['employee_project'] } ),
         'child_asset_id': 0,        
         }
     )
