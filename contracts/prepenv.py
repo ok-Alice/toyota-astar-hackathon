@@ -204,7 +204,7 @@ if verbose > 0:
 employee = contract_from_address(str(employee_address), "employee/employee")
 
 total_supply = employee.read(kp['alice'], 'Minting::max_supply').contract_result_data[1]
-assert(total_supply == 100)
+assert(total_supply == 10000)
 
 transfer_balance(kp['alice'], str(employee_address), 10**17)
 
@@ -214,7 +214,7 @@ project_id = random.randint(0, 2**32 -1);
 
 employee_function = contract_from_address(str(function_address), 'assignment/assignment')
 total_supply = employee_function.read(kp['alice'], 'Minting::max_supply').contract_result_data[1]
-assert(total_supply == 100)
+assert(total_supply == 10000)
 
 transfer_balance(kp['alice'], str(function_address), 10**17)
 
@@ -231,7 +231,7 @@ if verbose > 0:
 
 employee_project = contract_from_address(str(eproject_address), 'assignment/assignment')
 total_supply = employee_project.read(kp['alice'], 'Minting::max_supply').contract_result_data[1]
-assert(total_supply == 100)
+assert(total_supply == 10000)
 
 transfer_balance(kp['alice'], str(eproject_address), 10**17)
 
@@ -371,8 +371,6 @@ for member in members:
         },
     )
 
-
-    # ? currently only works for alice?
     contract_call(
         "Equip function for "+member,
         kp[member],
@@ -401,7 +399,7 @@ for member in members:
         },
     )
 
-    # ? currently only works for alice?
+   
     contract_call(
         "Equip project for "+member,
         kp[member],

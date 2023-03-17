@@ -82,6 +82,17 @@ pub mod project {
         vote_end: BlockNumber,
     }
 
+    #[ink(event)]
+    pub struct VoteCast {
+        #[ink(topic)]
+        user: AccountId,
+        #[ink(topic)]
+        project_id: ProjectId,
+        #[ink(topic)]
+        proposal_id: ProposalId,
+        vote: VoteType,
+    }
+
 
     #[derive(scale::Decode, scale::Encode)]
     #[cfg_attr(
@@ -144,7 +155,7 @@ pub mod project {
                 String::from("Employee"),
                 String::from("EMP"),
                 String::from("http://hello.world/"),
-                100,
+                10000,
                 String::from("ipfs://over.there/"),
                 Self::env().caller(),
             )
@@ -157,7 +168,7 @@ pub mod project {
                 String::from("Function"),
                 String::from("FNC"),
                 String::from("http://hello.world"),
-                100,
+                10000,
                 String::from("ipfs://over.there"),
                 Self::env().caller(),
             )
@@ -214,7 +225,7 @@ pub mod project {
                 project_title,
                 project_code,
                 String::from("http://hello.world"),
-                100,
+                10000,
                 String::from("ipfs://over.there"),
                 Self::env().caller(),
             )
@@ -348,10 +359,30 @@ pub mod project {
             vote_status.has_voted.push(caller);
             self.votes.insert((project_id, proposal_id), &vote_status);
 
-            // self._emit_vote_cast(caller,proposal_id,vote);
+            <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<VoteCast>(self.env(), 
+                VoteCast {
+                    user: caller,
+                    project_id: project_id,
+                    proposal_id: proposal_id,
+                    vote: vote_type,
+                });
+
             Ok(())
         }
 
+        /// Has the user voted
+        #[ink(message)]
+        pub fn has_voted(&self, project_id: ProjectId, proposal_id: ProposalId, user: AccountId) -> Result<bool, ProjectError> {
+            if !self.proposals.contains((project_id, proposal_id)) {
+                return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
+            }
+            let vote_status = self.votes.get((project_id, proposal_id)).unwrap();
+            if vote_status.has_voted.contains(&user) {
+                return Ok(true);
+            } else {
+                return Ok(false);
+            }
+        }
 
         /// Cancel the current proposal
         #[ink(message)]
@@ -425,11 +456,5 @@ pub mod project {
             // TODO: Implement PRJ voting factor  * FNC voting factor but not sure where to get these values from
             return function_voting_power + project_voting_power;
         }
-
-        // #[ink(message)]
-        // pub fn mint_employee(&mut self, to: AccountId) -> Result<(), ProjectError> {
-        //     //self.employee.unwrap().mint(to);
-        //     //RmrkEmployeeRef::mint(to);
-        // }
     }
 }
