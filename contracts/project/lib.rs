@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
+
 #[openbrush::contract]
 pub mod project {
     use ink::storage::Mapping;
@@ -21,6 +22,9 @@ pub mod project {
 
     // use sp_arithmetic::{FixedU128, FixedPointNumber, traits::One, traits::Saturating, traits::Zero};
     // use scale::CompactAs;
+
+
+
 
     #[derive(Debug, scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -50,6 +54,26 @@ pub mod project {
     type ProjectId = u32;
 
 
+    /// Event emmited at project creation
+    #[ink(event)]
+    pub struct ProjectCreated {
+        creator: AccountId,
+        project_id: ProjectId,
+        employee_project: AccountId,
+    }
+
+    /// Event emmited at proposal creation
+    #[ink(event)]
+    pub struct ProposalCreated {
+        creator: AccountId,
+        project_id: ProjectId,
+        proposal_id: ProposalId,
+        employee_project: AccountId,
+    }
+
+
+
+
     #[derive(scale::Decode, scale::Encode)]
     #[cfg_attr(
         feature = "std",
@@ -73,6 +97,9 @@ pub mod project {
         pub votes_abstain: u32,
         pub has_voted: Vec<AccountId>,
     }
+
+
+    
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -161,7 +188,7 @@ pub mod project {
         }
 
         #[ink(message)]
-        pub fn create_project(&mut self, project_id: ProjectId) -> Result<(), ProjectError> {
+        pub fn create_project(&mut self, project_title: String, project_id: ProjectId) -> Result<(), ProjectError> {
             // todo: check role
 
             match self.employee_project.get(project_id) {
@@ -175,8 +202,8 @@ pub mod project {
             //todo: concat project_id
 
             let salt = Self::env().block_number().to_le_bytes();
-            let project = RmrkAssignmentRef::new(
-                Vec::from(project_id.to_be_bytes()),
+            let employee_project = RmrkAssignmentRef::new(
+                project_title,
                 project_code,
                 String::from("http://hello.world"),
                 100,
@@ -188,7 +215,14 @@ pub mod project {
             .salt_bytes(salt)
             .instantiate();
             
-            self.employee_project.insert(project_id, &project);
+            self.employee_project.insert(project_id, &employee_project);
+
+            // self.env().emit_event(
+            //     ProjectCreated {
+            //         creator: Self::env().caller(),
+            //         project_id,
+            //         employee_project: employee_project.account_id(),
+            //     });
 
             Ok(())
         }
