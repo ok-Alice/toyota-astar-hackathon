@@ -24,7 +24,7 @@ kp_charlie = Keypair.create_from_uri('//Charlie')
 #### Deploy Assignments for Projects & Functions
 
 def deploy_contract(msg, contractname, kp, args, endowment = 0):
-    print("Args:", args)
+    #print("Args:", args)
     code = ContractCode.create_from_contract_files(
         metadata_file=os.path.join(os.path.dirname(__file__), 'project', 'target', 'ink',  contractname + '.json'),
         wasm_file=os.path.join(os.path.dirname(__file__), 'project', 'target', 'ink',  contractname + '.wasm'),

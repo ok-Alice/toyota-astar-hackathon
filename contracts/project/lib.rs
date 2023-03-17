@@ -5,6 +5,10 @@
 #[openbrush::contract]
 pub mod project {
     use ink::storage::Mapping;
+    use ink::EnvAccess;
+    use ink::env::DefaultEnvironment;
+    use ink::codegen::EmitEvent;
+
     use ink::prelude::vec::Vec;
 
     use ink::env::hash::{Sha2x256, HashOutput};
@@ -57,21 +61,26 @@ pub mod project {
     /// Event emmited at project creation
     #[ink(event)]
     pub struct ProjectCreated {
+        #[ink(topic)]
         creator: AccountId,
+        #[ink(topic)]
         project_id: ProjectId,
+        #[ink(topic)]
         employee_project: AccountId,
     }
 
     /// Event emmited at proposal creation
     #[ink(event)]
     pub struct ProposalCreated {
+        #[ink(topic)]
         creator: AccountId,
+        #[ink(topic)]
         project_id: ProjectId,
+        #[ink(topic)]
         proposal_id: ProposalId,
-        employee_project: AccountId,
+        vote_start: BlockNumber,
+        vote_end: BlockNumber,
     }
-
-
 
 
     #[derive(scale::Decode, scale::Encode)]
@@ -98,8 +107,7 @@ pub mod project {
         pub has_voted: Vec<AccountId>,
     }
 
-
-    
+   
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -217,12 +225,12 @@ pub mod project {
             
             self.employee_project.insert(project_id, &employee_project);
 
-            // self.env().emit_event(
-            //     ProjectCreated {
-            //         creator: Self::env().caller(),
-            //         project_id,
-            //         employee_project: employee_project.account_id(),
-            //     });
+            <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<ProjectCreated>(self.env(), 
+                ProjectCreated {
+                    creator: Self::env().caller(),
+                    project_id,
+                    employee_project: employee_project.account_id(),
+                });
 
             Ok(())
         }
@@ -263,6 +271,15 @@ pub mod project {
             };
 
             self.proposals.insert((project_id, proposal_id), &proposal);
+
+            <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<ProposalCreated>(self.env(), 
+            ProposalCreated {
+                creator: self.env().caller(),
+                project_id: project_id,
+                proposal_id: proposal_id,
+                vote_start: proposal.vote_start,
+                vote_end: proposal.vote_end,
+            });
 
             Ok(())
         } 
