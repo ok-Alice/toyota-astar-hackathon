@@ -329,23 +329,28 @@ pub mod project {
 
             let assignment_ref = self.employee_project.get(project_id).unwrap();
             if !assignment_ref.ensure_exists_and_owner_of(caller, project_token_id.clone()).is_ok() {
+                ink::env::debug_println!("Invalid project_token_id");
                 return Err(ProjectError::Custom(String::from("Invalid project_token_id")));
             }
 
             if !self.employee_function.clone().unwrap().ensure_exists_and_owner_of(caller, function_token_id.clone()).is_ok() {
+                ink::env::debug_println!("Invalid function_token_id");
                 return Err(ProjectError::Custom(String::from("Invalid function_token_id")));
             }
 
             if !self.proposals.contains((project_id, proposal_id)) {
+                ink::env::debug_println!("Project / Proposal does not exist");
                 return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
             }
 
             if self.proposal_state(project_id, proposal_id)? != ProposalState::Active {
+                ink::env::debug_println!("Project / Proposal not open for voting");
                 return Err(ProjectError::Custom(String::from("Project / Proposal not open for voting")));
             }
 
             let mut vote_status = self.votes.get((project_id, proposal_id)).unwrap();
             if vote_status.has_voted.contains(&caller) {
+                ink::env::debug_println!("Caller has already voted");
                 return Err(ProjectError::Custom(String::from("Caller has already voted")));
             }
 
