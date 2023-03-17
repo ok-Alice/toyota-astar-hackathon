@@ -120,8 +120,8 @@ project = deploy_contract(msg='Project',
                           kp=kp_alice,
                           args={
                             'name': "Project",
-                            'assignment_hash': assignment_hash,
-                            'employee_hash': employee_hash,
+                            'assignment_hash': str(assignment_hash),
+                            'employee_hash': str(employee_hash),
                             },
                         endowment=0
                         )
