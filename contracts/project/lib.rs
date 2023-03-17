@@ -83,6 +83,7 @@ pub mod project {
         employee: Option<RmrkEmployeeRef>,
         employee_function: Option<RmrkAssignmentRef>,
         employee_project: Mapping<ProjectId, RmrkAssignmentRef>,
+        projects: Vec<ProjectId>,
         proposals: Mapping<(ProjectId, ProposalId), ProposalCore>,
         proposal_ids: Mapping<ProjectId, Vec<ProposalId>>,
         votes: Mapping<(ProjectId, ProposalId), ProposalVote>,
@@ -101,6 +102,7 @@ pub mod project {
             let proposal_ids = Mapping::default();
             let employee_project = Mapping::default();
             let votes = Mapping::default();
+            let projects = Vec::default();
 
             let salt = Self::env().block_number().to_le_bytes();
             let employee = RmrkEmployeeRef::new(
@@ -132,13 +134,14 @@ pub mod project {
 
             Self { 
                 name, 
-                proposals, 
-                proposal_ids, 
                 voting_delay: 0, 
                 voting_period: 10,
                 employee: Some(employee),
                 employee_function: Some(function),
                 employee_project,
+                projects,
+                proposals, 
+                proposal_ids, 
                 votes,
                 assignment_hash,
              }
@@ -165,6 +168,8 @@ pub mod project {
                 Some(_) => return Err(ProjectError::Custom(String::from("Project already exists"))),
                 None => (),
             };
+
+            self.projects.push(project_id);
 
             let project_code = String::from("P");
             //todo: concat project_id
@@ -228,6 +233,13 @@ pub mod project {
             Ok(())
         } 
 
+
+        /// List all active projects
+        #[ink(message)]
+        pub fn list_project_ids(&self) -> Result<Vec<ProjectId>,ProjectError> {
+            Ok(self.projects.clone())
+        }
+
         /// List all open proposals for given project 
         #[ink(message)]
         pub fn list_proposal_ids(&self, project_id: ProjectId, ) -> Result<Vec<ProposalId>, ProjectError> {
@@ -288,6 +300,23 @@ pub mod project {
             // self._emit_vote_cast(caller,proposal_id,vote);
             Ok(())
         }
+
+
+        /// Cancel the current proposal
+        #[ink(message)]
+        pub fn cancel_proposal(&mut self, project_id: ProjectId, proposal_id: ProposalId) -> Result<(), ProjectError> {
+            if !self.proposals.contains((project_id, proposal_id)) {
+                return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
+            }
+
+            let mut proposal = self.proposals.get((project_id, proposal_id)).unwrap();
+            proposal.canceled = true;
+
+            self.proposals.insert((project_id, proposal_id),&proposal);
+
+            Ok(())
+        }
+
 
         /// Current state of proposal
         #[ink(message)]
