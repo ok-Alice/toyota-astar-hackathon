@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import random
 
 from substrateinterface.contracts import ContractCode, ContractInstance
@@ -253,9 +254,17 @@ for member in members:
     contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['project']}, 'metadata': titles[member]['project']})
     #contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
 
-#ids['Alice']['employee'] = contract_mint_to('Mint Employee-project for Alice', kp['alice'], employee, alice.ss58_address)
+
+ids['contract'] = {}
+ids['contract']['project'] = project_address
+ids['contract']['employee'] = employee_address
+ids['contract']['function'] = function_address
+ids['contract']['project'] = project_address
 
 print("♐ IDs:", ids)
+
+with open("ids.json", "w") as outfile:
+    json.dump(ids, outfile)
 
 
 # Alice adds the part slots to employee
