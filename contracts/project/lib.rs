@@ -217,6 +217,9 @@ pub mod project {
 
             self.projects.push(project_id);
 
+            let proposal_ids : Vec<ProposalId> = Vec::new();
+            self.proposal_ids.insert(project_id, &proposal_ids);
+
             let project_code = String::from("P");
             //todo: concat project_id
 
@@ -282,6 +285,11 @@ pub mod project {
             };
 
             self.proposals.insert((project_id, proposal_id), &proposal);
+
+            let mut proposals = self.proposal_ids.get(project_id).unwrap();
+            proposals.push(proposal_id);
+            self.proposal_ids.insert(project_id, &proposals);
+            
 
             <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<ProposalCreated>(self.env(), 
             ProposalCreated {
