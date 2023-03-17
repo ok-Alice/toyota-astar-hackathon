@@ -95,7 +95,10 @@ def contract_call(msg, keypair, contract, fname,  args):
     contract_receipt = contract.exec(keypair, fname, args)
     
     if contract_receipt.is_success:
-        print(f'  😎 Call {msg} {fname} : Events { show_events(contract_receipt.contract_events) }')
+        print(f'  😎 Call {msg} {fname}', end='')
+        if contract_receipt.contract_events:
+            print(f': Events { show_events(contract_receipt.contract_events) }', end='')
+        print()
     else:
         print(f'  🤕 Error {msg} {fname}: {contract_receipt.error_message}')
         print("      Args: ", args)
@@ -232,7 +235,6 @@ transfer_balance(kp['alice'], str(eproject_address), 10**17)
 
 ## Setting up employees
 
-
 ids = {}
 
 for member in members:
@@ -244,11 +246,11 @@ for member in members:
     
     ids[member]['function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
     contract_call("Employee_function metadata " + member,     kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['function']}, 'metadata': titles[member]['function']}) 
-    contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
+    #contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
     
     ids[member]['project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
     contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['project']}, 'metadata': titles[member]['project']})
-    contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
+    #contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
 
 #ids['Alice']['employee'] = contract_mint_to('Mint Employee-project for Alice', kp['alice'], employee, alice.ss58_address)
 
