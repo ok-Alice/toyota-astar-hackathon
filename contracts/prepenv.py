@@ -13,39 +13,39 @@ from substrateinterface.exceptions import SubstrateRequestException
 members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
 
 titles = { 'alice' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
 
             },
             'bob' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'charlie' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'dave' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'eve' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'ferdie' : { 
-                'function': 'UI dev',
-                'project': 'UI Front-end 1',
+                'employee_function': 'UI dev',
+                'employee_project': 'UI Front-end 1',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
@@ -247,20 +247,20 @@ for member in members:
     ids[member]['employee'] = contract_mint_to('Mint Employee for ' + member, kp['alice'], employee, kp[member].ss58_address) 
     contract_call("Employee metadata " + member, kp['alice'], employee, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee']}, 'metadata': member})
     
-    ids[member]['function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
-    contract_call("Employee_function metadata " + member,     kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['function']}, 'metadata': titles[member]['function']}) 
-    #contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
+    ids[member]['employee_function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
+    contract_call("Employee_function metadata " + member,     kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'metadata': titles[member]['employee_function']}) 
+    #contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
     
-    ids[member]['project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
-    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['project']}, 'metadata': titles[member]['project']})
-    #contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
+    ids[member]['employee_project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
+    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'metadata': titles[member]['employee_project']})
+    #contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
 
 
 ids['contract'] = {}
 ids['contract']['project'] = project_address
 ids['contract']['employee'] = str(employee_address)
-ids['contract']['function'] = str(function_address)
-ids['contract']['project'] = str(project_address)
+ids['contract']['employee_function'] = str(function_address)
+ids['contract']['employee_project'] = str(eproject_address)
 
 print("♐ IDs:", ids)
 
@@ -382,7 +382,7 @@ for member in members:
         'token_id':  { 'U64' : ids[member]['employee'] },
         'asset_id': function_asset_id,
         'slot_part_id': 0,
-        'child_nft' : ( employee_function.contract_address, { 'U64': ids[member]['function'] } ),
+        'child_nft' : ( employee_function.contract_address, { 'U64': ids[member]['employee_function'] } ),
         'child_asset_id': 0,        
         }
     )
@@ -411,7 +411,7 @@ for member in members:
         'token_id':  { 'U64' : ids[member]['employee'] },
         'asset_id': project_asset_id,
         'slot_part_id': 1,
-        'child_nft' : ( employee_project.contract_address, { 'U64': ids[member]['project'] } ),
+        'child_nft' : ( employee_project.contract_address, { 'U64': ids[member]['employee_project'] } ),
         'child_asset_id': 0,        
         }
     )
