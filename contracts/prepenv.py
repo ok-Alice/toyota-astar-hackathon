@@ -159,11 +159,12 @@ def transfer_balance(kp_from, to, value):
 ########## Cmdline & setup
 
 
-if len(sys.argv) != 2:
-    print("Usage: ", sys.argv[0], " [project-address]")
+if len(sys.argv) != 3:
+    print("Usage: ", sys.argv[0], " [project-address] [outfile.json]")
     sys.exit(1)
     
 project_address = sys.argv[1]
+outfile_json = sys.argv[2]
 
 substrate = SubstrateInterface(
     url="ws://127.0.0.1:9944",
@@ -257,13 +258,13 @@ for member in members:
 
 ids['contract'] = {}
 ids['contract']['project'] = project_address
-ids['contract']['employee'] = employee_address
-ids['contract']['function'] = function_address
-ids['contract']['project'] = project_address
+ids['contract']['employee'] = str(employee_address)
+ids['contract']['function'] = str(function_address)
+ids['contract']['project'] = str(project_address)
 
 print("♐ IDs:", ids)
 
-with open("ids.json", "w") as outfile:
+with open(outfile_json, "w") as outfile:
     json.dump(ids, outfile)
 
 
