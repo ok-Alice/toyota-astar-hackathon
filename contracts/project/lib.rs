@@ -449,11 +449,10 @@ pub mod project {
 
         /// Current votes for proposal
         #[ink(message)]
-        pub fn proposal_votes(&mut self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalVote, ProjectError> {
-            assert!(self.proposals.contains((project_id, proposal_id)), "Project / Proposal does noet exist");
-            let proposal = self.proposals.get((project_id, proposal_id)).unwrap();
-
-            self.proposal_votes.get(project_id, proposal_id).unwrap()
+        pub fn proposal_votes(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalVote, ProjectError> {
+            assert!(self.votes.contains((project_id, proposal_id)), "Project / Proposal does noet exist");
+        
+            Ok(self.votes.get((project_id, proposal_id)).unwrap())
         }
 
 
