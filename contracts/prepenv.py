@@ -431,6 +431,7 @@ contract_call(
     args = {
         'project_id' : project_id,
         'proposal_id': 1,
+        'project_token_id': { 'U64' : ids['alice']['employee_project']},
         'internal': False,
     }
 )

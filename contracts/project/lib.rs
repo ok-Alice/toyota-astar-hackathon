@@ -269,8 +269,14 @@ pub mod project {
         /// Create new proposal for give ProjectID (can only be called by 
         /// project token holder)
         #[ink(message)]
-        pub fn create_proposal(&mut self, project_id: ProjectId, proposal_id: ProposalId, internal: bool) -> Result<(),ProjectError> {
-            //TODO: check caller holds NFT
+        pub fn create_proposal(&mut self, project_id: ProjectId, proposal_id: ProposalId, project_token_id: Id, internal: bool) -> Result<(), ProjectError> {
+            let assignment_ref = self.employee_project.get(project_id).unwrap();
+
+            if !assignment_ref.ensure_exists_and_owner_of(self.env().caller(), project_token_id).is_ok() {
+                ink::env::debug_println!("Caller not part of project");
+                return Err(ProjectError::Custom(String::from("Caller not part of project")));
+            }
+
             if self.proposals.get(&(project_id, proposal_id)).is_some() {
                 return Err(ProjectError::Custom(String::from("Proposal already exists")));
             }
