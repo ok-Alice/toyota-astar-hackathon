@@ -13,7 +13,6 @@ from substrateinterface.exceptions import SubstrateRequestException
 members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
 verbose = 1
 
-
 titles = { 'alice' : { 
                 'employee_project': 'UI Front-end 1',
                 'project_voting_power': 1050,
@@ -242,19 +241,6 @@ contract_call(
      },
 )
 
-
-# contract_call(
-#     'add_equippable address on employee for employee_project', 
-#     kp['alice'],
-#     employee,
-#     'Base::add_equippable_addresses',
-#     args={ 
-#         'part_id': part_id,
-#         'equippable_address' : [ employee_project.contract_address ],
-    
-#     }
-# )
-
 for member in members:
     
     # Member tries to equip with project
@@ -283,3 +269,44 @@ for member in members:
         'child_asset_id': 0,        
         }
     )
+
+
+# Alice creates proposal
+
+contract_call(
+    "Alice creates proposal",
+    kp['alice'],
+    project,
+    'create_proposal',
+    args = {
+        'project_id' : project_id,
+        'proposal_id': 1,
+        'project_token_id': { 'U64' : ids['alice']['employee_project']},
+        'internal': False,
+    }
+)
+
+
+details = project.read(kp['alice'], 'proposal_details', args = { 'project_id': project_id, 'proposal_id': 1}).contract_result_data[1]
+print("Details:",details)
+state = project.read(kp['alice'], 'proposal_state', args = { 'project_id': project_id, 'proposal_id': 1}).contract_result_data[1]
+print("State:",state)
+
+
+
+# Alice votes
+
+contract_call(
+    "Alice votes FOR",
+    kp['alice'],
+    project,
+    'vote',
+    args = {
+        'vote_type': "For" ,
+        'project_id': project_id,
+        'proposal_id': 1,
+        'project_token_id': { 'U64': ids['alice']['employee_project'] },
+        'function_token_id': { 'U64': ids['alice']['employee_function'] },
+    }
+)
+
