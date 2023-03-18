@@ -277,6 +277,8 @@ pub mod project {
                 return Err(ProjectError::Custom(String::from("Proposal already exists")));
             }
 
+            // insert self.proposals
+
             let proposal = ProposalCore {
                 vote_start: self.env().block_timestamp() as u32 + self.voting_delay,
                 vote_end:   self.env().block_timestamp() as u32 + self.voting_delay + self.voting_period,
@@ -286,10 +288,15 @@ pub mod project {
 
             self.proposals.insert((project_id, proposal_id), &proposal);
 
+            // update self.proposal_ids
             let mut proposals = self.proposal_ids.get(project_id).unwrap();
             proposals.push(proposal_id);
             self.proposal_ids.insert(project_id, &proposals);
             
+
+            // // insert self.vote
+            let vote_status = ProposalVote { votes_against: 0, votes_for: 0, votes_abstain: 0, has_voted: Vec::new(), };
+            self.votes.insert((project_id, proposal_id), &vote_status);
 
             <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<ProposalCreated>(self.env(), 
             ProposalCreated {
@@ -389,7 +396,9 @@ pub mod project {
             if !self.proposals.contains((project_id, proposal_id)) {
                 return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
             }
+
             let vote_status = self.votes.get((project_id, proposal_id)).unwrap();
+
             if vote_status.has_voted.contains(&user) {
                 return Ok(true);
             } else {
@@ -415,7 +424,7 @@ pub mod project {
 
         /// Current state of proposal
         #[ink(message)]
-        pub fn proposal_state(&mut self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalState, ProjectError> {
+        pub fn proposal_state(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalState, ProjectError> {
             assert!(self.proposals.contains((project_id, proposal_id)), "Proposal does noet exist");
             let proposal = self.proposals.get((project_id, proposal_id)).unwrap();
 
