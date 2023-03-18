@@ -11,24 +11,26 @@ import { currentProjectAtom } from 'store/db';
 import { currentSubstrateAccountAtom } from 'store/substrateAccount';
 
 import { maskAddress } from 'utils/maskAddress';
-import { keyringAtom } from 'store/api';
+import { blockNumberAtom, keyringAtom } from 'store/api';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { Chip } from 'components/ui-kit/Chip';
 import { Button } from 'components/ui-kit/Button';
+import { ProjectProposal } from 'components/ProposalBoard/types';
 import { ProposalActions } from './ProposalActions';
 
 import styles from './ProposalCard.module.scss';
 
 export interface ProposalCardProps {
-  proposal: Proposal;
-  currentBlock: number | null;
+  proposal: ProjectProposal;
 }
 
-export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
+export function ProposalCard({ proposal }: ProposalCardProps) {
+  console.log(proposal);
   const title = proposal?.title;
   const description = proposal?.description;
   const currentProject = useAtomValue(currentProjectAtom);
   const currentAccount = useAtomValue(currentSubstrateAccountAtom);
+  const blockNumber = useAtomValue(blockNumberAtom);
   const keyring = useAtomValue(keyringAtom);
 
   const getUser = (address: string) =>
@@ -44,26 +46,22 @@ export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
             name="circle"
             className={clsx(
               styles['status-icon'],
-              styles[
-                proposal?.status === 'ACTIVE' ? 'icon-active' : 'icon-completed'
-              ]
+              styles[`icon-${proposal.status}`]
             )}
           />
           <Typography variant="title7">{proposal?.status}</Typography>
         </div>
         <div className={styles['top-right-container']}>
-          {proposal.status === 'ACTIVE' && currentProject && currentBlock && (
+          {proposal.status === 'Active' && currentProject && blockNumber && (
             <div className={styles.countdown}>
               <Typography variant="value5">
-                {proposal.createdAtBlock +
-                  appConfig.proposalVotingPeriod -
-                  currentBlock}
+                {proposal.voteEnd - blockNumber}
               </Typography>
               <Typography variant="body2">blocks left</Typography>
             </div>
           )}
           {currentAccount?.address === proposal.proposer &&
-            proposal.status === 'ACTIVE' && <Button size="xs">Delete</Button>}
+            proposal.status === 'Active' && <Button size="xs">Delete</Button>}
         </div>
       </div>
       <div className={styles.content}>

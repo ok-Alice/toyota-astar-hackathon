@@ -68,11 +68,13 @@
   width: 8px;
 }
 
-.icon-active {
+.icon-Active {
   color: #{colors.$blue-1};
 }
-
-.icon-completed {
+.icon-Defeated {
+  color: #{colors.$red-1};
+}
+.icon-Completed {
   color: #{colors.$green-1};
 }
 

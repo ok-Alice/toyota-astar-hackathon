@@ -2,17 +2,18 @@ import { MouseEventHandler, useEffect, useState } from 'react';
 
 import { useAtomValue } from 'jotai';
 import { currentProjectAtom } from 'store/db';
-import { apiAtom } from 'store/api';
-
-import type { u32 } from '@polkadot/types';
+import { apiAtom, blockNumberAtom, projectContractAtom } from 'store/api';
 
 import { Card } from 'components/ui-kit/Card';
 import { Typography } from 'components/ui-kit/Typography';
 import { Button } from 'components/ui-kit/Button';
 import { ProposalCard } from 'components/ProposalCard';
-import { Proposal } from 'db/proposals';
 
+import { contractQuery, parseToInt } from 'helpers';
+import { substrateAccountAddressAtom } from 'store/substrateAccount';
+import { Proposal } from 'db/proposals';
 import styles from './ProposalBoard.module.scss';
+import { ProjectProposal } from './types';
 
 type FilterVariant = 'All' | 'In Progress' | 'Completed';
 
@@ -28,41 +29,108 @@ const filterOptions: FilterOption[] = [
 
 export function ProposalBoard() {
   const api = useAtomValue(apiAtom);
+  const projectContract = useAtomValue(projectContractAtom);
   const currentProject = useAtomValue(currentProjectAtom);
-  const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [currentBlock, setCurrentBlock] = useState<number | null>(null);
+  const currentAccountAddress = useAtomValue(substrateAccountAddressAtom);
+  const blockNumber = useAtomValue(blockNumberAtom);
+  const [proposalIds, setProposalIds] = useState<number[]>([]);
+  const [proposals, setProposals] = useState<ProjectProposal[]>([]);
   const [filter, setFilter] = useState<FilterVariant>('All');
-
-  useEffect(() => {
-    (async () => {
-      const _currentBlock = (
-        (await api?.query.system.number()) as u32 | undefined
-      )?.toNumber();
-
-      if (!_currentBlock) {
-        return;
-      }
-      setCurrentBlock(_currentBlock);
-    })();
-  }, [api?.query.system]);
 
   const handleFilterClick: MouseEventHandler<HTMLButtonElement> = (e) =>
     setFilter((e.target as HTMLButtonElement).innerText as FilterVariant);
 
-  const getProposals = async () => {
-    const response = await fetch(
-      `/api/projects/${currentProject?.id}/proposals`
+  const getProposalIds = async () => {
+    if (!projectContract || !currentAccountAddress) return;
+    const { decodedOutput, result } = await contractQuery(
+      projectContract,
+      api.registry,
+      currentAccountAddress,
+      'listProposalIds',
+      [currentProject?.id]
     );
-    setProposals(await response.json());
+
+    if (result.isOk) {
+      const _proposalIds = decodedOutput.Ok.map(parseToInt);
+      console.log('proposalIds', _proposalIds);
+      setProposalIds(_proposalIds);
+    }
+  };
+
+  const getProposals = async () => {
+    if (!projectContract || !currentAccountAddress) return;
+
+    const promises = proposalIds.map(async (id) => {
+      // get proposal details from chain
+      const { decodedOutput: detailsOutput } = await contractQuery(
+        projectContract,
+        api.registry,
+        currentAccountAddress,
+        'proposalDetails',
+        [currentProject?.id, id]
+      );
+      const details = detailsOutput.Ok;
+      details.voteEnd = parseToInt(details.voteEnd);
+      details.voteStart = parseToInt(details.voteStart);
+
+      // get proposal status from chain
+      const { decodedOutput: statusOutput } = await contractQuery(
+        projectContract,
+        api.registry,
+        currentAccountAddress,
+        'proposalState',
+        [currentProject?.id, id]
+      );
+      const status = statusOutput.Ok;
+
+      // get proposal vote status from chain
+      const { decodedOutput: voteStatusOutput } = await contractQuery(
+        projectContract,
+        api.registry,
+        currentAccountAddress,
+        'proposalVotes',
+        [currentProject?.id, id]
+
+        // get proposal info from db
+      );
+      const voteStatus = voteStatusOutput.Ok;
+      voteStatus.votesAbstain = parseToInt(voteStatus.votesAbstain);
+      voteStatus.votesAgainst = parseToInt(voteStatus.votesAgainst);
+      voteStatus.votesFor = parseToInt(voteStatus.votesFor);
+
+      const response = await fetch(
+        `/api/projects/${currentProject?.id}/proposals/${id}`
+      );
+      const proposal: Proposal = await response.json();
+
+      return {
+        id,
+        ...details,
+        status,
+        ...voteStatus,
+        title: proposal.title,
+        description: proposal.description,
+        proposer: proposal.proposer
+      };
+    });
+    const _proposals: ProjectProposal[] = await Promise.all(promises);
+
+    setProposals(_proposals);
   };
 
   useEffect(() => {
     if (!currentProject) {
       return;
     }
-    getProposals();
+    getProposalIds();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProject]);
+
+  useEffect(() => {
+    if (!proposalIds.length) return;
+    getProposals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [proposalIds, blockNumber]);
 
   return (
     <>
@@ -86,10 +154,10 @@ export function ProposalBoard() {
         proposals
           .filter((proposal) => {
             if (filter === 'Completed') {
-              return proposal.status !== 'ACTIVE';
+              return proposal.status !== 'Active';
             }
             if (filter === 'In Progress') {
-              return proposal.status === 'ACTIVE';
+              return proposal.status === 'Active';
             }
             return proposal;
           })
@@ -97,7 +165,6 @@ export function ProposalBoard() {
             <ProposalCard
               key={`${proposal.title}-${proposal.id}`}
               proposal={proposal}
-              currentBlock={currentBlock}
             />
           ))
       ) : (

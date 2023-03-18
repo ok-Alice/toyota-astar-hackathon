@@ -14,6 +14,7 @@ export const apiAtom = atom<any | null>(null);
 export const keyringAtom = atom<Keyring | null>(null);
 export const apiConnectedAtom = atom<boolean>(false);
 export const apiErrorAtom = atom<string | null>(null);
+export const blockNumberAtom = atom<number>(0);
 
 // contracts
 export const projectContractAtom = atom<ContractPromise | null>(null);

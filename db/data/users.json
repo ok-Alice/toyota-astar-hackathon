@@ -5,8 +5,11 @@
     "email": "alice@astar.com",
     "displayName": "Alice",
     "password": "1234",
-    "badges": ["Lead Frontend Dev"],
-    "avatar": "/nfts/Alice/Alice.svg"
+    "nfts": {
+      "employee": 1,
+      "employeeFunction": 1,
+      "projects": [1]
+    }
   },
   {
     "id": 1,
@@ -14,8 +17,11 @@
     "email": "bob@astar.com",
     "displayName": "Bob",
     "password": "1234",
-    "badges": ["Lead Backend Dev"],
-    "avatar": "/nfts/Bob/Bob.svg"
+    "nfts": {
+      "employee": 2,
+      "employeeFunction": 2,
+      "projects": [2]
+    }
   },
   {
     "id": 2,
@@ -23,8 +29,11 @@
     "email": "charlie@astar.com",
     "displayName": "Charlie",
     "password": "1234",
-    "badges": ["Full Stack Dev"],
-    "avatar": "/nfts/Charlie/Charlie.svg"
+    "nfts": {
+      "employee": 3,
+      "employeeFunction": 3,
+      "projects": [3]
+    }
   },
   {
     "id": 3,
@@ -32,8 +41,11 @@
     "email": "dave@astar.com",
     "displayName": "Dave",
     "password": "1234",
-    "badges": ["Medior Backend Dev"],
-    "avatar": "/nfts/Dave/Dave.svg"
+    "nfts": {
+      "employee": 4,
+      "employeeFunction": 4,
+      "projects": [4]
+    }
   },
   {
     "id": 4,
@@ -41,8 +53,11 @@
     "email": "eve@astar.com",
     "displayName": "Eve",
     "password": "1234",
-    "badges": ["UX Designer"],
-    "avatar": "/nfts/Eve/Eve.svg"
+    "nfts": {
+      "employee": 5,
+      "employeeFunction": 5,
+      "projects": [5]
+    }
   },
   {
     "id": 5,
@@ -50,7 +65,10 @@
     "email": "Ferdie@adobe.com",
     "displayName": "Ferdie",
     "password": "1234",
-    "badges": ["Adobe UI Designer"],
-    "avatar": "/nfts/Ferdie/Ferdie.svg"
+    "nfts": {
+      "employee": 6,
+      "employeeFunction": 6,
+      "projects": [6]
+    }
   }
 ]

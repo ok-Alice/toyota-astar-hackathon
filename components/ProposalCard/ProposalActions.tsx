@@ -4,20 +4,21 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from 'components/ui-kit/Button';
 import { Icon } from 'components/ui-kit/Icon';
 import { Typography } from 'components/ui-kit/Typography';
-import { Proposal } from 'db/proposals';
+
 import { currentProjectAtom, currentUserAtom } from 'store/db';
+import { ProjectProposal } from 'components/ProposalBoard/types';
 
 import styles from './ProposalCard.module.scss';
 
-type ProposalActionsProps = { proposal: Proposal };
+type ProposalActionsProps = { proposal: ProjectProposal };
 
 export function ProposalActions({ proposal }: ProposalActionsProps) {
   const currentUser = useAtomValue(currentUserAtom);
   const currentProject = useAtomValue(currentProjectAtom);
   const setCurrentProject = useSetAtom(currentProjectAtom);
-  const [ayes, setAyes] = useState<number>(proposal.yesVotes);
-  const [nays, setNays] = useState<number>(proposal.noVotes);
-  const [abstains, setAbstains] = useState<number>(proposal.abstainVotes);
+  const [ayes, setAyes] = useState<number>(proposal.votesFor);
+  const [nays, setNays] = useState<number>(proposal.votesAgainst);
+  const [abstains, setAbstains] = useState<number>(proposal.votesAbstain);
 
   const castVote = async (vote: 'yes' | 'no' | 'abstain') => {
     await fetch(
@@ -66,15 +67,15 @@ export function ProposalActions({ proposal }: ProposalActionsProps) {
   // };
 
   const disabled =
-    proposal.status !== 'ACTIVE' ||
+    proposal.status !== 'Active' ||
     !currentProject?.members?.find(
       (member) => member.userId === currentUser?.id
     );
 
   useEffect(() => {
-    setAyes(proposal.yesVotes);
-    setNays(proposal.noVotes);
-    setAbstains(proposal.abstainVotes);
+    setAyes(proposal.votesFor);
+    setNays(proposal.votesAgainst);
+    setAbstains(proposal.votesAbstain);
   }, [proposal]);
   return (
     <div className={styles['proposal-vote-buttons']}>

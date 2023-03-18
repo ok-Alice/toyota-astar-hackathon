@@ -49,7 +49,7 @@ export function Members() {
             <li className={styles.member} key={user?.displayName}>
               <div className={styles.memberinfo}>
                 <div className={styles.avatar}>
-                  <embed src={user?.avatar} />
+                  <embed src={`/nfts/employee/${user.nfts.employee}.svg`} />
                 </div>
                 <div>
                   <span>
@@ -74,7 +74,7 @@ export function Members() {
                     </Button>
                   </span>
                   <div className={styles.badges}>
-                    {user?.badges.map((badge) => (
+                    {/* {user?.badges.map((badge) => (
                       <Chip
                         key={`${user.displayName}-${badge}`}
                         variant="group"
@@ -82,7 +82,7 @@ export function Members() {
                       >
                         <Typography variant="title8">{badge}</Typography>
                       </Chip>
-                    ))}
+                    ))} */}
 
                     <Chip
                       key={`${user.displayName}-${member.role}`}

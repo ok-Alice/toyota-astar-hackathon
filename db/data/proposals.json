@@ -1,15 +1,9 @@
 [
   {
-    "id": 0,
-    "projectId": 0,
+    "id": 1,
+    "projectId": 4105864977,
     "title": "Corolla UI team",
     "description": "We need to redesign the UI of the Corolla app",
-    "yesVotes": 2,
-    "noVotes": 4,
-    "abstainVotes": 2,
-    "status": "ACTIVE",
-    "createdAtBlock": 10,
-    "internal": false,
     "proposer": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
   }
 ]

@@ -7,8 +7,11 @@ export type User = {
   address: string;
   password?: string;
   displayName: string;
-  badges: string[];
-  avatar: string;
+  nfts: {
+    employee: number;
+    employeeFunction: number;
+    projects: number[];
+  };
 };
 
 const getSanitizedUser = (user: User) => {
