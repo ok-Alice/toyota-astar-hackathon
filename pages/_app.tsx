@@ -3,8 +3,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { useRouter } from 'next/router';
 import Layout from 'components/Layout';
 
-import 'styles/globals.scss';
 import { Preloader } from 'components/Preloader';
+import { DataLoader } from 'components/DataLoader';
+import 'styles/globals.scss';
 
 import Head from 'next/head';
 
@@ -22,6 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
         ) : (
           <Layout>
             <Preloader />
+            <DataLoader />
             <Component {...pageProps} />
           </Layout>
         )}

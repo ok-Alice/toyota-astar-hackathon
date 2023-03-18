@@ -11,23 +11,28 @@ import { Avatar } from 'components/ui-kit/Avatar';
 
 import { Project } from 'db/projects';
 import { projectsAtom, usersAtom } from 'store/db';
+import { projectIdsAtom } from 'store/api';
 
 import styles from './Sidebar.module.scss';
 
 export function Sidebar() {
   const router = useRouter();
   const currentAccount = useAtomValue(currentSubstrateAccountAtom);
+  const projectIds = useAtomValue(projectIdsAtom);
   const projects = useAtomValue(projectsAtom);
   const setProjects = useSetAtom(projectsAtom);
   const setUsers = useSetAtom(usersAtom);
 
   const projectId = router.query.id as string;
 
-  const getProjects = useCallback(async () => {
+  const getProjects = async () => {
     const response = await fetch('/api/projects');
-    const apiProjects = (await response.json()) as Project[];
-    setProjects(apiProjects);
-  }, [setProjects]);
+    const dbProjects = (await response.json()) as Project[];
+
+    setProjects(
+      dbProjects.filter((project) => projectIds.includes(project.id as number))
+    );
+  };
 
   const getUsers = useCallback(async () => {
     const response = await fetch('/api/users');
@@ -36,13 +41,14 @@ export function Sidebar() {
   }, [setUsers]);
 
   useEffect(() => {
-    if (!currentAccount) {
+    if (!projectIds.length) {
       return;
     }
 
     getProjects();
     getUsers();
-  }, [setProjects, currentAccount, getProjects, getUsers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectIds]);
 
   if (!currentAccount) {
     return null;
