@@ -12,40 +12,49 @@ from substrateinterface.exceptions import SubstrateRequestException
 
 members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
 
-titles = { 'alice' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+titles = {  'project' : {
+                'title' : 'Corolla 2025 UI Team',
+            },
+            'alice' : {
+                'employee': 'Aiko', 
+                'employee_function': 'Back-end developer',
+                'employee_project': 'Back-end lead',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
 
             },
             'bob' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Bob',
+                'employee_function': 'Back-end developer',
+                'employee_project': 'Back-end developer',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'charlie' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Carol',
+                'employee_function': 'Front-end developer',
+                'employee_project': 'Front-end lead',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'dave' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Dave',
+                'employee_function': 'Project Manager',
+                'employee_project': 'Project Manager',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'eve' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Eve',
+                'employee_function': 'Graphical Designer',
+                'employee_project': 'Graphical design lead',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'ferdie' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Ferdie',
+                'employee_function': 'External Consultant',
+                'employee_project': 'Graphical design consultant',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
@@ -171,7 +180,6 @@ substrate = SubstrateInterface(
     type_registry_preset='canvas'
 )
 
-members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
 kp = {}
 
 kp['alice']   = Keypair.create_from_uri('//Alice')
@@ -204,21 +212,23 @@ if verbose > 0:
 employee = contract_from_address(str(employee_address), "employee/employee")
 
 total_supply = employee.read(kp['alice'], 'Minting::max_supply').contract_result_data[1]
-assert(total_supply == 100)
+assert(total_supply == 10000)
 
 transfer_balance(kp['alice'], str(employee_address), 10**17)
 
 ## Function from project call, and send it some funds from Alice
 
-project_id = random.randint(0, 2**32 -1);
 
 employee_function = contract_from_address(str(function_address), 'assignment/assignment')
 total_supply = employee_function.read(kp['alice'], 'Minting::max_supply').contract_result_data[1]
-assert(total_supply == 100)
+assert(total_supply == 10000)
 
 transfer_balance(kp['alice'], str(function_address), 10**17)
 
 ## Employee_project from create project, and send it some funds from Alice
+project_id = random.randint(0, 2**32 -1)
+project_part_id = project_id
+
 
 contract_call("Create Project", kp['alice'], project, 'create_project', args = {
     'project_title': "My New project!",
@@ -231,7 +241,7 @@ if verbose > 0:
 
 employee_project = contract_from_address(str(eproject_address), 'assignment/assignment')
 total_supply = employee_project.read(kp['alice'], 'Minting::max_supply').contract_result_data[1]
-assert(total_supply == 100)
+assert(total_supply == 10000)
 
 transfer_balance(kp['alice'], str(eproject_address), 10**17)
 
@@ -245,14 +255,14 @@ for member in members:
     
     # Mint employee and set name
     ids[member]['employee'] = contract_mint_to('Mint Employee for ' + member, kp['alice'], employee, kp[member].ss58_address) 
-    contract_call("Employee metadata " + member, kp['alice'], employee, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee']}, 'metadata': member})
+    contract_call("Employee metadata " + member, kp['alice'], employee, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee']}, 'metadata': titles[member]['employee']})
     
     ids[member]['employee_function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
     contract_call("Employee_function metadata " + member,     kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'metadata': titles[member]['employee_function']}) 
     contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
     
     ids[member]['employee_project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
-    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'metadata': titles[member]['employee_project']})
+    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'metadata': titles['project']['title'] + " - " + titles[member]['employee_project']})
     contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
 
 
@@ -279,7 +289,7 @@ contract_call(
         'parts' : [  {
             'part_type': 'Slot',
             'z': 0,
-            'equippable': [employee_project.contract_address],
+            'equippable': [employee_function.contract_address],
             'part_uri': "",
             'is_equippable_by_all': False,
             },
@@ -295,7 +305,7 @@ contract_call(
 )
 
 function_asset_id =  random.randint(0, 2**32 -1)
-project_asset_id =  random.randint(0, 2**32 -1)
+project_asset_id =  project_id
 group_id = 1
 
 
@@ -338,27 +348,25 @@ contract_call(
          'id': project_asset_id,
          'equippable_group_id': group_id,
          'asset_uri': 'asset_uri/',
-         'part_ids': [1]
+         'part_ids': [project_part_id]
      },
 )
 
 
-contract_call(
-    'add_equippable address on employee for employee_project', 
-    kp['alice'],
-    employee,
-    'Base::add_equippable_addresses',
-    args={ 
-        'part_id': 1,
-        'equippable_address' : [ employee_project.contract_address ],
+# contract_call(
+#     'add_equippable address on employee for employee_project', 
+#     kp['alice'],
+#     employee,
+#     'Base::add_equippable_addresses',
+#     args={ 
+#         'part_id': project_part_id,
+#         'equippable_address' : [ employee_project.contract_address ],
     
-    }
-)
+#     }
+# )
 
 for member in members:
-
     # Member tries to equip with function
-
     contract_call(
         "Employee " + member + " add_asset_to_token",
         kp['alice'],
@@ -371,8 +379,6 @@ for member in members:
         },
     )
 
-
-    # ? currently only works for alice?
     contract_call(
         "Equip function for "+member,
         kp[member],
@@ -388,7 +394,6 @@ for member in members:
     )
 
     # Member tries to equip with project
-
     contract_call(
         "Employee " + member + " add_asset_to_token",
         kp[member],
@@ -401,7 +406,6 @@ for member in members:
         },
     )
 
-    # ? currently only works for alice?
     contract_call(
         "Equip project for "+member,
         kp[member],
@@ -410,11 +414,12 @@ for member in members:
         args={
         'token_id':  { 'U64' : ids[member]['employee'] },
         'asset_id': project_asset_id,
-        'slot_part_id': 1,
+        'slot_part_id': project_part_id,
         'child_nft' : ( employee_project.contract_address, { 'U64': ids[member]['employee_project'] } ),
         'child_asset_id': 0,        
         }
     )
+
 
 # Alice creates proposal
 

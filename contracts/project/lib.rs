@@ -82,6 +82,17 @@ pub mod project {
         vote_end: BlockNumber,
     }
 
+    #[ink(event)]
+    pub struct VoteCast {
+        #[ink(topic)]
+        user: AccountId,
+        #[ink(topic)]
+        project_id: ProjectId,
+        #[ink(topic)]
+        proposal_id: ProposalId,
+        vote: VoteType,
+    }
+
 
     #[derive(scale::Decode, scale::Encode)]
     #[cfg_attr(
@@ -144,7 +155,7 @@ pub mod project {
                 String::from("Employee"),
                 String::from("EMP"),
                 String::from("http://hello.world/"),
-                100,
+                10000,
                 String::from("ipfs://over.there/"),
                 Self::env().caller(),
             )
@@ -157,7 +168,7 @@ pub mod project {
                 String::from("Function"),
                 String::from("FNC"),
                 String::from("http://hello.world"),
-                100,
+                10000,
                 String::from("ipfs://over.there"),
                 Self::env().caller(),
             )
@@ -206,6 +217,9 @@ pub mod project {
 
             self.projects.push(project_id);
 
+            let proposal_ids : Vec<ProposalId> = Vec::new();
+            self.proposal_ids.insert(project_id, &proposal_ids);
+
             let project_code = String::from("P");
             //todo: concat project_id
 
@@ -214,7 +228,7 @@ pub mod project {
                 project_title,
                 project_code,
                 String::from("http://hello.world"),
-                100,
+                10000,
                 String::from("ipfs://over.there"),
                 Self::env().caller(),
             )
@@ -263,14 +277,26 @@ pub mod project {
                 return Err(ProjectError::Custom(String::from("Proposal already exists")));
             }
 
+            // insert self.proposals
+
             let proposal = ProposalCore {
-                vote_start: self.env().block_timestamp() as u32 + self.voting_delay,
-                vote_end:   self.env().block_timestamp() as u32 + self.voting_delay + self.voting_period,
+                vote_start: self.env().block_number() as u32 + self.voting_delay,
+                vote_end:   self.env().block_number() as u32 + self.voting_delay + self.voting_period,
                 canceled: false,
                 internal,
             };
 
             self.proposals.insert((project_id, proposal_id), &proposal);
+
+            // update self.proposal_ids
+            let mut proposals = self.proposal_ids.get(project_id).unwrap();
+            proposals.push(proposal_id);
+            self.proposal_ids.insert(project_id, &proposals);
+            
+
+            // // insert self.vote
+            let vote_status = ProposalVote { votes_against: 0, votes_for: 0, votes_abstain: 0, has_voted: Vec::new(), };
+            self.votes.insert((project_id, proposal_id), &vote_status);
 
             <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<ProposalCreated>(self.env(), 
             ProposalCreated {
@@ -283,7 +309,6 @@ pub mod project {
 
             Ok(())
         } 
-
 
         /// List all active projects
         #[ink(message)]
@@ -360,10 +385,32 @@ pub mod project {
             vote_status.has_voted.push(caller);
             self.votes.insert((project_id, proposal_id), &vote_status);
 
-            // self._emit_vote_cast(caller,proposal_id,vote);
+            <EnvAccess<'_, DefaultEnvironment> as EmitEvent<Project>>::emit_event::<VoteCast>(self.env(), 
+                VoteCast {
+                    user: caller,
+                    project_id: project_id,
+                    proposal_id: proposal_id,
+                    vote: vote_type,
+                });
+
             Ok(())
         }
 
+        /// Has the user voted
+        #[ink(message)]
+        pub fn has_voted(&self, project_id: ProjectId, proposal_id: ProposalId, user: AccountId) -> Result<bool, ProjectError> {
+            if !self.proposals.contains((project_id, proposal_id)) {
+                return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
+            }
+
+            let vote_status = self.votes.get((project_id, proposal_id)).unwrap();
+
+            if vote_status.has_voted.contains(&user) {
+                return Ok(true);
+            } else {
+                return Ok(false);
+            }
+        }
 
         /// Cancel the current proposal
         #[ink(message)]
@@ -383,19 +430,19 @@ pub mod project {
 
         /// Current state of proposal
         #[ink(message)]
-        pub fn proposal_state(&mut self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalState, ProjectError> {
-            assert!(self.proposals.contains((project_id, proposal_id)), "Proposal does noet exist");
+        pub fn proposal_state(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalState, ProjectError> {
+            assert!(self.proposals.contains((project_id, proposal_id)), "Project / Proposal does noet exist");
             let proposal = self.proposals.get((project_id, proposal_id)).unwrap();
 
             if proposal.canceled {
                 return Ok(ProposalState::Canceled);
             }
 
-            if proposal.vote_start > self.env().block_timestamp() as u32 {
+            if proposal.vote_start > self.env().block_number() as u32 {
                 return Ok(ProposalState::Pending);
             }
 
-            if proposal.vote_end > self.env().block_timestamp() as u32 {
+            if proposal.vote_end > self.env().block_number() as u32 {
                 return Ok(ProposalState::Active);
             }
 
@@ -406,6 +453,15 @@ pub mod project {
 
             return Ok(ProposalState::Defeated);
         }
+
+        /// Current votes for proposal
+        #[ink(message)]
+        pub fn proposal_votes(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalVote, ProjectError> {
+            assert!(self.votes.contains((project_id, proposal_id)), "Project / Proposal does noet exist");
+        
+            Ok(self.votes.get((project_id, proposal_id)).unwrap())
+        }
+
 
         #[ink(message)]
         pub fn voting_delay(&self) -> BlockNumber {
@@ -437,11 +493,5 @@ pub mod project {
             // TODO: Implement PRJ voting factor  * FNC voting factor but not sure where to get these values from
             return function_voting_power + project_voting_power;
         }
-
-        // #[ink(message)]
-        // pub fn mint_employee(&mut self, to: AccountId) -> Result<(), ProjectError> {
-        //     //self.employee.unwrap().mint(to);
-        //     //RmrkEmployeeRef::mint(to);
-        // }
     }
 }
