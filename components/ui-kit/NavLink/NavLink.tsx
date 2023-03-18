@@ -45,7 +45,7 @@ export function NavLink({
           name={icon}
         />
       )}
-      {active && <Typography variant={titleVariant}>{title}</Typography>}
+      <Typography variant={titleVariant}>{title}</Typography>
     </NextLink>
   );
 }
