@@ -12,40 +12,49 @@ from substrateinterface.exceptions import SubstrateRequestException
 
 members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
 
-titles = { 'alice' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+titles = {  'project' : {
+                'title' : 'Corolla 2025 UI Team',
+            },
+            'alice' : {
+                'employee': 'Aiko', 
+                'employee_function': 'Back-end developer',
+                'employee_project': 'Back-end lead',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
 
             },
             'bob' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Bob',
+                'employee_function': 'Back-end developer',
+                'employee_project': 'Back-end developer',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'charlie' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Carol',
+                'employee_function': 'Front-end developer',
+                'employee_project': 'Front-end lead',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'dave' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Dave',
+                'employee_function': 'Project Manager',
+                'employee_project': 'Project Manager',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'eve' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Eve',
+                'employee_function': 'Graphical Designer',
+                'employee_project': 'Graphical design lead',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
             'ferdie' : { 
-                'employee_function': 'UI dev',
-                'employee_project': 'UI Front-end 1',
+                'employee': 'Ferdie',
+                'employee_function': 'External Consultant',
+                'employee_project': 'Graphical design consultant',
                 'function_voting_power': 1100,
                 'project_voting_power': 1050,
             },
@@ -246,14 +255,14 @@ for member in members:
     
     # Mint employee and set name
     ids[member]['employee'] = contract_mint_to('Mint Employee for ' + member, kp['alice'], employee, kp[member].ss58_address) 
-    contract_call("Employee metadata " + member, kp['alice'], employee, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee']}, 'metadata': member})
+    contract_call("Employee metadata " + member, kp['alice'], employee, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee']}, 'metadata': titles[member]['employee']})
     
     ids[member]['employee_function'] = contract_mint_to('Mint Employee-Function for ' + member, kp['alice'], employee_function, kp[member].ss58_address) 
     contract_call("Employee_function metadata " + member,     kp['alice'], employee_function, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'metadata': titles[member]['employee_function']}) 
     #contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
     
     ids[member]['employee_project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
-    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'metadata': titles[member]['employee_project']})
+    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'metadata': titles['project']['title'] + " - " + titles[member]['employee_project']})
     #contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
 
 
