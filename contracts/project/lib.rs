@@ -280,8 +280,8 @@ pub mod project {
             // insert self.proposals
 
             let proposal = ProposalCore {
-                vote_start: self.env().block_timestamp() as u32 + self.voting_delay,
-                vote_end:   self.env().block_timestamp() as u32 + self.voting_delay + self.voting_period,
+                vote_start: self.env().block_number() as u32 + self.voting_delay,
+                vote_end:   self.env().block_number() as u32 + self.voting_delay + self.voting_period,
                 canceled: false,
                 internal,
             };
@@ -309,7 +309,6 @@ pub mod project {
 
             Ok(())
         } 
-
 
         /// List all active projects
         #[ink(message)]
@@ -432,11 +431,11 @@ pub mod project {
                 return Ok(ProposalState::Canceled);
             }
 
-            if proposal.vote_start > self.env().block_timestamp() as u32 {
+            if proposal.vote_start > self.env().block_number() as u32 {
                 return Ok(ProposalState::Pending);
             }
 
-            if proposal.vote_end > self.env().block_timestamp() as u32 {
+            if proposal.vote_end > self.env().block_number() as u32 {
                 return Ok(ProposalState::Active);
             }
 
