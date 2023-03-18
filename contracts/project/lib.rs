@@ -424,7 +424,7 @@ pub mod project {
         /// Current state of proposal
         #[ink(message)]
         pub fn proposal_state(&self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalState, ProjectError> {
-            assert!(self.proposals.contains((project_id, proposal_id)), "Proposal does noet exist");
+            assert!(self.proposals.contains((project_id, proposal_id)), "Project / Proposal does noet exist");
             let proposal = self.proposals.get((project_id, proposal_id)).unwrap();
 
             if proposal.canceled {
@@ -446,6 +446,16 @@ pub mod project {
 
             return Ok(ProposalState::Defeated);
         }
+
+        /// Current votes for proposal
+        #[ink(message)]
+        pub fn proposal_votes(&mut self, project_id: ProjectId, proposal_id: ProposalId) -> Result<ProposalVote, ProjectError> {
+            assert!(self.proposals.contains((project_id, proposal_id)), "Project / Proposal does noet exist");
+            let proposal = self.proposals.get((project_id, proposal_id)).unwrap();
+
+            self.proposal_votes.get(project_id, proposal_id).unwrap()
+        }
+
 
         #[ink(message)]
         pub fn voting_delay(&self) -> BlockNumber {
