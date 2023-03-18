@@ -132,6 +132,19 @@ pub mod rmrk_assignment { // from rmrk_example_mintable
         }
 
         #[ink(message)]
+        pub fn set_token_title(&mut self, token_id: Id, title: String) -> Result<(), AssignmentError> {
+            if !self.ensure_exists_and_get_owner(&token_id.clone()).is_ok() {
+                return Err(AssignmentError::Custom("Invalid token id".into()));
+            }
+
+            self.assign_metadata(token_id.clone(), title).or_else(|_|
+                Err(AssignmentError::Custom("Failed to assign metadata".into()))
+            )?;
+
+            Ok(())
+        }
+
+        #[ink(message)]
         pub fn account_id(&self) -> AccountId {
             self.env().account_id()
         }

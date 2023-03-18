@@ -118,8 +118,6 @@ pub mod project {
         pub has_voted: Vec<AccountId>,
     }
 
-   
-
     #[ink(storage)]
     #[derive(Default, Storage)]
     pub struct Project {
@@ -277,11 +275,9 @@ pub mod project {
                 return Err(ProjectError::Custom(String::from("Proposal already exists")));
             }
 
-            // insert self.proposals
-
             let proposal = ProposalCore {
-                vote_start: self.env().block_number() as u32 + self.voting_delay,
-                vote_end:   self.env().block_number() as u32 + self.voting_delay + self.voting_period,
+                vote_start: self.env().block_number() + self.voting_delay,
+                vote_end:   self.env().block_number() + self.voting_delay + self.voting_period,
                 canceled: false,
                 internal,
             };
@@ -292,7 +288,6 @@ pub mod project {
             let mut proposals = self.proposal_ids.get(project_id).unwrap();
             proposals.push(proposal_id);
             self.proposal_ids.insert(project_id, &proposals);
-            
 
             // // insert self.vote
             let vote_status = ProposalVote { votes_against: 0, votes_for: 0, votes_abstain: 0, has_voted: Vec::new(), };
@@ -308,7 +303,31 @@ pub mod project {
             });
 
             Ok(())
-        } 
+        }
+
+        #[ink(message)]
+        pub fn set_caller_project_voting_power(&mut self, project_id: ProjectId, project_token_id: Id, voting_factor: u128) -> Result<(), ProjectError> {
+            let mut assignment_ref = self.employee_project.get(project_id).unwrap();
+
+            assignment_ref.set_token_voting_power(project_token_id, voting_factor).or_else(|_|
+                Err(ProjectError::Custom("Failed to set voting power".into()))
+            )?;
+
+            self.employee_project.insert(project_id, &assignment_ref);
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn set_caller_project_title(&mut self, project_id: ProjectId, project_token_id: Id, title: String) -> Result<(), ProjectError> {
+            let mut assignment_ref = self.employee_project.get(project_id).unwrap();
+
+            assignment_ref.set_token_title(project_token_id, title).or_else(|_|
+                Err(ProjectError::Custom("Failed to set title".into()))
+            )?;
+
+            self.employee_project.insert(project_id, &assignment_ref);
+            Ok(())
+        }
 
         /// List all active projects
         #[ink(message)]
@@ -337,24 +356,26 @@ pub mod project {
         /// vote for given proposal Id
         #[ink(message)]
         pub fn vote(&mut self, vote_type: VoteType, project_id: ProjectId, proposal_id: ProposalId, project_token_id: Id, function_token_id: Id) -> Result<(), ProjectError> {
-            // todo: check caller has the required rights
-
             let caller = self.env().caller();
 
+            if !self.proposals.contains((project_id, proposal_id)) {
+                ink::env::debug_println!("Project / Proposal does not exist");
+                return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
+            }
+
+            let proposal = self.proposals.get((project_id, proposal_id)).unwrap();
             let assignment_ref = self.employee_project.get(project_id).unwrap();
-            if !assignment_ref.ensure_exists_and_owner_of(caller, project_token_id.clone()).is_ok() {
-                ink::env::debug_println!("Invalid project_token_id");
-                return Err(ProjectError::Custom(String::from("Invalid project_token_id")));
+
+            if proposal.internal {
+                if !assignment_ref.ensure_exists_and_owner_of(caller, project_token_id.clone()).is_ok() {
+                    ink::env::debug_println!("Invalid project_token_id");
+                    return Err(ProjectError::Custom(String::from("Invalid project_token_id")));
+                }
             }
 
             if !self.employee_function.clone().unwrap().ensure_exists_and_owner_of(caller, function_token_id.clone()).is_ok() {
                 ink::env::debug_println!("Invalid function_token_id");
                 return Err(ProjectError::Custom(String::from("Invalid function_token_id")));
-            }
-
-            if !self.proposals.contains((project_id, proposal_id)) {
-                ink::env::debug_println!("Project / Proposal does not exist");
-                return Err(ProjectError::Custom(String::from("Project / Proposal does not exist")));
             }
 
             if self.proposal_state(project_id, proposal_id)? != ProposalState::Active {
@@ -370,12 +391,17 @@ pub mod project {
                     has_voted: Vec::new()
                 }
             );
+
             if vote_status.has_voted.contains(&caller) {
                 ink::env::debug_println!("Caller has already voted");
                 return Err(ProjectError::Custom(String::from("Caller has already voted")));
             }
 
-            let voting_power = self.get_caller_voting_power(project_id, project_token_id, function_token_id);
+            let function_voting_power: u32 = self.employee_function.clone().unwrap().token_voting_power(function_token_id).unwrap().try_into().unwrap_or(0);
+            let project_voting_power: u32 = assignment_ref.token_voting_power(project_token_id).unwrap_or(0).try_into().unwrap_or(0);
+            let voting_power: u32 = function_voting_power.saturating_add(project_voting_power);
+
+            ink::env::debug_println!("retrieved voting power");
             match vote_type {
                 VoteType::Against => vote_status.votes_against += voting_power,
                 VoteType::For     => vote_status.votes_for     += voting_power,
@@ -438,17 +464,26 @@ pub mod project {
                 return Ok(ProposalState::Canceled);
             }
 
-            if proposal.vote_start > self.env().block_number() as u32 {
+            if proposal.vote_start > self.env().block_number() {
                 return Ok(ProposalState::Pending);
             }
 
-            if proposal.vote_end > self.env().block_number() as u32 {
+            if proposal.vote_end > self.env().block_number() {
                 return Ok(ProposalState::Active);
             }
 
-            let vote = self.votes.get((project_id, proposal_id)).unwrap();
-            if vote.votes_for > vote.votes_against {
-                return Ok(ProposalState::Succeeded);
+            if self.votes.contains((project_id, proposal_id)) {
+                let vote = self.votes.get((project_id, proposal_id)).unwrap_or(
+                    ProposalVote {
+                        votes_against: 0,
+                        votes_for:     0,
+                        votes_abstain: 0,
+                        has_voted: Vec::new()
+                    }
+                );
+                if vote.votes_for > vote.votes_against {
+                    return Ok(ProposalState::Succeeded);
+                }
             }
 
             return Ok(ProposalState::Defeated);
@@ -483,15 +518,6 @@ pub mod project {
         pub fn set_voting_period(&mut self, voting_period: BlockNumber) -> Result<(),ProjectError> {
             self.voting_period = voting_period;
             Ok(())
-        }
-
-        fn get_caller_voting_power(&self, project_id: ProjectId, project_token_id: Id, function_token_id: Id) -> u32 {
-            // TODO: These are lazy and horrible castings, also should we use FixedU128 to handle decimals?
-            let assignment_ref = self.employee_project.get(project_id).unwrap();
-            let function_voting_power = self.employee_function.clone().unwrap().token_voting_power(function_token_id).unwrap_or(0) as u32;
-            let project_voting_power = assignment_ref.token_voting_power(project_token_id).unwrap_or(0) as u32;
-            // TODO: Implement PRJ voting factor  * FNC voting factor but not sure where to get these values from
-            return function_voting_power + project_voting_power;
         }
     }
 }

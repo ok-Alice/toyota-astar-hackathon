@@ -262,8 +262,8 @@ for member in members:
     contract_call("Employee_function voting_power " + member, kp['alice'], employee_function, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_function']}, 'voting_factor': titles[member]['function_voting_power'] }) 
     
     ids[member]['employee_project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
-    contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'metadata': titles['project']['title'] + " - " + titles[member]['employee_project']})
-    contract_call("Employee_project voting_power " + member, kp['alice'], employee_project, "set_token_voting_power",   args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'voting_factor': titles[member]['project_voting_power'] }) 
+    contract_call("Employee_project metadata " + member, kp['alice'], project, "set_caller_project_title", args = { 'project_id': project_id, 'project_token_id': { 'U64' : ids[member]['employee_project']}, 'title': titles[member]['employee_project']})
+    contract_call("Employee_project voting_power " + member, kp['alice'], project, "set_caller_project_voting_power", args = { 'project_id': project_id, 'project_token_id': { 'U64' : ids[member]['employee_project']}, 'voting_factor': titles[member]['project_voting_power'] })
 
 
 ids['contract'] = {}
