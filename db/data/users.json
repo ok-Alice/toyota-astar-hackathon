@@ -29,7 +29,7 @@
   {
     "id": 3,
     "address": "5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy",
-    "email": "Dave@toyota.com",
+    "email": "dave@toyota.com",
     "displayName": "Dave",
     "password": "1234",
     "badges": ["Manager"],
@@ -41,7 +41,7 @@
     "email": "eve@toyota.com",
     "displayName": "Eve",
     "password": "1234",
-    "badges": ["Full Stack Developer"],
+    "badges": ["Test Driver"],
     "avatar": "/nfts/Eve/Eve.svg"
   },
   {

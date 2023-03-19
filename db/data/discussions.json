@@ -1,7 +1,35 @@
 [
-  {
-    "id": 0,
-    "projectId": 0,
-    "messages": []
-  }
+    {
+        "id": 0,
+        "projectId": 0,
+        "messages": []
+    },
+    {
+        "id": 1,
+        "projectId": 1,
+        "messages": [
+            {
+                "id": 0,
+                "userId": 2,
+                "message": "Hi everyone, can you comment on what was wrong about my proposal?",
+                "timestamp": "2023-03-19T13:01:24.433Z"
+            },
+            {
+                "id": 1,
+                "userId": 0,
+                "message": "I think you should rewrite your description so we understand it better",
+                "timestamp": "2023-03-19T13:02:32.054Z"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "projectId": 2,
+        "messages": []
+    },
+    {
+        "id": 3,
+        "projectId": 3,
+        "messages": []
+    }
 ]

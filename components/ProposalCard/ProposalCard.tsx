@@ -24,6 +24,15 @@ export interface ProposalCardProps {
   currentBlock: number | null;
 }
 
+const ACCOUNT_MAP = {
+  alice: 'Aiko',
+  bob: 'Bob',
+  charlie: 'Carol',
+  dave: 'Dave',
+  eve: 'Eve',
+  ferdie: 'Hassan'
+};
+
 export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
   const title = proposal?.title;
   const description = proposal?.description;
@@ -62,8 +71,6 @@ export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
               <Typography variant="body2">blocks left</Typography>
             </div>
           )}
-          {currentAccount?.address === proposal.proposer &&
-            proposal.status === 'ACTIVE' && <Button size="xs">Delete</Button>}
         </div>
       </div>
       <div className={styles.content}>
@@ -93,7 +100,7 @@ export function ProposalCard({ proposal, currentBlock }: ProposalCardProps) {
                 <Icon name="user-profile" size="xs" />
                 <Typography variant="title5">
                   {`${
-                    getUser(proposal.proposer)?.meta.name || ''
+                    ACCOUNT_MAP[getUser(proposal.proposer)?.meta.name] || ''
                   } - ${maskAddress(proposal.proposer)}`}
                 </Typography>
               </span>

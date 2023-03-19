@@ -1,8 +1,8 @@
 [
   {
     "id": 0,
-    "name": "Toyota Projects",
-    "description": "Main project used for project proposals",
+    "name": "Toyota Company Wide Proposals",
+    "description": "Company wide proposals can be voted on by all employees",
     "attribute": "",
     "members": [
       {
@@ -33,6 +33,39 @@
       {
         "userId": 5,
         "role": "Employee",
+        "voteWeight": "1"
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "Corolla UI",
+    "description": "The following topics need to change in UI. 1) Previous physical buttons of the airo have to be integrated in the UI. 2) Less clicks/tabs needed to perform certain actions.",
+    "attribute": "Corolla UI",
+    "members": [
+      {
+        "userId": 0,
+        "role": "Frontend Dev",
+        "voteWeight": "1"
+      },
+      {
+        "userId": 1,
+        "role": "Backend Dev",
+        "voteWeight": "1.1"
+      },
+      {
+        "userId": 2,
+        "role": "Graphical Designer",
+        "voteWeight": "1.1"
+      },
+      {
+        "userId": 4,
+        "role": "Test Driver",
+        "voteWeight": "1"
+      },
+      {
+        "userId": 5,
+        "role": "Adobe Lead UI",
         "voteWeight": "1"
       }
     ]
