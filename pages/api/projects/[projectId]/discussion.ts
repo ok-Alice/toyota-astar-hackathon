@@ -3,11 +3,16 @@ import { discussionsDB } from 'db/discussions';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { projectId } = req.query;
+  const discussion = discussionsDB.get(parseInt(projectId as string, 10));
   switch (req.method) {
     case 'GET':
       res
         .status(200)
-        .json(discussionsDB.get(parseInt(projectId as string, 10)));
+        .json(
+          discussion
+            ? discussion
+            : discussionsDB.createDiscussion(parseInt(projectId as string, 10))
+        );
       break;
     case 'POST':
       // eslint-disable-next-line no-case-declarations

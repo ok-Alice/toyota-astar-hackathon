@@ -17,6 +17,18 @@ export type Discussion = {
 const getDiscussion = (projectId: number) =>
   discussionData.find((x) => x.projectId === projectId);
 
+const createDiscussion = (projectId: number) => {
+  const newDiscussion = {
+    id: discussionData.length || 0,
+    projectId,
+    messages: []
+  };
+
+  discussionData.push(newDiscussion);
+  saveData(discussionData, 'discussions.json');
+  return newDiscussion;
+};
+
 const addMessage = (projectId: number, message: string, userId: number) => {
   let discussion = getDiscussion(projectId);
 
@@ -45,5 +57,6 @@ const addMessage = (projectId: number, message: string, userId: number) => {
 
 export const discussionsDB = {
   get: getDiscussion,
-  addMessage
+  addMessage,
+  createDiscussion
 };
