@@ -87,7 +87,7 @@ The project example then takes the following steps:
                 - Voting Power: 1.1
             - Participation Attribute: 5 
                 - 0.1 Additional voting power
-    - Carol: Lead Front-end Dev
+    - Carol: Designer
         - Toyota NFT:
             - Project Attribute: Corolla 2025 UI Team
                 - Voting Power: 1.1
