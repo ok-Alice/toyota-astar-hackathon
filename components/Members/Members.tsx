@@ -74,15 +74,15 @@ export function Members() {
                     </Button>
                   </span>
                   <div className={styles.badges}>
-                    {/* {user?.badges.map((badge) => (
-                      <Chip
-                        key={`${user.displayName}-${badge}`}
-                        variant="group"
-                        color="orange"
-                      >
-                        <Typography variant="title8">{badge}</Typography>
-                      </Chip>
-                    ))} */}
+                    <Chip
+                      key={`${user.displayName}-${user.nfts.employeeFunction.function}`}
+                      variant="group"
+                      color="orange"
+                    >
+                      <Typography variant="title8">
+                        {user.nfts.employeeFunction.function}
+                      </Typography>
+                    </Chip>
 
                     <Chip
                       key={`${user.displayName}-${member.role}`}

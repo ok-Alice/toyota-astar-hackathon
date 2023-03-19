@@ -9,7 +9,10 @@ export type User = {
   displayName: string;
   nfts: {
     employee: number;
-    employeeFunction: number;
+    employeeFunction: {
+      nftId: number;
+      function: string;
+    };
     projects: number[];
   };
 };

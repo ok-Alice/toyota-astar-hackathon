@@ -7,7 +7,10 @@
     "password": "1234",
     "nfts": {
       "employee": 1,
-      "employeeFunction": 1,
+      "employeeFunction": {
+        "nftId": 1,
+        "function": "Frontend Developer"
+      },
       "projects": [1]
     }
   },
@@ -19,7 +22,10 @@
     "password": "1234",
     "nfts": {
       "employee": 2,
-      "employeeFunction": 2,
+      "employeeFunction": {
+        "nftId": 2,
+        "function": "Backend Developer"
+      },
       "projects": [2]
     }
   },
@@ -31,7 +37,10 @@
     "password": "1234",
     "nfts": {
       "employee": 3,
-      "employeeFunction": 3,
+      "employeeFunction": {
+        "nftId": 3,
+        "function": "UI Designer"
+      },
       "projects": [3]
     }
   },
@@ -43,7 +52,10 @@
     "password": "1234",
     "nfts": {
       "employee": 4,
-      "employeeFunction": 4,
+      "employeeFunction": {
+        "nftId": 4,
+        "function": "Manager"
+      },
       "projects": [4]
     }
   },
@@ -55,7 +67,10 @@
     "password": "1234",
     "nfts": {
       "employee": 5,
-      "employeeFunction": 5,
+      "employeeFunction": {
+        "nftId": 5,
+        "function": "Test Driver"
+      },
       "projects": [5]
     }
   },
@@ -67,7 +82,10 @@
     "password": "1234",
     "nfts": {
       "employee": 6,
-      "employeeFunction": 6,
+      "employeeFunction": {
+        "nftId": 6,
+        "function": "External Consultant"
+      },
       "projects": [6]
     }
   }
