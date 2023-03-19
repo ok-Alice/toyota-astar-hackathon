@@ -19,5 +19,7 @@ export const blockNumberAtom = atom<number>(0);
 // contracts
 export const projectContractAtom = atom<ContractPromise | null>(null);
 export const employeeContractAtom = atom<ContractPromise | null>(null);
+export const employeeFunctionContractAtom = atom<ContractPromise | null>(null);
+export const employeeProjectContractAtom = atom<ContractPromise | null>(null);
 
 export const projectIdsAtom = atom<number[]>([]);

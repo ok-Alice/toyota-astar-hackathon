@@ -5,15 +5,17 @@ import {
   apiAtom,
   blockNumberAtom,
   employeeContractAtom,
+  employeeFunctionContractAtom,
+  employeeProjectContractAtom,
   projectContractAtom,
   projectIdsAtom
 } from 'store/api';
 import ProjectAbi from 'abis/project.json';
 import EmployeeAbi from 'abis/employee.json';
+import AssignmentAbi from 'abis/assignment.json';
 import { appConfig } from 'config';
 import { substrateAccountAddressAtom } from 'store/substrateAccount';
 import { contractQuery, parseToInt } from 'helpers';
-import { u32 } from '@polkadot/types';
 
 export function DataLoader() {
   const api = useAtomValue(apiAtom);
@@ -21,6 +23,12 @@ export function DataLoader() {
   const [blockNumber, setBlockNumber] = useAtom(blockNumberAtom);
   const [projectContract, setProjectContract] = useAtom(projectContractAtom);
   const [employeeContract, setEmployeeContract] = useAtom(employeeContractAtom);
+  const [employeeFunctionContract, setEmployeeFunctionContract] = useAtom(
+    employeeFunctionContractAtom
+  );
+  const [employeeProjectContract, setEmployeeProjectContract] = useAtom(
+    employeeProjectContractAtom
+  );
   const currentAccountAddress = useAtomValue(substrateAccountAddressAtom);
 
   const getProjects = useCallback(async () => {
@@ -83,12 +91,36 @@ export function DataLoader() {
         new ContractPromise(api, EmployeeAbi, appConfig.employeeContractAddress)
       );
     }
+
+    if (!employeeFunctionContract) {
+      setEmployeeFunctionContract(
+        new ContractPromise(
+          api,
+          AssignmentAbi,
+          appConfig.employeeFunctionContractAddress
+        )
+      );
+    }
+
+    if (!employeeProjectContract) {
+      setEmployeeProjectContract(
+        new ContractPromise(
+          api,
+          AssignmentAbi,
+          appConfig.employeeProjectContractAddress
+        )
+      );
+    }
   }, [
     api,
     projectContract,
     employeeContract,
     setProjectContract,
-    setEmployeeContract
+    setEmployeeContract,
+    employeeFunctionContract,
+    setEmployeeFunctionContract,
+    employeeProjectContract,
+    setEmployeeProjectContract
   ]);
 
   return null;
