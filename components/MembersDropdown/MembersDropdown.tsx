@@ -16,6 +16,15 @@ import { KeyringPair } from '@polkadot/keyring/types';
 
 import styles from './MembersDropdown.module.scss';
 
+const ACCOUNT_MAP = {
+  alice: 'Aiko',
+  bob: 'Bob',
+  charlie: 'Carol',
+  dave: 'Dave',
+  eve: 'Eve',
+  ferdie: 'Hassan'
+};
+
 export interface MembersDropdownProps {
   accounts?: KeyringPair[];
   children: ReactElement;
@@ -98,7 +107,8 @@ export function MembersDropdown({
                         height={24}
                       />
                       <Typography variant="title4">
-                        {_account.meta.name as string}
+                        {ACCOUNT_MAP[_account.meta.name as string] ||
+                          (_account.meta.name as string)}
                       </Typography>
                     </span>
                   </Button>

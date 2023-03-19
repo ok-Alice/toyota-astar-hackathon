@@ -2,55 +2,55 @@
   {
     "id": 0,
     "address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-    "email": "alice@astar.com",
-    "displayName": "Alice",
+    "email": "aiko@toyota.com",
+    "displayName": "Aiko",
     "password": "1234",
-    "badges": ["Lead Frontend Dev"],
-    "avatar": "/nfts/Alice/Alice.svg"
+    "badges": ["Front-end Developer"],
+    "avatar": "/nfts/Aiko/Aiko.svg"
   },
   {
     "id": 1,
     "address": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-    "email": "bob@astar.com",
+    "email": "bob@toyota.com",
     "displayName": "Bob",
     "password": "1234",
-    "badges": ["Lead Backend Dev"],
+    "badges": ["Back-end Developer"],
     "avatar": "/nfts/Bob/Bob.svg"
   },
   {
     "id": 2,
     "address": "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y",
-    "email": "charlie@astar.com",
-    "displayName": "Charlie",
+    "email": "carol@toyota.com",
+    "displayName": "Carol",
     "password": "1234",
-    "badges": ["Full Stack Dev"],
-    "avatar": "/nfts/Charlie/Charlie.svg"
+    "badges": ["Graphical Designer"],
+    "avatar": "/nfts/Carol/Carol.svg"
   },
   {
     "id": 3,
     "address": "5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy",
-    "email": "dave@astar.com",
+    "email": "Dave@toyota.com",
     "displayName": "Dave",
     "password": "1234",
-    "badges": ["Medior Backend Dev"],
+    "badges": ["Manager"],
     "avatar": "/nfts/Dave/Dave.svg"
   },
   {
     "id": 4,
     "address": "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
-    "email": "eve@astar.com",
+    "email": "eve@toyota.com",
     "displayName": "Eve",
     "password": "1234",
-    "badges": ["UX Designer"],
+    "badges": ["Full Stack Developer"],
     "avatar": "/nfts/Eve/Eve.svg"
   },
   {
     "id": 5,
     "address": "5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL",
-    "email": "Ferdie@adobe.com",
-    "displayName": "Ferdie",
+    "email": "Hassan@adobe.com",
+    "displayName": "Hassan",
     "password": "1234",
-    "badges": ["Adobe UI Designer"],
-    "avatar": "/nfts/Ferdie/Ferdie.svg"
+    "badges": ["External Consultant"],
+    "avatar": "/nfts/Hassan/Hassan.svg"
   }
 ]

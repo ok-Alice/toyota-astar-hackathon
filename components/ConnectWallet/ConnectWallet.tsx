@@ -47,6 +47,15 @@ import {
 
 import styles from './ConnectWallet.module.scss';
 
+const ACCOUNT_MAP = {
+  alice: 'Aiko',
+  bob: 'Bob',
+  charlie: 'Carol',
+  dave: 'Dave',
+  eve: 'Eve',
+  ferdie: 'Hassan'
+};
+
 export function ConnectWallet() {
   const router = useRouter();
   const [selectedWallet, setSelectedWallet] = useState<WalletSource | null>(
@@ -136,7 +145,7 @@ export function ConnectWallet() {
 
   if (currentSubstrateAccount) {
     visualAddress =
-      currentSubstrateAccount.meta.name?.toString() ??
+      ACCOUNT_MAP[currentSubstrateAccount.meta.name?.toString()] ??
       currentSubstrateAccount.address;
   }
 
@@ -168,7 +177,7 @@ export function ConnectWallet() {
           {currentWallet && (
             <Image
               src={currentWallet.icon}
-              alt={currentWallet.name}
+              alt={ACCOUNT_MAP[currentWallet.name]}
               width={24}
               height={24}
             />
@@ -232,7 +241,8 @@ export function ConnectWallet() {
                   .map((_account) => (
                     <SelectItem value={_account.address} key={_account.address}>
                       <Typography variant="button2">
-                        {_account.meta.name as string}
+                        {ACCOUNT_MAP[_account.meta.name as string] ||
+                          (_account.meta.name as string)}
                       </Typography>
                     </SelectItem>
                   ))}

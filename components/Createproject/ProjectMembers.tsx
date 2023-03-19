@@ -29,6 +29,14 @@ enum InputLabel {
   VOTE_WEIGHT = 'Vote Weight'
 }
 
+const ACCOUNT_MAP = {
+  alice: 'Aiko',
+  bob: 'Bob',
+  charlie: 'Carol',
+  dave: 'Dave',
+  eve: 'Eve',
+  ferdie: 'Hassan'
+};
 type ProjectMembersProps = {
   state: MembersState;
   setState: Dispatch<SetStateAction<MembersState>>;
@@ -125,9 +133,11 @@ export function ProjectMembers({ state, setState }: ProjectMembersProps) {
                   onChange={onInputChange}
                   data-member-index={index}
                   value={
-                    (accounts?.find(
-                      (_account) => _account.address === member.address
-                    )?.meta.name as string) || member.address
+                    ACCOUNT_MAP[
+                      accounts?.find(
+                        (_account) => _account.address === member.address
+                      )?.meta.name as string
+                    ] || member.address
                   }
                   autoComplete="off"
                   required
