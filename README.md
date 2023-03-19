@@ -147,6 +147,4 @@ The project example then takes the following steps:
 
 # Code Deployment
 
-## Node
-  
-## Client
+Please check the READMEs in the [frontend](frontend/) and [backend](backend/) folders for instructions on how to use this code.
