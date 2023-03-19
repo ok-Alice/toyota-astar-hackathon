@@ -11,7 +11,7 @@ from substrateinterface.exceptions import SubstrateRequestException
 # Config
 
 members = ['alice', 'bob', 'charlie', 'dave', 'eve', 'ferdie']
-verbose = 1
+verbose = 0
 
 titles = { 'alice' : { 
                 'employee_project': 'UI Front-end 1',
@@ -40,18 +40,6 @@ titles = { 'alice' : {
         }
 
 
-
-def contract_from_address(contract_address, contract_name):
-    contract = ContractInstance.create_from_address(
-        contract_address=contract_address,
-        metadata_file=os.path.join(os.path.dirname(__file__), 'project', 'target', 'ink', contract_name + '.json'),
-        substrate=substrate
-    )
-
-    print("✅ Loaded", contract_name, "from", contract_address, " CodeHash:", contract.metadata.source['hash']);
-
-    return contract
-
 ########## Generic Functions
 
 def contract_from_address(contract_address, contract_name):
@@ -61,7 +49,7 @@ def contract_from_address(contract_address, contract_name):
         substrate=substrate
     )
 
-    print("✅ Loaded", contract_name, "from", contract_address, " CodeHash:", contract.metadata.source['hash']);
+    print("  ✅ Loaded", contract_name, "from", contract_address, " CodeHash:", contract.metadata.source['hash']);
 
     return contract
 
@@ -144,7 +132,7 @@ def transfer_balance(kp_from, to, value):
 
         if receipt.is_success:
 
-            print('✅ Successful transfer from',kp_from, 'to', to, 'for', value)
+            print('  ✅ Successful transfer from',kp_from, 'to', to, 'for', value)
             if verbose > 0:
                 print("Transfer Events:", receipt.triggered_events)
         else:
@@ -185,6 +173,9 @@ with open(infile_json, 'r') as file:
 if verbose:
     print("♐ IDs:", ids)
 
+print("🍉🍉🍉 Loading contracts 🍉🍉🍉")
+
+
 project = contract_from_address(ids['contract']['project'], 'project')
 
 employee_address = project.read(kp['alice'], 'employee_address').contract_result_data[1]
@@ -200,6 +191,9 @@ total_supply = employee.read(kp['alice'], 'Minting::max_supply').contract_result
 assert(total_supply == 10000)
 
 transfer_balance(kp['alice'], str(employee_address), 10**17)
+
+
+print("🍉🍉🍉 Create project 🍉🍉🍉")
 
 ## Employee_project from create project, and send it some funds from Alice
 project_id = random.randint(0, 2**32 -1)
@@ -223,13 +217,31 @@ assert(total_supply == 10000)
 
 transfer_balance(kp['alice'], str(eproject_address), 10**17)
 
+# Add all members to project
+print("🍉🍉🍉 Add project members 🍉🍉🍉")
+
 for member in members:
     ids[member]['employee_project'] = contract_mint_to('Mint Employee-Project for ' + member, kp['alice'], employee_project, kp[member].ss58_address) 
     contract_call("Employee_project metadata " + member,     kp['alice'], employee_project, "Minting::assign_metadata", args = { 'token_id': { 'U64' : ids[member]['employee_project']}, 'metadata': titles[member]['employee_project']})
-    
+    contract_call("Employee_project voting_power " + member, kp['alice'], project, "set_caller_project_voting_power", args = { 'project_id': project_id, 'project_token_id': { 'U64' : ids[member]['employee_project']}, 'voting_factor': titles[member]['project_voting_power'] })
+
+
+# limit voting period to 7
 
 contract_call(
-     "Employee add_asset_entry on employee",
+     "Project votingperiod => 7",
+     kp['alice'],
+     project,
+    'set_voting_period',
+     args={
+       'voting_period': 7,
+     },
+)
+
+# add_asset_entry on employee
+
+contract_call(
+     "Employee add_asset_entry",
      kp['alice'],
      employee,
      'MultiAsset::add_asset_entry',
@@ -273,40 +285,89 @@ for member in members:
 
 # Alice creates proposal
 
-contract_call(
-    "Alice creates proposal",
-    kp['alice'],
-    project,
-    'create_proposal',
-    args = {
-        'project_id' : project_id,
-        'proposal_id': 1,
-        'project_token_id': { 'U64' : ids['alice']['employee_project']},
-        'internal': False,
-    }
-)
+for proposal_id in range(5):
+    print("🍉🍉🍉 Create and vote on proposal " + str(proposal_id) + " 🍉🍉🍉")
+
+    # limit voting period to 7
+
+    contract_call(
+        "Project votingperiod => 7",
+        kp['alice'],
+        project,
+        'set_voting_period',
+        args={
+        'voting_period': 7,
+        },
+    )
+
+    contract_call(
+        "Alice creates proposal",
+        kp['alice'],
+        project,
+        'create_proposal',
+        args = {
+            'project_id' : project_id,
+            'proposal_id': proposal_id,
+            'project_token_id': { 'U64' : ids['alice']['employee_project']},
+            'internal': False,
+        }
+    )
 
 
-details = project.read(kp['alice'], 'proposal_details', args = { 'project_id': project_id, 'proposal_id': 1}).contract_result_data[1]
-print("Details:",details)
-state = project.read(kp['alice'], 'proposal_state', args = { 'project_id': project_id, 'proposal_id': 1}).contract_result_data[1]
-print("State:",state)
+    details = project.read(kp['alice'], 'proposal_details', args = { 'project_id': project_id, 'proposal_id': proposal_id}).contract_result_data[1]
+    print("  ✊ Details:",details)
+    state = project.read(kp['alice'], 'proposal_state', args = { 'project_id': project_id, 'proposal_id': proposal_id}).contract_result_data[1]
+    print("  ❎ State:",state)
 
 
 
-# Alice votes
+    # All member votes
 
-contract_call(
-    "Alice votes FOR",
-    kp['alice'],
-    project,
-    'vote',
-    args = {
-        'vote_type': "For" ,
-        'project_id': project_id,
-        'proposal_id': 1,
-        'project_token_id': { 'U64': ids['alice']['employee_project'] },
-        'function_token_id': { 'U64': ids['alice']['employee_function'] },
-    }
-)
+    for member in members:
+        match random.randint(0,2):
+            case 0:
+                choice = "Against"
+            case 1:
+                choice = "For"
+            case 2:
+                choice = "Abstain"
+
+
+        msg = member + " votes " + choice
+
+        contract_call(
+            msg,
+            kp[member],
+            project,
+            'vote',
+            args = {
+                'vote_type': choice,
+                'project_id': project_id,
+                'proposal_id': proposal_id,
+                'project_token_id': { 'U64': ids[member]['employee_project'] },
+                'function_token_id': { 'U64': ids[member]['employee_function'] },
+            }
+        )
+
+        votes = project.read(kp['alice'], 'proposal_votes', args = { 'project_id': project_id, 'proposal_id': proposal_id}).contract_result_data[1]
+        print("   ✍ ", votes)
+        #details = project.read(kp['alice'], 'proposal_details', args = { 'project_id': project_id, 'proposal_id': 1}).contract_result_data[1]
+        #print("Details:",details)
+        #state = project.read(kp['alice'], 'proposal_state', args = { 'project_id': project_id, 'proposal_id': 1}).contract_result_data[1]
+        #print("State:",state)
+
+
+    contract_call(
+        "Project votingperiod => 10",
+        kp['alice'],
+        project,
+        'set_voting_period',
+        args={
+        'voting_period': 10,
+        },
+    )
+
+    state = project.read(kp['alice'], 'proposal_state', args = { 'project_id': project_id, 'proposal_id': proposal_id}).contract_result_data[1]
+    print("  ☕ State:",state)
+
 
