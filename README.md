@@ -112,6 +112,12 @@ The project example then takes the following steps:
                 - Voting Power: 1
             - Participation Attribute: 0
                 - No additional voting power
+     - Hassan: Adobe lead UI developer
+        - Toyota NFT:
+             - Project Attribute: Corolla 2025 UI Team
+                - Voting Power: 1
+             - Participation Attribute: 0
+                 - 0.2 Additional voting power 
 
 
 - Now that the team members have been selected, they have autonomy over the project and the proposal process can start 
