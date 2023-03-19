@@ -16,7 +16,7 @@ Toyota is on a mission to continue the Kaizen culture at their workplace, in the
 
 Our system allows Toyota to manage their projects via DAOs, reducing the workload of managers. Our product is a knowledge based voting system, utilizing NFTs. Every employee of Toyota will be issued an NFT, that can be equipped with project and participation attributes. When a new project is created, the members will have their NFT equipped with the project attribute and their voting power. In the project, two types of proposals can be created: one for only project members and one for all Toyota employees. Upon project completion, the system will reward the members a participation attribute. 
 
-The NFT of each employee evolves according to their contribution to the project. Similarly, the project will also be represented by an NFT that evolves as more employees contribute and commit to the project. By providing a visual representation of their influence, we hope to create a more engaging and participatory work environment.
+The NFT of each employee evolves according to their contribution to the project. 
 
 For the sake of this hackathon, we will focus on a small project that will be managed as a DAO. For example, we will create a project that will re-design the UI interface of the Toyota Corolla. 
 
