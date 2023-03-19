@@ -2,8 +2,8 @@
   {
     "id": 0,
     "address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-    "email": "alice@astar.com",
-    "displayName": "Alice",
+    "email": "aiko@toyota.com",
+    "displayName": "Aiko",
     "password": "1234",
     "nfts": {
       "employee": 1,
@@ -14,7 +14,7 @@
   {
     "id": 1,
     "address": "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
-    "email": "bob@astar.com",
+    "email": "bob@toyota.com",
     "displayName": "Bob",
     "password": "1234",
     "nfts": {
@@ -26,8 +26,8 @@
   {
     "id": 2,
     "address": "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y",
-    "email": "charlie@astar.com",
-    "displayName": "Charlie",
+    "email": "carol@toyota.com",
+    "displayName": "Carol",
     "password": "1234",
     "nfts": {
       "employee": 3,
@@ -38,7 +38,7 @@
   {
     "id": 3,
     "address": "5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy",
-    "email": "dave@astar.com",
+    "email": "Dave@toyota.com",
     "displayName": "Dave",
     "password": "1234",
     "nfts": {
@@ -50,7 +50,7 @@
   {
     "id": 4,
     "address": "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
-    "email": "eve@astar.com",
+    "email": "eve@toyota.com",
     "displayName": "Eve",
     "password": "1234",
     "nfts": {
@@ -62,8 +62,8 @@
   {
     "id": 5,
     "address": "5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL",
-    "email": "Ferdie@adobe.com",
-    "displayName": "Ferdie",
+    "email": "Hassan@adobe.com",
+    "displayName": "Hassan",
     "password": "1234",
     "nfts": {
       "employee": 6,

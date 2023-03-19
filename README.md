@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-First, install packages
+First, install packages (node v19)
 
 ```bash
 yarn install
@@ -17,6 +17,8 @@ NEXT_PUBLIC_PROPOSAL_VOTING_DELAY=0
 NEXT_PUBLIC_PROPOSAL_VOTING_PERIOD=10
 NEXT_PUBLIC_PROJECT_CONTRACT_ADDRESS=0x000000
 NEXT_PUBLIC_EMPLOYEE_CONTRACT_ADDRESS=0x000000
+NEXT_PUBLIC_EMPLOYEE_PROJECT_CONTRACT_ADDRESS=0x000000
+NEXT_PUBLIC_EMPLOYEE_FUNCTION_CONTRACT_ADDRESS=0x000000
 ```
 
 Run the development server:
@@ -38,6 +40,8 @@ Modify contract addresses in .env
 ```
 NEXT_PUBLIC_PROJECT_CONTRACT_ADDRESS=<contract_address>
 NEXT_PUBLIC_EMPLOYEE_CONTRACT_ADDRESS=<contract_address>
+NEXT_PUBLIC_EMPLOYEE_PROJECT_CONTRACT_ADDRESS=<contract_address>
+NEXT_PUBLIC_EMPLOYEE_FUNCTION_CONTRACT_ADDRESS=<contract_address>
 ```
 
 If needed, update contract metadata json files in /abis/ folder
