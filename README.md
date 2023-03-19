@@ -48,7 +48,7 @@ If needed, update contract metadata json files in /abis/ folder
 
 Update JSON db files with projectIds, proposalIds and employeeIds given in backend deploy script
 
-## Current state of onchain/offchain
+## Current state of on-chain/off-chain
 
 We created everything with a mocked database first (see db/data) in order to create this UI.
 Then we moved to get information from chain instead of the database.
@@ -59,8 +59,8 @@ accounts gets fetched from keyring and then matched with off-chain mocked databa
 for projects see -> components/DataLoader
 for proposals see -> components/TaskBoard
 
-Create Project will create the project offchain but will not create it onchain so you will see an error
+Create Project will create the project off-chain but will not create it on-chain so you will see an error
 when getting the proposals
 
-Create Proposal will create a proposal offchain but will not create it onchain so you will never see it in the UI
-since it filters on onchain proposal Ids
+Create Proposal will create a proposal off-chain but will not create it on-chain so you will never see it in the UI
+since it filters on on-chain proposal Ids
