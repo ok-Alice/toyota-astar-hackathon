@@ -14,12 +14,11 @@ Toyota is on a mission to continue the Kaizen culture at their workplace, in the
 
 ## Ok-Alice Project Summary:
 
-Our system allows Toyota to manage their projects via DAOs, reducing the workload of managers. Our product is a knowledge based voting system, utilizing NFTs. Every employee of Toyota will be issued an NFT, that can be equipped with project and participation attributes. When a new project is created, the members will have their NFT equipped with the project attribute and their voting power. In the project, two types of proposals can be created: one for only project members and one for all Toyota employees. Upon project completion, the system will reward the members a participation attribute. 
+Our system streamlines Toyota's project management by using DAOs and NFTs, reducing the workload for managers. Employees are issued a unique Toyota NFT that serves as their avatar and ID throughout their career. Project attribute NFTs are given to employees working on new projects, granting them access to the project DAO and assigning a team role with corresponding voting power. The historical project NFTs of each team member track their entire working experience and provide additional voting power. This approach ensures that team roles and experience, rather than governance tokens, determine voting power. 
 
-The NFT of each employee evolves according to their contribution to the project. 
+The NFTs of employees evolve according to their contributions to projects, visually representing their commitment over time. 
 
-For the sake of this hackathon, we will focus on a small project that will be managed as a DAO. For example, we will create a project that will re-design the UI interface of the Toyota Corolla. 
-
+In this hackathon, we will focus on a small project to redesign the UI of the Toyota Corolla, managed as a DAO.
 
 ## System Design:
 
