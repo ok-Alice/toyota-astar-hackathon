@@ -22,7 +22,7 @@ In this hackathon, we will focus on a small project to redesign the UI of the To
 
 ## System Design:
 
-Depending on the employee's role, their Toytoa employee NFT can be equipped with various attributes that represent their department, experience, achievements, and position within the company. These attributes will determine which proposals the employees can vote on. 
+Depending on the employee's role, their Toyota employee NFT can be equipped with various attributes that represent their department, experience, achievements, and position within the company. These attributes will determine which proposals the employees can vote on. 
 
 Additionally, the NFT takes into account the employee's experience and position, granting slightly higher weighted votes to those with more experience or seniority. For example, in our project lead developers receive an extra weight of 10%.
  
@@ -104,32 +104,50 @@ The project example then takes the following steps:
              - Participation Attribute: 0
                  - 0.2 Additional voting power 
 
-
-- Now that the team members have been selected, they have autonomy over the project and the proposal process can start 
-- Aiko, the front-end developer proposes a high level new approach on how to integrate the previous physical dashboard buttons in the new UI
-- Bob, the back-end dev, proposes a slightly different approach from Aiko.
-- Each member votes on the proposals with their voting power assigned voting
-- The proposal Aiko created wins
-- Carol makes a proposal to reposition the buttons in order to eliminate one unnecessary step 
-- The proposal is voted on and gets rejected
-- Carol creates an updated proposal based on the comments of the rejected proposal 
-- The team votes on the updated proposal and it passes 
-- Hassan, the Adobe UI designer proposes a different use of image and letters, improving the readability of the screen
-- The team votes on the proposal and it passes
-- The project is now complete and everyone gets rewarded with a participation attribute
-- Now Carol has five participation attributes and gets a small additional voting power in the next project.
-
 <br>
 
-<img src="assets/toyota-hackathon-3.png" width="800">
+- When the project starts the team members will have autonomy over the project and the proposal process can start 
+- When the project concludes everyone gets rewarded with a participation attribute
+
 
 <br>
 
 <img src="assets/toyota-hackathon-4.png" width="800">
 
-<br>
+
 <br>
 
+# Application Demo
+
+The client application can be found [here](https://demo.okalice.dev/)
+
+The login information to the application is:
+
+- Account 1:
+    - email: aiko@toyota.com
+    - password: 1234
+
+- Account 2: 
+    - email: bob@toyota.com
+    - password: 1234
+
+- Account 3:
+    - email: dave@toyota.com
+    - password: 1234
+
+- Account 4:
+    - email: eve@toyota.com
+    - password: 1234
+
+- Account 5:
+    - email: carol@toyota.com
+    - password: 1234
+
+- Account 6:
+    - email: hassan@adobe.com
+    - password: 1234
+
+<br>
 
 # Code Deployment
 
