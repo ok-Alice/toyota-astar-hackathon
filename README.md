@@ -62,10 +62,8 @@ The project example then takes the following steps:
 
 - Dave, a Manager at Toyota needs work done on the Corolla 2025 UI. To do this work, Dave wants to create a Corolla UI project DAO. 
 - Dave outlines the work required by the project team and a few high level milestones that need to be voted on. 
-    - Project Scope: the Corolla UI team will consist of 7 Toyota team members: 
-        - Back-end lead
+    - Project Scope: the Corolla UI team will consist of 5 Toyota team members: 
         - Back-end developer
-        - Front-end lead
         - Front-end developer
         - Graphical designer
         - A Test Driver
@@ -81,7 +79,7 @@ The project example then takes the following steps:
                 - Voting Power: 1 
             - Participation Attribute: 3 
                 - No additional points
-    - Bob: Lead Back-end Dev
+    - Bob: Back-end Dev
         - Toyota NFT:
             - Project Attribute: Corolla 2025 UI Team
                 - Voting Power: 1.1
@@ -93,19 +91,7 @@ The project example then takes the following steps:
                 - Voting Power: 1.1
             - Participation Attribute: 4
                 - No additional points
-    - Eve: Beck-end Dev
-        - Toyota NFT:
-            - Project Attribute: Corolla 2025 UI Team
-                - Voting Power: 1
-            - Participation Attribute: 5
-                - 0.1 Additional voting point
-    - Francis: Designer
-        - Toyota NFT:
-            - Project Attribute: Corolla 2025 UI Team
-                - Voting Power: 1
-            - Participation Attribute: 10
-                - 0.2 Additional voting power 
-    - Gaya: Test Driver
+    - Eve: Test Driver
         - Toyota NFT:
             - Project Attribute: Corolla 2025 UI Team
                 - Voting Power: 1
@@ -121,7 +107,7 @@ The project example then takes the following steps:
 
 - Now that the team members have been selected, they have autonomy over the project and the proposal process can start 
 - Aiko, the front-end developer proposes a high level new approach on how to integrate the previous physical dashboard buttons in the new UI
-- Bob, the back-end lead, proposes a slightly different approach from Aiko.
+- Bob, the back-end dev, proposes a slightly different approach from Aiko.
 - Each member votes on the proposals with their voting power assigned voting
 - The proposal Aiko created wins
 - Carol makes a proposal to reposition the buttons in order to eliminate one unnecessary step 
