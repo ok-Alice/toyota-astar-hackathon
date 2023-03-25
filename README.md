@@ -149,6 +149,10 @@ The login information to the application is:
 
 <br>
 
+# Final Pitch Presentation
+
+The final presentation can be found [here](https://www.youtube.com/watch?v=B6j6HJN18E8&ab_channel=quietapplause1)
+
 # Code Deployment
 
 Please check the READMEs in the [frontend](frontend/) and [backend](backend/) folders for instructions on how to use this code.
